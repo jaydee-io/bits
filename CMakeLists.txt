@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.13)
+
+project(bits CXX)
+set(CMAKE_CXX_STANDARD          17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS        OFF)
+
+include(cmake/utils.cmake)
+
+# Main (header-only) library
+add_subdirectory(include)
+
+# Main library unit tests
+enable_testing()
+add_subdirectory(tests)
+
+# Install CMake file for all exported targets
+install(EXPORT BitsExport DESTINATION cmake/bits)
