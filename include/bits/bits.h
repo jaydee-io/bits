@@ -6,6 +6,8 @@
 #include <assert.h>
 #include <stdexcept>
 
+#include "bits/detail/detail.h"
+
 namespace bits {
 
 class BitsSerializer
@@ -38,21 +40,6 @@ size_t BitsSerializer::nbBitsSerialized(void)
 }
 
 //------------------------------------------------------
-static inline size_t serialize_num_byte(size_t bit) { return bit / 8; }
-static inline uint8_t serialize_upper_mask_8bits(size_t bit) { return ~((1 << (8 - (bit % 8))) - 1); }
-static inline uint8_t serialize_lower_mask_8bits(size_t bit) { return  ((1 << (7 - (bit % 8))) - 1); }
-static inline size_t serialize_first_byte_shift_8bits(size_t bit) { return 7 - (bit % 8); }
-
-//------------------------------------------------------
-static inline uint8_t serialize_first_byte_mask_8bits(size_t low, size_t high)
-{
-    if(serialize_num_byte(low) == serialize_num_byte(high))
-        return serialize_lower_mask_8bits(high) | serialize_upper_mask_8bits(low);
-    else
-        return serialize_upper_mask_8bits(low);
-}
-
-//------------------------------------------------------
 template<typename T>
 void BitsSerializer::insert(T val, size_t nbBits)
 {
@@ -62,10 +49,10 @@ void BitsSerializer::insert(T val, size_t nbBits)
 
     const size_t  high = posBits + nbBits - 1; // Upper bit
     const size_t  low  = posBits;              // Lower bit
-    const size_t  byte_start = serialize_num_byte(low);
-    const size_t  byte_end   = serialize_num_byte(high);
-    const uint8_t first_byte_mask =  serialize_first_byte_mask_8bits(low, high);
-    const size_t  first_byte_shift = serialize_first_byte_shift_8bits(high);
+    const size_t  byte_start = detail::num_byte(low);
+    const size_t  byte_end   = detail::num_byte(high);
+    const uint8_t first_byte_mask =  detail::serialize_first_byte_mask_8bits(low, high);
+    const size_t  first_byte_shift = detail::first_byte_shift_8bits(high);
 
     // Last byte
     if(byte_start != byte_end)
@@ -129,32 +116,16 @@ size_t BitsDeserializer::nbBitsDeserialized() const
 }
 
 //------------------------------------------------------
-static inline size_t deserialize_num_byte(size_t bit) { return bit / 8; }
-static inline uint8_t deserialize_mask_8bits(size_t low, size_t high) { return  (1 << (((high - low) % 8) + 1)) - 1; }
-static inline uint8_t deserialize_mask_8bits(size_t bit) { return  (1 << (8 - (bit % 8))) - 1; }
-static inline size_t deserialize_first_byte_shift_8bits(size_t bit) { return 7 - (bit % 8); }
-static inline size_t deserialize_last_byte_shift_8bits(size_t bit) { return (bit % 8) + 1; }
-
-//------------------------------------------------------
-static inline uint8_t deserialize_first_byte_mask_8bits(size_t low, size_t high)
-{
-    if(serialize_num_byte(low) == serialize_num_byte(high))
-        return deserialize_mask_8bits(low, high);
-    else
-        return deserialize_mask_8bits(low);
-}
-
-//------------------------------------------------------
 template<typename T>
 T BitsDeserializer::extract(size_t nbBits)
 {
     const size_t  high = posBits + nbBits - 1; // Upper bit
     const size_t  low  = posBits;              // Lower bit
-    const size_t  byte_start = deserialize_num_byte(low);
-    const size_t  byte_end   = deserialize_num_byte(high);
-    const uint8_t first_byte_mask =  deserialize_first_byte_mask_8bits(low, high);
-    const size_t  first_byte_shift = deserialize_first_byte_shift_8bits(high);
-    const size_t  last_byte_shift = deserialize_last_byte_shift_8bits(high);
+    const size_t  byte_start = detail::num_byte(low);
+    const size_t  byte_end   = detail::num_byte(high);
+    const uint8_t first_byte_mask  = detail::deserialize_first_byte_mask_8bits(low, high);
+    const size_t  first_byte_shift = detail::first_byte_shift_8bits(high);
+    const size_t  last_byte_shift  = detail::last_byte_shift_8bits(high);
 
     assert((sizeof(T) * 8) >= (high - low + 1));
     if(posBits + nbBits > lengthBits)
