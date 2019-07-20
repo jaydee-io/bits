@@ -6,6 +6,7 @@ target_link_libraries(bits_tests bits GTest::GTest GTest::Main)
 target_sources(bits_tests PRIVATE
     test_insert.cpp
     test_extract.cpp
+    test_classes.cpp
 )
 target_enable_warnings(bits_tests PRIVATE)
 
