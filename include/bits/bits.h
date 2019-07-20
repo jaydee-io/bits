@@ -7,6 +7,7 @@
 #include <stdexcept>
 
 #include "bits/detail/detail.h"
+#include "bits/detail/BaseBitsStream.h"
 
 namespace bits {
 
@@ -19,7 +20,7 @@ template<typename T> T    extract(const uint8_t * buffer, size_t high, size_t lo
 //-----------------------------------------------------------------------------
 //- Bits serializer class
 //-----------------------------------------------------------------------------
-class BitsSerializer
+class BitsSerializer : public detail::BaseBitsStream
 {
 public:
     inline BitsSerializer(uint8_t * buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);
@@ -27,19 +28,14 @@ public:
     template<typename T>
     inline void insert(T val, size_t nbBits);
 
-    inline size_t nbBitsSerialized(void);
-
 protected:
     uint8_t * const buffer;
-    const size_t lengthBits;
-    const size_t offsetBits;
-    size_t posBits;
 };
 
 //-----------------------------------------------------------------------------
 //- Bits deserializer class
 //-----------------------------------------------------------------------------
-class BitsDeserializer
+class BitsDeserializer : public detail::BaseBitsStream
 {
 public:
     inline BitsDeserializer(const uint8_t * buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);
@@ -47,13 +43,8 @@ public:
     template<typename T>
     inline T extract(size_t nbBits);
 
-    inline size_t nbBitsDeserialized() const;
-
 protected:
     const uint8_t * const buffer;
-    const size_t lengthBits;
-    const size_t offsetBits;
-    size_t posBits;
 };
 
 //-----------------------------------------------------------------------------
@@ -101,56 +92,34 @@ T extract(const uint8_t * buffer, size_t high, size_t low)
 
 //-----------------------------------------------------------------------------
 BitsSerializer::BitsSerializer(uint8_t * buffer_, size_t lengthBufferBits, size_t initialOffsetBits)
-: buffer(buffer_), lengthBits(lengthBufferBits), offsetBits(initialOffsetBits), posBits(initialOffsetBits)
+: BaseBitsStream(lengthBufferBits, initialOffsetBits), buffer(buffer_)
 {}
-
-//-----------------------------------------------------------------------------
-size_t BitsSerializer::nbBitsSerialized(void)
-{
-        return posBits - offsetBits;
-}
 
 //-----------------------------------------------------------------------------
 template<typename T>
 void BitsSerializer::insert(T val, size_t nbBits)
 {
-    if((posBits + nbBits) > lengthBits)
-        throw std::overflow_error("insert, overflow_error");
+    checkNbRemainingBits(nbBits, "Unable to insert bits, too few bits remaining");
 
-    const size_t  high = posBits + nbBits - 1; // Upper bit
-    const size_t  low  = posBits;              // Lower bit
+    bits::insert<T>(val, buffer, posBits + nbBits - 1, posBits);
 
-    bits::insert<T>(val, buffer, high, low);
-
-    // Shift the current position
     posBits += nbBits;
 }
 
 //-----------------------------------------------------------------------------
 BitsDeserializer::BitsDeserializer(const uint8_t * buffer_, size_t lengthBufferBits, size_t initialOffsetBits)
-: buffer(buffer_), lengthBits(lengthBufferBits), offsetBits(initialOffsetBits), posBits(initialOffsetBits)
+: BaseBitsStream(lengthBufferBits, initialOffsetBits), buffer(buffer_)
 {}
-
-//-----------------------------------------------------------------------------
-size_t BitsDeserializer::nbBitsDeserialized() const
-{
-    return posBits - offsetBits;
-}
 
 //-----------------------------------------------------------------------------
 template<typename T>
 T BitsDeserializer::extract(size_t nbBits)
 {
-    if((posBits + nbBits) > lengthBits)
-        throw std::out_of_range("extract, out_of_range");
+    checkNbRemainingBits(nbBits, "Unable to extract bits, too few bits remaining");
 
-    const size_t  high = posBits + nbBits - 1; // Upper bit
-    const size_t  low  = posBits;              // Lower bit
-
-    // Shift current position
     posBits += nbBits;
 
-    return bits::extract<T>(buffer, high, low);
+    return bits::extract<T>(buffer, posBits + nbBits - 1, posBits);
 }
 
 } // namespace bits
