@@ -1,7 +1,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <bits/bits.h>
+#include <bits/BitsSerializer.h>
+#include <bits/BitsDeserializer.h>
 
 using ::testing::ElementsAre;
 

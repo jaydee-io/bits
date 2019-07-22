@@ -9,7 +9,7 @@
 namespace bits::detail {
 
 //-----------------------------------------------------------------------------
-//- Bits serializer / deserializer base class
+//- Bits serializer / deserializer base class for common operations
 //-----------------------------------------------------------------------------
 class BaseBitsStream
 {
