@@ -30,12 +30,9 @@ void insert(T val, uint8_t * buffer, size_t high, size_t low)
 {
     assert((sizeof(T) * 8) >= (high - low + 1));
 
-    const size_t  byte_start = detail::num_byte(low);
-    const size_t  byte_end   = detail::num_byte(high);
-    const uint8_t first_byte_mask =  detail::serialize_first_byte_mask_8bits(low, high);
-    const size_t  first_byte_shift = detail::first_byte_shift_8bits(high);
+    const detail::SerializeInfos infos(high, low);
 
-    detail::insert(val, buffer, byte_start, byte_end, first_byte_mask, first_byte_shift);
+    detail::insert(val, buffer, infos);
 }
 
 //-----------------------------------------------------------------------------
@@ -44,12 +41,9 @@ void insert(T val, uint8_t * buffer)
 {
     static_assert((sizeof(T) * 8) >= (high - low + 1));
 
-    constexpr size_t  byte_start = detail::num_byte(low);
-    constexpr size_t  byte_end   = detail::num_byte(high);
-    constexpr uint8_t first_byte_mask =  detail::serialize_first_byte_mask_8bits(low, high);
-    constexpr size_t  first_byte_shift = detail::first_byte_shift_8bits(high);
+    constexpr detail::SerializeInfos infos(high, low);
 
-    detail::insert(val, buffer, byte_start, byte_end, first_byte_mask, first_byte_shift);
+    detail::insert(val, buffer, infos);
 }
 
 //-----------------------------------------------------------------------------
@@ -58,13 +52,9 @@ T extract(const uint8_t * buffer, size_t high, size_t low)
 {
     assert((sizeof(T) * 8) >= (high - low + 1));
 
-    const size_t  byte_start = detail::num_byte(low);
-    const size_t  byte_end   = detail::num_byte(high);
-    const uint8_t first_byte_mask  = detail::deserialize_first_byte_mask_8bits(low, high);
-    const size_t  first_byte_shift = detail::first_byte_shift_8bits(high);
-    const size_t  last_byte_shift  = detail::last_byte_shift_8bits(high);
+    const detail::DeserializeInfos infos(high, low);
 
-    return detail::extract<T>(buffer, byte_start, byte_end, first_byte_mask, first_byte_shift, last_byte_shift);
+    return detail::extract<T>(buffer, infos);
 }
 
 //-----------------------------------------------------------------------------
@@ -73,13 +63,9 @@ T extract(const uint8_t * buffer)
 {
     static_assert((sizeof(T) * 8) >= (high - low + 1));
 
-    constexpr size_t  byte_start = detail::num_byte(low);
-    constexpr size_t  byte_end   = detail::num_byte(high);
-    constexpr uint8_t first_byte_mask  = detail::deserialize_first_byte_mask_8bits(low, high);
-    constexpr size_t  first_byte_shift = detail::first_byte_shift_8bits(high);
-    constexpr size_t  last_byte_shift  = detail::last_byte_shift_8bits(high);
+    constexpr detail::DeserializeInfos infos(high, low);
 
-    return detail::extract<T>(buffer, byte_start, byte_end, first_byte_mask, first_byte_shift, last_byte_shift);
+    return detail::extract<T>(buffer, infos);
 }
 
 } // namespace bits
