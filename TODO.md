@@ -5,3 +5,5 @@
 - Add tests of `assert()` calls
 - Add tests of exception throw
 - Add tests for signed types
+- Extract `serializer_info` and `deserializer_info` to detail
+- Add documentation to README.md
