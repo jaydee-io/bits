@@ -1,0 +1,8 @@
+- Merge `BitsSerializer` and `BitsDeserializer` to `BitsStream` ?
+- Add free functions verion with `high` and `low` as template parameters
+- Add a `bits::pos(high, low)` to support `operator <<` and  `operator >>`
+- Add `operator <<` to `BitsSerializer`
+- Add `operator >>` to `BitsDeserializer`
+- Add tests of `assert()` calls
+- Add tests of exception throw
+- Add tests for signed types
