@@ -5,6 +5,7 @@
 #include <cstdlib>
 
 #include "bits/detail/infos.h"
+#include "bits/detail/underlying_integral_type.h"
 
 namespace bits::detail {
 
@@ -72,22 +73,24 @@ void extract_last_byte(T & val, const uint8_t * buffer, const DeserializeInfos &
 template<typename T>
 void insert(T val, uint8_t * buffer, const SerializeInfos & infos)
 {
-    detail::insert_last_byte         (val, buffer, infos);
-    detail::insert_intermediate_bytes(val, buffer, infos);
-    detail::insert_first_byte        (val, buffer, infos);
+    auto rawVal = static_cast<underlying_integral_type_t<T>>(val);
+
+    bits::detail::insert_last_byte         (rawVal, buffer, infos);
+    bits::detail::insert_intermediate_bytes(rawVal, buffer, infos);
+    bits::detail::insert_first_byte        (rawVal, buffer, infos);
 }
 
 //-----------------------------------------------------------------------------
 template<typename T>
 T extract(const uint8_t * buffer, const DeserializeInfos & infos)
 {
-    T val = 0;
+    underlying_integral_type_t<T> val = {};
 
-    detail::extract_first_byte        (val, buffer, infos);
-    detail::extract_intermediate_bytes(val, buffer, infos);
-    detail::extract_last_byte         (val, buffer, infos);
+    bits::detail::extract_first_byte        (val, buffer, infos);
+    bits::detail::extract_intermediate_bytes(val, buffer, infos);
+    bits::detail::extract_last_byte         (val, buffer, infos);
 
-    return val;
+    return static_cast<T>(val);
 }
 
 } // namespace bits::detail
