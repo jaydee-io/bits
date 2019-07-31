@@ -18,7 +18,7 @@ public:
     inline BitsSerializer(uint8_t * buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);
 
     template<typename T>
-    inline void insert(T val, size_t nbBits);
+    inline BitsSerializer & insert(T val, size_t nbBits);
 
 protected:
     uint8_t * const buffer;
@@ -37,13 +37,14 @@ BitsSerializer::BitsSerializer(uint8_t * buffer_, size_t lengthBufferBits, size_
 
 //-----------------------------------------------------------------------------
 template<typename T>
-void BitsSerializer::insert(T val, size_t nbBits)
+BitsSerializer & BitsSerializer::insert(T val, size_t nbBits)
 {
     checkNbRemainingBits(nbBits, "Unable to insert bits, too few bits remaining");
 
     bits::insert<T>(val, buffer, posBits + nbBits - 1, posBits);
-
     posBits += nbBits;
+
+    return *this;
 }
 
 } // namespace bits

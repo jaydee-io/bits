@@ -19,6 +19,8 @@ public:
 
     template<typename T>
     inline T extract(size_t nbBits);
+    template<typename T>
+    inline BitsDeserializer & extract(T & val, size_t nbBits);
 
 protected:
     const uint8_t * const buffer;
@@ -41,9 +43,19 @@ T BitsDeserializer::extract(size_t nbBits)
 {
     checkNbRemainingBits(nbBits, "Unable to extract bits, too few bits remaining");
 
+    auto val = bits::extract<T>(buffer, posBits + nbBits - 1, posBits);
     posBits += nbBits;
 
-    return bits::extract<T>(buffer, posBits + nbBits - 1, posBits);
+    return val;
+}
+
+//-----------------------------------------------------------------------------
+template<typename T>
+inline BitsDeserializer & BitsDeserializer::extract(T & val, size_t nbBits)
+{
+    val = extract<T>(nbBits);
+
+    return *this;
 }
 
 } // namespace bits

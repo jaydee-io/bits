@@ -161,11 +161,12 @@ std::cout << "Nano second = " << nanoSecond << std::endl;
 
 // Serialize response
 bits::BitsSerializer serializer(buffer.data(), buffer.size() * 8);
-serializer.insert(MessageType::RESPONSE, 2);
-serializer.insert(MessageGroup::TIME, 2);
-serializer.insert(TimeServices::UPDATE, 4);
-serializer.insert(3, 2);
-serializer.insert(TimeUpdateStatus::SUCCESS, 8);
+serializer
+    .insert(MessageType::RESPONSE, 2)
+    .insert(MessageGroup::TIME, 2)
+    .insert(TimeServices::UPDATE, 4)
+    .insert(3, 2)
+    .insert(TimeUpdateStatus::SUCCESS, 8);
 
 // ... Write back response message from the buffer ...
 ```

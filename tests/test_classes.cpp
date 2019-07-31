@@ -45,3 +45,34 @@ TEST(BitsStream, BitsSkipped)
     stream.skip(8); ASSERT_EQ(stream.nbBitsStreamed(), 22);
     stream.skip(8); ASSERT_EQ(stream.nbBitsStreamed(), 30);
 }
+
+TEST(BitsSerializer, ChainedInsert)
+{
+    uint8_t buffer[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    bits::BitsSerializer serializer(buffer, BUFFER_SIZE * 8);
+
+    serializer
+        .insert(0x03, 4)
+        .insert(0x01, 2)
+        .insert(0x7F, 8)
+        .insert(0xDC, 8)
+        .insert(0x0D, 8);
+    
+    ASSERT_THAT(buffer, ElementsAre(0x35, 0xFF, 0x70, 0x34, 0x00, 0x00, 0x00, 0x00));
+}
+
+TEST(BitsDeserializer, ChainedExtract)
+{
+    uint8_t buffer[] = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
+    bits::BitsDeserializer deserializer(buffer, BUFFER_SIZE * 8);
+    uint8_t val = 0;
+
+    deserializer
+        .extract(val, 4)
+        .extract(val, 2)
+        .extract(val, 8)
+        .extract(val, 8)
+        .extract(val, 8);
+    
+    ASSERT_EQ(val, 0x0D);
+}
