@@ -15,4 +15,3 @@
 - Document library installation / including
 - Overload functions for `std::array`
 - Allow `insert()` / `extract()` chaining (by returning a reference to the `BitsSerializer` / `BitsDeserializer`)
-- Add `skip()` to `BitsSerializer` / `BitsDeserializer`

@@ -33,3 +33,15 @@ TEST(BitsDeserializer, NbBitsDeserialized)
     deserializer.extract<uint8_t>(8); ASSERT_EQ(deserializer.nbBitsStreamed(), 22);
     deserializer.extract<uint8_t>(8); ASSERT_EQ(deserializer.nbBitsStreamed(), 30);
 }
+
+TEST(BitsStream, BitsSkipped)
+{
+    bits::detail::BaseBitsStream stream(BUFFER_SIZE * 8, 0);
+
+    ASSERT_EQ(stream.nbBitsStreamed(), 0);
+    stream.skip(4); ASSERT_EQ(stream.nbBitsStreamed(), 4);
+    stream.skip(2); ASSERT_EQ(stream.nbBitsStreamed(), 6);
+    stream.skip(8); ASSERT_EQ(stream.nbBitsStreamed(), 14);
+    stream.skip(8); ASSERT_EQ(stream.nbBitsStreamed(), 22);
+    stream.skip(8); ASSERT_EQ(stream.nbBitsStreamed(), 30);
+}

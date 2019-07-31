@@ -16,6 +16,8 @@ class BaseBitsStream
 public:
     inline BaseBitsStream(size_t lengthBufferBits, size_t initialOffsetBits);
 
+    inline void skip(size_t nbBits);
+
     inline size_t nbBitsStreamed(void);
 
 protected:
@@ -41,6 +43,14 @@ BaseBitsStream::BaseBitsStream(size_t lengthBufferBits, size_t initialOffsetBits
 size_t BaseBitsStream::nbBitsStreamed(void)
 {
     return posBits - offsetBits;
+}
+
+//-----------------------------------------------------------------------------
+void BaseBitsStream::skip(size_t nbBits)
+{
+    checkNbRemainingBits(nbBits, "Unable to skip bits, too few bits remaining");
+
+    posBits += nbBits;
 }
 
 //-----------------------------------------------------------------------------

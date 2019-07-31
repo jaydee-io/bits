@@ -127,7 +127,6 @@ enum class TimeUpdateStatus
     ERROR = 1,
 };
 
-using MessageLength = uint8_t;
 using Second = uint32_t;
 using NanoSecond = uint32_t;
 ````
@@ -146,7 +145,7 @@ bits::BitsDeserializer deserializer(buffer.data(), buffer.size() * 8);
 auto type = deserializer.extract<MessageType>(2);
 auto group = deserializer.extract<MessageGroup>(2);
 auto service = deserializer.extract<TimeServices>(4);
-deserializer.extract<MessageLength>(8);
+deserializer.skip(8);
 
 // Check this is a time update request
 if(!(type == MessageType::REQUEST
