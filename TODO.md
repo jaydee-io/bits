@@ -1,9 +1,18 @@
 ## TODO List
 - Merge `BitsSerializer` and `BitsDeserializer` to `BitsStream` ?
-- Add a `bits::pos(high, low)` to support `operator <<` and  `operator >>`
+- Add a `bits::pos(nbBits)` to support `operator <<` and  `operator >>`
 - Add `operator <<` to `BitsSerializer`
 - Add `operator >>` to `BitsDeserializer`
 - Add tests of `assert()` calls
 - Add tests of exception throw
 - Add tests for signed types
 - Replace `uint8_t` by `std::byte`
+- Add endianness handling
+- Add CMake options to
+  - Enable tests
+  - Enable bound check (assertion or exception throwing)
+- Add CMake installation rules
+- Document library installation / including
+- Overload functions for `std::array`
+- Allow `insert()` / `extract()` chaining (by returning a reference to the `BitsSerializer` / `BitsDeserializer`)
+- Add `skip()` to `BitsSerializer` / `BitsDeserializer`
