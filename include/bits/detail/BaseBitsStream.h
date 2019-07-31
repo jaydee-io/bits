@@ -11,12 +11,13 @@ namespace bits::detail {
 //-----------------------------------------------------------------------------
 //- Bits serializer / deserializer base class for common operations
 //-----------------------------------------------------------------------------
+template<typename T>
 class BaseBitsStream
 {
 public:
     inline BaseBitsStream(size_t lengthBufferBits, size_t initialOffsetBits);
 
-    inline void skip(size_t nbBits);
+    inline T & skip(size_t nbBits);
 
     inline size_t nbBitsStreamed(void);
 
@@ -35,26 +36,32 @@ protected:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-BaseBitsStream::BaseBitsStream(size_t lengthBufferBits, size_t initialOffsetBits)
+template<typename T>
+BaseBitsStream<T>::BaseBitsStream(size_t lengthBufferBits, size_t initialOffsetBits)
 : lengthBits(lengthBufferBits), offsetBits(initialOffsetBits), posBits(initialOffsetBits)
 {}
 
 //-----------------------------------------------------------------------------
-size_t BaseBitsStream::nbBitsStreamed(void)
+template<typename T>
+size_t BaseBitsStream<T>::nbBitsStreamed(void)
 {
     return posBits - offsetBits;
 }
 
 //-----------------------------------------------------------------------------
-void BaseBitsStream::skip(size_t nbBits)
+template<typename T>
+T & BaseBitsStream<T>::skip(size_t nbBits)
 {
     checkNbRemainingBits(nbBits, "Unable to skip bits, too few bits remaining");
 
     posBits += nbBits;
+
+    return static_cast<T &>(*this);
 }
 
 //-----------------------------------------------------------------------------
-void BaseBitsStream::checkNbRemainingBits(size_t nbBits, std::string_view message)
+template<typename T>
+void BaseBitsStream<T>::checkNbRemainingBits(size_t nbBits, std::string_view message)
 {
     if((posBits + nbBits) > lengthBits)
         throw std::out_of_range(message.data());

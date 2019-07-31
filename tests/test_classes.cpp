@@ -36,7 +36,8 @@ TEST(BitsDeserializer, NbBitsDeserialized)
 
 TEST(BitsStream, BitsSkipped)
 {
-    bits::detail::BaseBitsStream stream(BUFFER_SIZE * 8, 0);
+    uint8_t buffer[BUFFER_SIZE] = {};
+    bits::BitsSerializer stream(buffer, BUFFER_SIZE * 8); // Could be BitsDeserializer
 
     ASSERT_EQ(stream.nbBitsStreamed(), 0);
     stream.skip(4); ASSERT_EQ(stream.nbBitsStreamed(), 4);
@@ -44,6 +45,22 @@ TEST(BitsStream, BitsSkipped)
     stream.skip(8); ASSERT_EQ(stream.nbBitsStreamed(), 14);
     stream.skip(8); ASSERT_EQ(stream.nbBitsStreamed(), 22);
     stream.skip(8); ASSERT_EQ(stream.nbBitsStreamed(), 30);
+}
+
+TEST(BitsStream, ChainedSkip)
+{
+    uint8_t buffer[BUFFER_SIZE] = {};
+    bits::BitsDeserializer stream(buffer, BUFFER_SIZE * 8); // Could be BitsSerializer
+
+    ASSERT_EQ(stream.nbBitsStreamed(), 0);
+    stream
+        .skip(4)
+        .skip(2)
+        .skip(8)
+        .skip(8)
+        .skip(8);
+    
+    ASSERT_EQ(stream.nbBitsStreamed(), 30);
 }
 
 TEST(BitsSerializer, ChainedInsert)

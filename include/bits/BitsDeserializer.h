@@ -12,7 +12,7 @@ namespace bits {
 //-----------------------------------------------------------------------------
 //- Bits deserializer class
 //-----------------------------------------------------------------------------
-class BitsDeserializer : public detail::BaseBitsStream
+class BitsDeserializer : public detail::BaseBitsStream<BitsDeserializer>
 {
 public:
     inline BitsDeserializer(const uint8_t * buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);

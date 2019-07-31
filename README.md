@@ -165,7 +165,7 @@ serializer
     .insert(MessageType::RESPONSE, 2)
     .insert(MessageGroup::TIME, 2)
     .insert(TimeServices::UPDATE, 4)
-    .insert(3, 2)
+    .skip(2)    // Skip 'length' field
     .insert(TimeUpdateStatus::SUCCESS, 8);
 
 // ... Write back response message from the buffer ...

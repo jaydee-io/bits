@@ -12,7 +12,7 @@ namespace bits {
 //-----------------------------------------------------------------------------
 //- Bits serializer class
 //-----------------------------------------------------------------------------
-class BitsSerializer : public detail::BaseBitsStream
+class BitsSerializer : public detail::BaseBitsStream<BitsSerializer>
 {
 public:
     inline BitsSerializer(uint8_t * buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);
