@@ -13,4 +13,3 @@
   - Enable bound check (assertion or exception throwing)
 - Add CMake installation rules
 - Document library installation / including
-- Add Travis continuous integration

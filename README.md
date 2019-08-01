@@ -2,6 +2,11 @@
 `bits` is a C++ 17 library designed to ease bit manipulations from raw buffer. It allow easy inserting and extracting bit fields into/from raw `uint8_t` buffer.
 
 See all the details of the latest version from [CHANGELOG](https://github.com/jaydee-io/bits/blob/master/CHANGELOG.md).
+Current build & test status [![TravisCI Build Status](https://travis-ci.org/jaydee-io/bits.svg?branch=master)](https://travis-ci.org/jaydee-io/bits)
+
+## TODO
+There's a lot in progress :-)
+Have a look at the [TODO](https://github.com/jaydee-io/bits/blob/master/TODO.md) list.
 
 ## Example #1 : _Hardware register access_
 `bits` could be very usefull to manipulate low-level hardware bits, extract meaningfull information and raise up abstraction level.
@@ -170,7 +175,3 @@ serializer
 
 // ... Write back response message from the buffer ...
 ```
-
-## TODO
-There's a lot in progress :-)
-Have a look at the [TODO](https://github.com/jaydee-io/bits/blob/master/TODO.md) list.

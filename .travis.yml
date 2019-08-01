@@ -1,0 +1,88 @@
+dist: xenial
+language: cpp
+git:
+  depth: 1
+
+install:
+  - if [[ -n "$CUSTOM_COMPILER" ]]; then eval "${CUSTOM_COMPILER}"; fi
+  - ./scripts/install_dependencies.sh
+
+script:
+  - mkdir build
+  - cd build
+  - cmake ..
+  - cmake --build . -j
+  - ctest -V
+
+##########################
+# GCC 6 and older doesn't support 'string_view'
+# clang 5.0 and older doesn't support brace list initializer
+##########################
+matrix:
+  include:
+    # gcc 9
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-9
+      env: CUSTOM_COMPILER="CC=gcc-9 && CXX=g++-9"
+    # gcc 8
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+      env: CUSTOM_COMPILER="CC=gcc-8 && CXX=g++-8"
+    # gcc 7
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+      env: CUSTOM_COMPILER="CC=gcc-7 && CXX=g++-7"
+    # clang 8
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-xenial-8
+          packages:
+            - clang-8
+            - g++-9
+      env: CUSTOM_COMPILER="CC=clang-8 && CXX=clang++-8"
+    # clang 7
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-xenial-7
+          packages:
+            - clang-7
+            - g++-9
+      env: CUSTOM_COMPILER="CC=clang-7 && CXX=clang++-7"
+    # clang 6.0
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-xenial-6.0
+          packages:
+            - clang-6.0
+            - g++-9
+      env: CUSTOM_COMPILER="CC=clang-6.0 && CXX=clang++-6.0"
