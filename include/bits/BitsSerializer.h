@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <cstdlib>
+#include <array>
 
 #include "bits/bits.h"
 #include "bits/detail/BaseBitsStream.h"
@@ -16,6 +17,8 @@ class BitsSerializer : public detail::BaseBitsStream<BitsSerializer>
 {
 public:
     inline BitsSerializer(uint8_t * buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);
+    template<size_t N>
+    inline BitsSerializer(std::array<uint8_t, N> & buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);
 
     template<typename T>
     inline BitsSerializer & insert(T val, size_t nbBits);
@@ -33,6 +36,12 @@ protected:
 //-----------------------------------------------------------------------------
 BitsSerializer::BitsSerializer(uint8_t * buffer_, size_t lengthBufferBits, size_t initialOffsetBits)
 : BaseBitsStream(lengthBufferBits, initialOffsetBits), buffer(buffer_)
+{}
+
+//-----------------------------------------------------------------------------
+template<size_t N>
+BitsSerializer::BitsSerializer(std::array<uint8_t, N> & buffer, size_t lengthBufferBits, size_t initialOffsetBits)
+: BitsSerializer(buffer.data(), lengthBufferBits, initialOffsetBits)
 {}
 
 //-----------------------------------------------------------------------------

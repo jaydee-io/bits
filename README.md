@@ -33,9 +33,9 @@ enum class GasValid
     VALID = 1,
 };
 
-auto gas_resistance_data  = bits::extract<uint16_t,  9,  0>(buffer.data());
-auto gas_is_valid_as_enum = bits::extract<GasValid, 10, 10>(buffer.data());
-auto gas_is_valid_as_bool = bits::extract<bool,     10, 10>(buffer.data());
+auto gas_resistance_data  = bits::extract<uint16_t,  9,  0>(buffer);
+auto gas_is_valid_as_enum = bits::extract<GasValid, 10, 10>(buffer);
+auto gas_is_valid_as_bool = bits::extract<bool,     10, 10>(buffer);
 
 if(gas_is_valid_as_bool)                    // Using bool type
 if(gas_is_valid_as_enum == GasValid::VALID) // Using 'GasValid' strong type
@@ -77,7 +77,7 @@ enum class Oversampling
     OVERSAMPLING_X16 = 5,
 };
 
-bits::insert<Oversampling, 7, 5>(Oversampling::OVERSAMPLING_X4, buffer.data());
+bits::insert<Oversampling, 7, 5>(Oversampling::OVERSAMPLING_X4, buffer);
 
 // ... Write back the byte on I2C bus, at address 0x74 ...
 ```
@@ -141,7 +141,7 @@ std::array<uint8_t, 16> buffer = { };
 // ... Read incoming message into the buffer ...
 
 // Deserialize request
-bits::BitsDeserializer deserializer(buffer.data(), buffer.size() * 8);
+bits::BitsDeserializer deserializer(buffer, buffer.size() * 8);
 auto type = deserializer.extract<MessageType>(2);
 auto group = deserializer.extract<MessageGroup>(2);
 auto service = deserializer.extract<TimeServices>(4);
@@ -160,7 +160,7 @@ std::cout << "Second = " << second << std::endl;
 std::cout << "Nano second = " << nanoSecond << std::endl;
 
 // Serialize response
-bits::BitsSerializer serializer(buffer.data(), buffer.size() * 8);
+bits::BitsSerializer serializer(buffer, buffer.size() * 8);
 serializer
     .insert(MessageType::RESPONSE, 2)
     .insert(MessageGroup::TIME, 2)

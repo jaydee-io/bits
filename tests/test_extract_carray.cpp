@@ -5,7 +5,7 @@
 
 using ::testing::ElementsAre;
 
-TEST(BitsExtraction, Unsigned_8bits)
+TEST(BitsExtraction_CArray, Unsigned_8bits)
 {
     uint8_t buffer[] = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
 
@@ -16,7 +16,7 @@ TEST(BitsExtraction, Unsigned_8bits)
     ASSERT_EQ(bits::extract<uint8_t>(buffer, 29, 22), 0x0D);
 }
 
-TEST(BitsExtraction, Unsigned_16bits)
+TEST(BitsExtraction_CArray, Unsigned_16bits)
 {
     uint8_t buffer[] = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
 
@@ -26,7 +26,7 @@ TEST(BitsExtraction, Unsigned_16bits)
     ASSERT_EQ(bits::extract<uint16_t>(buffer, 27, 14), 0x3703);
 }
 
-TEST(BitsExtraction, Unsigned_32bits)
+TEST(BitsExtraction_CArray, Unsigned_32bits)
 {
     uint8_t buffer[] = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
 
@@ -37,7 +37,7 @@ TEST(BitsExtraction, Unsigned_32bits)
     ASSERT_EQ(bits::extract<uint32_t>(buffer, 53, 28), 0x017FDC0D);
 }
 
-TEST(BitsExtraction, Unsigned_8bits_with_offset)
+TEST(BitsExtraction_CArray, Unsigned_8bits_with_offset)
 {
     uint8_t buffer[] = { 0x00, 0x00, 0x00, 0x00, 0x0D, 0x7F, 0xDC, 0x0D };
 
@@ -48,7 +48,7 @@ TEST(BitsExtraction, Unsigned_8bits_with_offset)
     ASSERT_EQ(bits::extract<uint8_t>(buffer, 63, 56), 0x0D);
 }
 
-TEST(BitsExtraction, Unsigned_16bits_with_offset)
+TEST(BitsExtraction_CArray, Unsigned_16bits_with_offset)
 {
     uint8_t buffer[] = { 0x00, 0x00, 0x00, 0x00, 0x03, 0x5F, 0xF7, 0x03 };
 
@@ -58,7 +58,7 @@ TEST(BitsExtraction, Unsigned_16bits_with_offset)
     ASSERT_EQ(bits::extract<uint16_t>(buffer, 63, 50), 0x3703);
 }
 
-TEST(BitsExtraction, Unsigned_32bits_with_offset)
+TEST(BitsExtraction_CArray, Unsigned_32bits_with_offset)
 {
     uint8_t buffer[] = { 0x00, 0x0D, 0x7F, 0xDC, 0x0D, 0x7F, 0xDC, 0x0D };
 
@@ -73,7 +73,7 @@ TEST(BitsExtraction, Unsigned_32bits_with_offset)
 //- Tests for templated bits position
 //-----------------------------------------------------------------------------
 
-TEST(BitsExtraction, TemplatedPosition_Unsigned_8bits)
+TEST(BitsExtraction_CArray, TemplatedPosition_Unsigned_8bits)
 {
     uint8_t buffer[] = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
 
@@ -84,7 +84,7 @@ TEST(BitsExtraction, TemplatedPosition_Unsigned_8bits)
     ASSERT_EQ((bits::extract<uint8_t, 29, 22>(buffer)), 0x0D);
 }
 
-TEST(BitsExtraction, TemplatedPosition_Unsigned_16bits)
+TEST(BitsExtraction_CArray, TemplatedPosition_Unsigned_16bits)
 {
     uint8_t buffer[] = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
 
@@ -94,7 +94,7 @@ TEST(BitsExtraction, TemplatedPosition_Unsigned_16bits)
     ASSERT_EQ((bits::extract<uint16_t, 27, 14>(buffer)), 0x3703);
 }
 
-TEST(BitsExtraction, TemplatedPosition_Unsigned_32bits)
+TEST(BitsExtraction_CArray, TemplatedPosition_Unsigned_32bits)
 {
     uint8_t buffer[] = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
 
@@ -105,7 +105,7 @@ TEST(BitsExtraction, TemplatedPosition_Unsigned_32bits)
     ASSERT_EQ((bits::extract<uint32_t, 53, 28>(buffer)), 0x017FDC0D);
 }
 
-TEST(BitsExtraction, TemplatedPosition_Unsigned_8bits_with_offset)
+TEST(BitsExtraction_CArray, TemplatedPosition_Unsigned_8bits_with_offset)
 {
     uint8_t buffer[] = { 0x00, 0x00, 0x00, 0x00, 0x0D, 0x7F, 0xDC, 0x0D };
 
@@ -116,7 +116,7 @@ TEST(BitsExtraction, TemplatedPosition_Unsigned_8bits_with_offset)
     ASSERT_EQ((bits::extract<uint8_t, 63, 56>(buffer)), 0x0D);
 }
 
-TEST(BitsExtraction, TemplatedPosition_Unsigned_16bits_with_offset)
+TEST(BitsExtraction_CArray, TemplatedPosition_Unsigned_16bits_with_offset)
 {
     uint8_t buffer[] = { 0x00, 0x00, 0x00, 0x00, 0x03, 0x5F, 0xF7, 0x03 };
 
@@ -126,7 +126,7 @@ TEST(BitsExtraction, TemplatedPosition_Unsigned_16bits_with_offset)
     ASSERT_EQ((bits::extract<uint16_t, 63, 50>(buffer)), 0x3703);
 }
 
-TEST(BitsExtraction, TemplatedPosition_Unsigned_32bits_with_offset)
+TEST(BitsExtraction_CArray, TemplatedPosition_Unsigned_32bits_with_offset)
 {
     uint8_t buffer[] = { 0x00, 0x0D, 0x7F, 0xDC, 0x0D, 0x7F, 0xDC, 0x0D };
 

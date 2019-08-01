@@ -13,4 +13,4 @@
   - Enable bound check (assertion or exception throwing)
 - Add CMake installation rules
 - Document library installation / including
-- Overload functions for `std::array`
+- Add Travis continuous integration

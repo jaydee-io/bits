@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <cstdlib>
 #include <assert.h>
+#include <array>
 
 #include "bits/detail/detail.h"
 #include "bits/detail/BaseBitsStream.h"
@@ -17,6 +18,11 @@ template<typename T> void insert(T val, uint8_t * buffer, size_t high, size_t lo
 template<typename T> T    extract(const uint8_t * buffer, size_t high, size_t low);
 template<typename T, size_t high, size_t low> void insert(T val, uint8_t * buffer);
 template<typename T, size_t high, size_t low> T    extract(const uint8_t * buffer);
+
+template<typename T, size_t N> void insert(T val, std::array<uint8_t, N> & buffer, size_t high, size_t low);
+template<typename T, size_t N> T    extract(const std::array<uint8_t, N> & buffer, size_t high, size_t low);
+template<typename T, size_t high, size_t low, size_t N> void insert(T val, std::array<uint8_t, N> & buffer);
+template<typename T, size_t high, size_t low, size_t N> T    extract(const std::array<uint8_t, N> & buffer);
 
 //-----------------------------------------------------------------------------
 //-
@@ -66,6 +72,34 @@ T extract(const uint8_t * buffer)
     constexpr detail::DeserializeInfos infos(high, low);
 
     return detail::extract<T>(buffer, infos);
+}
+
+//-----------------------------------------------------------------------------
+template<typename T, size_t N>
+void insert(T val, std::array<uint8_t, N> & buffer, size_t high, size_t low)
+{
+    bits::insert<T>(val, buffer.data(), high, low);
+}
+
+//-----------------------------------------------------------------------------
+template<typename T, size_t high, size_t low, size_t N>
+void insert(T val, std::array<uint8_t, N> & buffer)
+{
+    bits::insert<T, high, low>(val, buffer.data());
+}
+
+//-----------------------------------------------------------------------------
+template<typename T, size_t N>
+T extract(const std::array<uint8_t, N> & buffer, size_t high, size_t low)
+{
+    return bits::extract<T>(buffer.data(), high, low);
+}
+
+//-----------------------------------------------------------------------------
+template<typename T, size_t high, size_t low, size_t N>
+T extract(const std::array<uint8_t, N> & buffer)
+{
+    return bits::extract<T, high, low>(buffer.data());
 }
 
 } // namespace bits

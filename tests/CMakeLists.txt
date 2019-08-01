@@ -4,8 +4,10 @@ add_executable(bits_tests)
 target_link_libraries(bits_tests bits GTest::GTest GTest::Main)
 
 target_sources(bits_tests PRIVATE
-    test_insert.cpp
-    test_extract.cpp
+    test_insert_carray.cpp
+    test_insert_cpparray.cpp
+    test_extract_carray.cpp
+    test_extract_cpparray.cpp
     test_classes.cpp
 )
 target_enable_warnings(bits_tests PRIVATE)

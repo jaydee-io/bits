@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <cstdlib>
+#include <array>
 
 #include "bits/bits.h"
 #include "bits/detail/BaseBitsStream.h"
@@ -16,6 +17,8 @@ class BitsDeserializer : public detail::BaseBitsStream<BitsDeserializer>
 {
 public:
     inline BitsDeserializer(const uint8_t * buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);
+    template<size_t N>
+    inline BitsDeserializer(const std::array<uint8_t, N> & buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);
 
     template<typename T>
     inline T extract(size_t nbBits);
@@ -35,6 +38,12 @@ protected:
 //-----------------------------------------------------------------------------
 BitsDeserializer::BitsDeserializer(const uint8_t * buffer_, size_t lengthBufferBits, size_t initialOffsetBits)
 : BaseBitsStream(lengthBufferBits, initialOffsetBits), buffer(buffer_)
+{}
+
+//-----------------------------------------------------------------------------
+template<size_t N>
+inline BitsDeserializer::BitsDeserializer(const std::array<uint8_t, N> & buffer, size_t lengthBufferBits, size_t initialOffsetBits)
+: BitsDeserializer(buffer.data(), lengthBufferBits, initialOffsetBits)
 {}
 
 //-----------------------------------------------------------------------------
