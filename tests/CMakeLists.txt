@@ -9,6 +9,7 @@ target_sources(bits_tests PRIVATE
     test_extract_carray.cpp
     test_extract_cpparray.cpp
     test_classes.cpp
+    test_examples.cpp
 )
 target_enable_warnings(bits_tests PRIVATE)
 
