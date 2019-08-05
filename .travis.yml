@@ -11,12 +11,12 @@ script:
   - mkdir build
   - cd build
   - cmake ..
-  - cmake --build . -j
+  - cmake --build .
   - ctest -V
 
 ##########################
 # GCC 6 and older doesn't support 'string_view'
-# clang 5.0 and older doesn't support brace list initializer
+# clang 5.0, xcode9.4 and older doesn't support brace list initializer
 ##########################
 matrix:
   include:
@@ -86,3 +86,9 @@ matrix:
             - clang-6.0
             - g++-9
       env: CUSTOM_COMPILER="CC=clang-6.0 && CXX=clang++-6.0"
+    # osx (xcode 11)
+    - os: osx
+      osx_image: xcode11
+    # osx (xcode 10.2)
+    - os: osx
+      osx_image: xcode10.2

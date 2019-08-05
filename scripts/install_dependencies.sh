@@ -18,7 +18,7 @@ function install_GTest()
     mkdir build
     cd build
     cmake ../$NAME_GTEST -DCMAKE_BUILD_TYPE=Release
-    cmake --build . -j
+    cmake --build .
 
     # Install
     sudo make install
