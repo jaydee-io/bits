@@ -21,9 +21,12 @@ function install_GTest()
     cmake --build .
 
     # Install
-    sudo make install
-    # This is better, but doesn't work on Travis CI
-    # sudo cmake --install .
+    # We should 'cmake --install' everywhere but this doesn't work on Travis CI linux
+    if [ "$TRAVIS_OS_NAME" == "windows" ] ; then
+        cmake --install .
+    else
+        sudo make install
+    fi
 }
 
 install_GTest
