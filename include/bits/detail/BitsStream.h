@@ -1,25 +1,26 @@
-#ifndef BITS_BASE_BITS_STREAM_H
-#define BITS_BASE_BITS_STREAM_H
+#ifndef BITS_BITS_STREAM_H
+#define BITS_BITS_STREAM_H
 
 #include <stdint.h>
 #include <cstdlib>
 #include <stdexcept>
 #include <string_view>
 
+#include "bits/detail/BitsStreamManipulation.h"
+
 namespace bits::detail {
 
 //-----------------------------------------------------------------------------
 //- Bits serializer / deserializer base class for common operations
 //-----------------------------------------------------------------------------
-template<typename T>
-class BaseBitsStream
+class BitsStream
 {
 public:
-    inline BaseBitsStream(size_t lengthBufferBits, size_t initialOffsetBits);
-
-    inline T & skip(size_t nbBits);
+    inline BitsStream(size_t lengthBufferBits, size_t initialOffsetBits);
 
     inline size_t nbBitsStreamed(void);
+
+    inline void setManipulation(const BitsStreamManipulation manip);
 
 protected:
     inline void checkNbRemainingBits(size_t nbBits, std::string_view message);
@@ -27,6 +28,7 @@ protected:
     const size_t lengthBits;
     const size_t offsetBits;
     size_t posBits;
+    size_t nbBitsNext;
 };
 
 //-----------------------------------------------------------------------------
@@ -36,37 +38,33 @@ protected:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<typename T>
-BaseBitsStream<T>::BaseBitsStream(size_t lengthBufferBits, size_t initialOffsetBits)
+BitsStream::BitsStream(size_t lengthBufferBits, size_t initialOffsetBits)
 : lengthBits(lengthBufferBits), offsetBits(initialOffsetBits), posBits(initialOffsetBits)
 {}
 
 //-----------------------------------------------------------------------------
-template<typename T>
-size_t BaseBitsStream<T>::nbBitsStreamed(void)
+size_t BitsStream::nbBitsStreamed(void)
 {
     return posBits - offsetBits;
 }
 
 //-----------------------------------------------------------------------------
-template<typename T>
-T & BaseBitsStream<T>::skip(size_t nbBits)
-{
-    checkNbRemainingBits(nbBits, "Unable to skip bits, too few bits remaining");
-
-    posBits += nbBits;
-
-    return static_cast<T &>(*this);
-}
-
-//-----------------------------------------------------------------------------
-template<typename T>
-void BaseBitsStream<T>::checkNbRemainingBits(size_t nbBits, std::string_view message)
+void BitsStream::checkNbRemainingBits(size_t nbBits, std::string_view message)
 {
     if((posBits + nbBits) > lengthBits)
         throw std::out_of_range(message.data());
 }
 
+//-----------------------------------------------------------------------------
+void BitsStream::setManipulation(const BitsStreamManipulation manip)
+{
+    switch(manip.action)
+    {
+        case BitsStreamManipulation::STREAM_BITS : nbBitsNext = manip.value; break;
+        case BitsStreamManipulation::SKIP_BITS   : posBits += manip.value; break;
+    }
+}
+
 } // namespace bits::detail
 
-#endif /* BITS_BASE_BITS_STREAM_H */
+#endif /* BITS_BITS_STREAM_H */

@@ -7,7 +7,6 @@
 #include <array>
 
 #include "bits/detail/detail.h"
-#include "bits/detail/BaseBitsStream.h"
 
 namespace bits {
 

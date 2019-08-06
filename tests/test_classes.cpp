@@ -63,7 +63,7 @@ TEST(BitsStream, ChainedSkip)
     ASSERT_EQ(stream.nbBitsStreamed(), 30);
 }
 
-TEST(BitsSerializer, ChainedInsert)
+TEST(BitsSerializer, CArray_ChainedInsert)
 {
     uint8_t buffer[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
     bits::BitsSerializer serializer(buffer, BUFFER_SIZE * 8);
@@ -78,7 +78,7 @@ TEST(BitsSerializer, ChainedInsert)
     ASSERT_THAT(buffer, ElementsAre(0x35, 0xFF, 0x70, 0x34, 0x00, 0x00, 0x00, 0x00));
 }
 
-TEST(BitsDeserializer, ChainedExtract)
+TEST(BitsDeserializer, CArray_ChainedExtract)
 {
     uint8_t buffer[] = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
     bits::BitsDeserializer deserializer(buffer, BUFFER_SIZE * 8);
@@ -94,7 +94,7 @@ TEST(BitsDeserializer, ChainedExtract)
     ASSERT_EQ(val, 0x0D);
 }
 
-TEST(BitsSerializer, CppArray_Insert)
+TEST(BitsSerializer, CppArray_ChainedInsert)
 {
     std::array<uint8_t, BUFFER_SIZE> buffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
     bits::BitsSerializer serializer(buffer, buffer.size() * 8);
@@ -109,18 +109,65 @@ TEST(BitsSerializer, CppArray_Insert)
     ASSERT_THAT(buffer, ElementsAre(0x35, 0xFF, 0x70, 0x34, 0x00, 0x00, 0x00, 0x00));
 }
 
-TEST(BitsDeserializer, CppArray_Extract)
+TEST(BitsDeserializer, CppArray_ChainedExtract)
 {
     std::array<uint8_t, BUFFER_SIZE> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
     bits::BitsDeserializer deserializer(buffer, buffer.size() * 8);
-    uint8_t val = 0;
+    uint8_t val1 = 0;
+    uint8_t val2 = 0;
+    uint8_t val3 = 0;
+    uint8_t val4 = 0;
+    uint8_t val5 = 0;
 
     deserializer
-        .extract(val, 4)
-        .extract(val, 2)
-        .extract(val, 8)
-        .extract(val, 8)
-        .extract(val, 8);
+        .extract(val1, 4)
+        .extract(val2, 2)
+        .extract(val3, 8)
+        .extract(val4, 8)
+        .extract(val5, 8);
     
-    ASSERT_EQ(val, 0x0D);
+    ASSERT_EQ(val1, 0x03);
+    ASSERT_EQ(val2, 0x01);
+    ASSERT_EQ(val3, 0x7F);
+    ASSERT_EQ(val4, 0xDC);
+    ASSERT_EQ(val5, 0x0D);
+}
+
+TEST(BitsSerializer, BitsManipulation_ChainedInsert)
+{
+    std::array<uint8_t, BUFFER_SIZE> buffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    bits::BitsSerializer serializer(buffer, buffer.size() * 8);
+
+    serializer
+        << bits::nbits(4) << 0x03    // 2 bits serialized
+        << bits::nbits(2) << 0x01    // 4 bits serialized
+        << uint8_t { 0x7F }          // 8 bits serialized
+        << uint8_t { 0xDC }          // 8 bits serialized
+        << uint8_t { 0x0D };         // 8 bits serialized
+    
+    ASSERT_THAT(buffer, ElementsAre(0x35, 0xFF, 0x70, 0x34, 0x00, 0x00, 0x00, 0x00));
+}
+
+TEST(BitsDeserializer, BitsManipulation_ChainedExtract)
+{
+    std::array<uint8_t, BUFFER_SIZE> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
+    bits::BitsDeserializer deserializer(buffer, buffer.size() * 8);
+    uint8_t val1 = 0;
+    uint8_t val2 = 0;
+    uint8_t val3 = 0;
+    uint8_t val4 = 0;
+    uint8_t val5 = 0;
+
+    deserializer
+        >> bits::nbits(4) >> val1    // 4 bits extracted
+        >> bits::nbits(2) >> val2    // 2 bits extracted
+        >> val3                      // 8 bits extracted
+        >> val4                      // 8 bits extracted
+        >> val5;                     // 8 bits extracted
+    
+    ASSERT_EQ(val1, 0x03);
+    ASSERT_EQ(val2, 0x01);
+    ASSERT_EQ(val3, 0x7F);
+    ASSERT_EQ(val4, 0xDC);
+    ASSERT_EQ(val5, 0x0D);
 }

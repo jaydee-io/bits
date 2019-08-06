@@ -147,10 +147,14 @@ std::array<uint8_t, 16> buffer = { };
 
 // Deserialize request
 bits::BitsDeserializer deserializer(buffer, buffer.size() * 8);
-auto type = deserializer.extract<MessageType>(2);
-auto group = deserializer.extract<MessageGroup>(2);
-auto service = deserializer.extract<TimeServices>(4);
-deserializer.skip(8);
+MessageType type;
+MessageGroup group;
+TimeServices service;
+deserializer
+    >> bits::nbits(2) >> type
+    >> bits::nbits(2) >> group
+    >> bits::nbits(4) >> service
+    >> bits::skip(8); // Skip 'length' field
 
 // Check this is a time update request
 if(!(type == MessageType::REQUEST
@@ -167,11 +171,11 @@ std::cout << "Nano second = " << nanoSecond << std::endl;
 // Serialize response
 bits::BitsSerializer serializer(buffer, buffer.size() * 8);
 serializer
-    .insert(MessageType::RESPONSE, 2)
-    .insert(MessageGroup::TIME, 2)
-    .insert(TimeServices::UPDATE, 4)
-    .skip(2)    // Skip 'length' field
-    .insert(TimeUpdateStatus::SUCCESS, 8);
+    << bits::nbits(2) << MessageType::RESPONSE
+    << bits::nbits(2) << MessageGroup::TIME
+    << bits::nbits(4) << TimeServices::UPDATE
+    << bits::skip(8) // Skip 'length' field
+    << bits::nbits(8) << TimeUpdateStatus::SUCCESS;
 
 // ... Write back response message from the buffer ...
 ```
