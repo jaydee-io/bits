@@ -18,7 +18,7 @@ class BitsDeserializer : public detail::SkippableBitsStream<BitsDeserializer>
 public:
     inline BitsDeserializer(const uint8_t * buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);
     template<size_t N>
-    inline BitsDeserializer(const std::array<uint8_t, N> & buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);
+    inline BitsDeserializer(const std::array<uint8_t, N> & buffer, size_t lengthBufferBits = N * 8, size_t initialOffsetBits = 0);
 
     template<typename T, std::enable_if_t< ! std::is_same_v<T, BitsDeserializer>, int> = 0>
     inline T extract(size_t nbBits);

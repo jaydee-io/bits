@@ -97,7 +97,7 @@ TEST(BitsDeserializer, CArray_ChainedExtract)
 TEST(BitsSerializer, CppArray_ChainedInsert)
 {
     std::array<uint8_t, BUFFER_SIZE> buffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-    bits::BitsSerializer serializer(buffer, buffer.size() * 8);
+    bits::BitsSerializer serializer(buffer);
 
     serializer
         .insert(0x03, 4)
@@ -112,7 +112,7 @@ TEST(BitsSerializer, CppArray_ChainedInsert)
 TEST(BitsDeserializer, CppArray_ChainedExtract)
 {
     std::array<uint8_t, BUFFER_SIZE> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
-    bits::BitsDeserializer deserializer(buffer, buffer.size() * 8);
+    bits::BitsDeserializer deserializer(buffer);
     uint8_t val1 = 0;
     uint8_t val2 = 0;
     uint8_t val3 = 0;
@@ -136,7 +136,7 @@ TEST(BitsDeserializer, CppArray_ChainedExtract)
 TEST(BitsSerializer, BitsManipulation_ChainedInsert)
 {
     std::array<uint8_t, BUFFER_SIZE> buffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-    bits::BitsSerializer serializer(buffer, buffer.size() * 8);
+    bits::BitsSerializer serializer(buffer);
 
     serializer
         << bits::nbits(4) << 0x03    // 2 bits serialized
@@ -151,7 +151,7 @@ TEST(BitsSerializer, BitsManipulation_ChainedInsert)
 TEST(BitsDeserializer, BitsManipulation_ChainedExtract)
 {
     std::array<uint8_t, BUFFER_SIZE> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
-    bits::BitsDeserializer deserializer(buffer, buffer.size() * 8);
+    bits::BitsDeserializer deserializer(buffer);
     uint8_t val1 = 0;
     uint8_t val2 = 0;
     uint8_t val3 = 0;

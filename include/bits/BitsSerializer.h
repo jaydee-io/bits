@@ -18,7 +18,7 @@ class BitsSerializer : public detail::SkippableBitsStream<BitsSerializer>
 public:
     inline BitsSerializer(uint8_t * buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);
     template<size_t N>
-    inline BitsSerializer(std::array<uint8_t, N> & buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);
+    inline BitsSerializer(std::array<uint8_t, N> & buffer, size_t lengthBufferBits = N * 8, size_t initialOffsetBits = 0);
 
     template<typename T>
     inline BitsSerializer & insert(T val, size_t nbBits);

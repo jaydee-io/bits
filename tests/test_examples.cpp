@@ -107,7 +107,7 @@ TEST(BitsDetail, TimeMessage)
     // ... Read incoming message into the buffer ...
 
     // Deserialize request
-    bits::BitsDeserializer deserializer(buffer, buffer.size() * 8);
+    bits::BitsDeserializer deserializer(buffer);
     MessageType type;
     MessageGroup group;
     TimeServices service;
@@ -130,7 +130,7 @@ TEST(BitsDetail, TimeMessage)
     std::cout << "Nano second = " << nanoSecond << std::endl;
 
     // Serialize response
-    bits::BitsSerializer serializer(buffer, buffer.size() * 8);
+    bits::BitsSerializer serializer(buffer);
     serializer
         << bits::nbits(2) << MessageType::RESPONSE
         << bits::nbits(2) << MessageGroup::TIME
