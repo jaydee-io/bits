@@ -21,16 +21,21 @@ public:
     inline BitsSerializer(std::array<uint8_t, N> & buffer, size_t lengthBufferBits = N * 8, size_t initialOffsetBits = 0);
 
     template<typename T>
-    inline BitsSerializer & insert(T val, size_t nbBits);
-    template<typename T>
-    inline BitsSerializer & insert(T val);
+    inline BitsSerializer & insert(T val, size_t nbBits = sizeof(T) * 8);
 
 protected:
+    template<typename T>
+    inline BitsSerializer & insertUsingInternalState(T val);
+
+    template<typename T>
+    friend inline BitsSerializer & operator <<(BitsSerializer & bs, T val);
+    
     uint8_t * const buffer;
 };
 
 template<typename T>
 inline BitsSerializer & operator <<(BitsSerializer & bs, T val);
+inline BitsSerializer & operator <<(BitsSerializer & bs, const detail::BitsStreamManipulation manip);
 
 //-----------------------------------------------------------------------------
 //-
@@ -63,7 +68,7 @@ BitsSerializer & BitsSerializer::insert(T val, size_t nbBits)
 
 //-----------------------------------------------------------------------------
 template<typename T>
-BitsSerializer & BitsSerializer::insert(T val)
+BitsSerializer & BitsSerializer::insertUsingInternalState(T val)
 {
     auto nbBits = nbBitsNext ? nbBitsNext : sizeof(T) * 8;
 
@@ -77,11 +82,10 @@ BitsSerializer & BitsSerializer::insert(T val)
 template<typename T>
 inline BitsSerializer & operator <<(BitsSerializer & bs, T val)
 {
-    return bs.insert<T>(val);
+    return bs.insertUsingInternalState<T>(val);
 }
 
 //-----------------------------------------------------------------------------
-template<>
 inline BitsSerializer & operator <<(BitsSerializer & bs, const detail::BitsStreamManipulation manip)
 {
     bs.setManipulation(manip); 

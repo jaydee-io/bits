@@ -23,14 +23,14 @@ public:
     template<typename T, std::enable_if_t< ! std::is_same_v<T, BitsDeserializer>, int> = 0>
     inline T extract(size_t nbBits);
     template<typename T>
-    inline BitsDeserializer & extract(T & val, size_t nbBits);
+    inline BitsDeserializer & extract(T & val, size_t nbBits = sizeof(T) * 8);
 
 protected:
     template<typename T>
     inline BitsDeserializer & extractUsingInternalState(T & val);
 
     template<typename T>
-    friend BitsDeserializer & operator >>(BitsDeserializer & bs, T & val);
+    friend inline BitsDeserializer & operator >>(BitsDeserializer & bs, T & val);
 
     const uint8_t * const buffer;
 };
