@@ -24,10 +24,14 @@ public:
     inline T extract(size_t nbBits);
     template<typename T>
     inline BitsDeserializer & extract(T & val, size_t nbBits);
-    template<typename T>
-    inline BitsDeserializer & extract(T & val);
 
 protected:
+    template<typename T>
+    inline BitsDeserializer & extractUsingInternalState(T & val);
+
+    template<typename T>
+    friend BitsDeserializer & operator >>(BitsDeserializer & bs, T & val);
+
     const uint8_t * const buffer;
 };
 
@@ -75,7 +79,7 @@ inline BitsDeserializer & BitsDeserializer::extract(T & val, size_t nbBits)
 
 //-----------------------------------------------------------------------------
 template<typename T>
-BitsDeserializer & BitsDeserializer::extract(T & val)
+BitsDeserializer & BitsDeserializer::extractUsingInternalState(T & val)
 {
     auto nbBits = nbBitsNext ? nbBitsNext : sizeof(T) * 8;
 
@@ -89,7 +93,7 @@ BitsDeserializer & BitsDeserializer::extract(T & val)
 template<typename T>
 inline BitsDeserializer & operator >>(BitsDeserializer & bs, T & val)
 {
-    return bs.extract<T>(val);
+    return bs.extractUsingInternalState(val);
 }
 
 //-----------------------------------------------------------------------------

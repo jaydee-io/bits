@@ -171,3 +171,14 @@ TEST(BitsDeserializer, BitsManipulation_ChainedExtract)
     ASSERT_EQ(val4, 0xDC);
     ASSERT_EQ(val5, 0x0D);
 }
+
+TEST(BitsDeserializer, Deserialize_size_t)
+{
+    std::array<uint8_t, BUFFER_SIZE> buffer = { 0xCA, 0xFE, 0xBA, 0xBE, 0xA5, 0xB6, 0xC7, 0xD8 };
+    bits::BitsDeserializer deserializer(buffer);
+    size_t val = 0;
+
+    deserializer >> val;
+    
+    ASSERT_EQ(val, 0xCAFEBABE'A5B6C7D8);
+}
