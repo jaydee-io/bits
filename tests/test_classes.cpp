@@ -8,32 +8,9 @@ using ::testing::ElementsAre;
 
 const size_t BUFFER_SIZE = 8;
 
-TEST(BitsSerializer, NbBitsSerialized)
-{
-    uint8_t buffer[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-    bits::BitsSerializer serializer(buffer, BUFFER_SIZE * 8);
-
-    ASSERT_EQ(serializer.nbBitsStreamed(), 0);
-    serializer.insert<uint8_t>(0x0, 4); ASSERT_EQ(serializer.nbBitsStreamed(), 4);
-    serializer.insert<uint8_t>(0x0, 2); ASSERT_EQ(serializer.nbBitsStreamed(), 6);
-    serializer.insert<uint8_t>(0x0, 8); ASSERT_EQ(serializer.nbBitsStreamed(), 14);
-    serializer.insert<uint8_t>(0x0, 8); ASSERT_EQ(serializer.nbBitsStreamed(), 22);
-    serializer.insert<uint8_t>(0x0, 8); ASSERT_EQ(serializer.nbBitsStreamed(), 30);
-}
-
-TEST(BitsDeserializer, NbBitsDeserialized)
-{
-    uint8_t buffer[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-    bits::BitsDeserializer deserializer(buffer, BUFFER_SIZE * 8);
-
-    ASSERT_EQ(deserializer.nbBitsStreamed(), 0);
-    deserializer.extract<uint8_t>(4); ASSERT_EQ(deserializer.nbBitsStreamed(), 4);
-    deserializer.extract<uint8_t>(2); ASSERT_EQ(deserializer.nbBitsStreamed(), 6);
-    deserializer.extract<uint8_t>(8); ASSERT_EQ(deserializer.nbBitsStreamed(), 14);
-    deserializer.extract<uint8_t>(8); ASSERT_EQ(deserializer.nbBitsStreamed(), 22);
-    deserializer.extract<uint8_t>(8); ASSERT_EQ(deserializer.nbBitsStreamed(), 30);
-}
-
+//-----------------------------------------------------------------------------
+//- Serializer / Deserializer common tests
+//-----------------------------------------------------------------------------
 TEST(BitsStream, BitsSkipped)
 {
     uint8_t buffer[BUFFER_SIZE] = {};
@@ -63,6 +40,22 @@ TEST(BitsStream, ChainedSkip)
     ASSERT_EQ(stream.nbBitsStreamed(), 30);
 }
 
+//-----------------------------------------------------------------------------
+//- BitsSerializer specific tests
+//-----------------------------------------------------------------------------
+TEST(BitsSerializer, NbBitsSerialized)
+{
+    uint8_t buffer[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    bits::BitsSerializer serializer(buffer, BUFFER_SIZE * 8);
+
+    ASSERT_EQ(serializer.nbBitsStreamed(), 0);
+    serializer.insert<uint8_t>(0x0, 4); ASSERT_EQ(serializer.nbBitsStreamed(), 4);
+    serializer.insert<uint8_t>(0x0, 2); ASSERT_EQ(serializer.nbBitsStreamed(), 6);
+    serializer.insert<uint8_t>(0x0, 8); ASSERT_EQ(serializer.nbBitsStreamed(), 14);
+    serializer.insert<uint8_t>(0x0, 8); ASSERT_EQ(serializer.nbBitsStreamed(), 22);
+    serializer.insert<uint8_t>(0x0, 8); ASSERT_EQ(serializer.nbBitsStreamed(), 30);
+}
+
 TEST(BitsSerializer, CArray_ChainedInsert)
 {
     uint8_t buffer[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -76,6 +69,52 @@ TEST(BitsSerializer, CArray_ChainedInsert)
         .insert(0x0D, 8);
     
     ASSERT_THAT(buffer, ElementsAre(0x35, 0xFF, 0x70, 0x34, 0x00, 0x00, 0x00, 0x00));
+}
+
+TEST(BitsSerializer, CppArray_ChainedInsert)
+{
+    std::array<uint8_t, BUFFER_SIZE> buffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    bits::BitsSerializer serializer(buffer);
+
+    serializer
+        .insert(0x03, 4)
+        .insert(0x01, 2)
+        .insert(0x7F, 8)
+        .insert(0xDC, 8)
+        .insert(0x0D, 8);
+    
+    ASSERT_THAT(buffer, ElementsAre(0x35, 0xFF, 0x70, 0x34, 0x00, 0x00, 0x00, 0x00));
+}
+
+TEST(BitsSerializer, BitsManipulation_ChainedInsert)
+{
+    std::array<uint8_t, BUFFER_SIZE> buffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    bits::BitsSerializer serializer(buffer);
+
+    serializer
+        << bits::nbits(4) << 0x03    // 2 bits serialized
+        << bits::nbits(2) << 0x01    // 4 bits serialized
+        << uint8_t { 0x7F }          // 8 bits serialized
+        << uint8_t { 0xDC }          // 8 bits serialized
+        << uint8_t { 0x0D };         // 8 bits serialized
+    
+    ASSERT_THAT(buffer, ElementsAre(0x35, 0xFF, 0x70, 0x34, 0x00, 0x00, 0x00, 0x00));
+}
+
+//-----------------------------------------------------------------------------
+//- BitsDeserializer specific tests
+//-----------------------------------------------------------------------------
+TEST(BitsDeserializer, NbBitsDeserialized)
+{
+    uint8_t buffer[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    bits::BitsDeserializer deserializer(buffer, BUFFER_SIZE * 8);
+
+    ASSERT_EQ(deserializer.nbBitsStreamed(), 0);
+    deserializer.extract<uint8_t>(4); ASSERT_EQ(deserializer.nbBitsStreamed(), 4);
+    deserializer.extract<uint8_t>(2); ASSERT_EQ(deserializer.nbBitsStreamed(), 6);
+    deserializer.extract<uint8_t>(8); ASSERT_EQ(deserializer.nbBitsStreamed(), 14);
+    deserializer.extract<uint8_t>(8); ASSERT_EQ(deserializer.nbBitsStreamed(), 22);
+    deserializer.extract<uint8_t>(8); ASSERT_EQ(deserializer.nbBitsStreamed(), 30);
 }
 
 TEST(BitsDeserializer, CArray_ChainedExtract)
@@ -92,21 +131,6 @@ TEST(BitsDeserializer, CArray_ChainedExtract)
         .extract(val, 8);
     
     ASSERT_EQ(val, 0x0D);
-}
-
-TEST(BitsSerializer, CppArray_ChainedInsert)
-{
-    std::array<uint8_t, BUFFER_SIZE> buffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-    bits::BitsSerializer serializer(buffer);
-
-    serializer
-        .insert(0x03, 4)
-        .insert(0x01, 2)
-        .insert(0x7F, 8)
-        .insert(0xDC, 8)
-        .insert(0x0D, 8);
-    
-    ASSERT_THAT(buffer, ElementsAre(0x35, 0xFF, 0x70, 0x34, 0x00, 0x00, 0x00, 0x00));
 }
 
 TEST(BitsDeserializer, CppArray_ChainedExtract)
@@ -131,21 +155,6 @@ TEST(BitsDeserializer, CppArray_ChainedExtract)
     ASSERT_EQ(val3, 0x7F);
     ASSERT_EQ(val4, 0xDC);
     ASSERT_EQ(val5, 0x0D);
-}
-
-TEST(BitsSerializer, BitsManipulation_ChainedInsert)
-{
-    std::array<uint8_t, BUFFER_SIZE> buffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-    bits::BitsSerializer serializer(buffer);
-
-    serializer
-        << bits::nbits(4) << 0x03    // 2 bits serialized
-        << bits::nbits(2) << 0x01    // 4 bits serialized
-        << uint8_t { 0x7F }          // 8 bits serialized
-        << uint8_t { 0xDC }          // 8 bits serialized
-        << uint8_t { 0x0D };         // 8 bits serialized
-    
-    ASSERT_THAT(buffer, ElementsAre(0x35, 0xFF, 0x70, 0x34, 0x00, 0x00, 0x00, 0x00));
 }
 
 TEST(BitsDeserializer, BitsManipulation_ChainedExtract)
