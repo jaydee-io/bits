@@ -39,7 +39,7 @@ protected:
 
 //-----------------------------------------------------------------------------
 BitsStream::BitsStream(size_t lengthBufferBits, size_t initialOffsetBits)
-: lengthBits(lengthBufferBits), offsetBits(initialOffsetBits), posBits(initialOffsetBits)
+: lengthBits(lengthBufferBits), offsetBits(initialOffsetBits), posBits(initialOffsetBits), nbBitsNext(0)
 {}
 
 //-----------------------------------------------------------------------------
