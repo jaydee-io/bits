@@ -24,13 +24,14 @@ struct SerializeInfos
 //-----------------------------------------------------------------------------
 struct DeserializeInfos
 {
-    constexpr DeserializeInfos(size_t high, size_t low);
+    constexpr DeserializeInfos(size_t type_size, size_t high, size_t low);
 
     const size_t  byte_start;
     const size_t  byte_end;
     const uint8_t first_byte_mask;
     const size_t  first_byte_shift;
     const size_t  last_byte_shift;
+    const size_t  sign_shift;
 };
 
 //-----------------------------------------------------------------------------
@@ -75,12 +76,13 @@ constexpr SerializeInfos::SerializeInfos(size_t high, size_t low)
 {}
 
 //-----------------------------------------------------------------------------
-constexpr DeserializeInfos::DeserializeInfos(size_t high, size_t low)
+constexpr DeserializeInfos::DeserializeInfos(size_t type_size, size_t high, size_t low)
 : byte_start { detail::num_byte(low) }
 , byte_end   { detail::num_byte(high) }
 , first_byte_mask  { detail::deserialize_first_byte_mask_8bits(low, high) }
 , first_byte_shift { detail::first_byte_shift_8bits(high) }
 , last_byte_shift  { detail::last_byte_shift_8bits(high) }
+, sign_shift { type_size - high + low -1 }
 {}
 
 } // namespace bits::detail

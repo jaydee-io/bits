@@ -38,7 +38,7 @@ template<typename T>
 void insert_first_byte(T & val, uint8_t * buffer, const SerializeInfos & infos)
 {
     if(infos.byte_start == infos.byte_end)
-        val = val << infos.first_byte_shift;
+        val = (val << infos.first_byte_shift) & ~infos.first_byte_mask;
     buffer[infos.byte_start] = buffer[infos.byte_start] | val;
     buffer[infos.byte_start] = buffer[infos.byte_start] & (val | infos.first_byte_mask);
 }
@@ -71,6 +71,13 @@ void extract_last_byte(T & val, const uint8_t * buffer, const DeserializeInfos &
 
 //-----------------------------------------------------------------------------
 template<typename T>
+void extend_sign(T & val, const DeserializeInfos & infos)
+{
+    val = static_cast<T>(val << infos.sign_shift) >> infos.sign_shift;
+}
+
+//-----------------------------------------------------------------------------
+template<typename T>
 void insert(T val, uint8_t * buffer, const SerializeInfos & infos)
 {
     auto rawVal = static_cast<underlying_integral_type_t<T>>(val);
@@ -89,6 +96,9 @@ T extract(const uint8_t * buffer, const DeserializeInfos & infos)
     bits::detail::extract_first_byte        (val, buffer, infos);
     bits::detail::extract_intermediate_bytes(val, buffer, infos);
     bits::detail::extract_last_byte         (val, buffer, infos);
+
+    if constexpr(std::is_signed_v<T>)
+        bits::detail::extend_sign(val, infos);
 
     return static_cast<T>(val);
 }

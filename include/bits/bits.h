@@ -57,7 +57,7 @@ T extract(const uint8_t * buffer, size_t high, size_t low)
 {
     assert((sizeof(T) * 8) >= (high - low + 1));
 
-    const detail::DeserializeInfos infos(high, low);
+    const detail::DeserializeInfos infos(sizeof(T) * 8, high, low);
 
     return detail::extract<T>(buffer, infos);
 }
@@ -68,7 +68,7 @@ T extract(const uint8_t * buffer)
 {
     static_assert((sizeof(T) * 8) >= (high - low + 1));
 
-    constexpr detail::DeserializeInfos infos(high, low);
+    constexpr detail::DeserializeInfos infos(sizeof(T) * 8, high, low);
 
     return detail::extract<T>(buffer, infos);
 }
