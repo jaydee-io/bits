@@ -1,5 +1,11 @@
 `bits` - _Manipulate low-level bits from high-level abstractions_
 =================================
+<!-- BEGIN BADGES -->
+[![Github License](https://img.shields.io/github/license/jaydee-io/bits)](https://github.com/jaydee-io/bits/blob/main/LICENSE)
+[![GitHub Release (latest by date)](https://img.shields.io/github/v/release/jaydee-io/bits)](https://github.com/jaydee-io/bits/releases/latest)
+[![Travis Build status](https://img.shields.io/travis/com/jaydee-io/bits)](https://app.travis-ci.com/github/jaydee-io/bits)
+[![Codecov Code coverage](https://img.shields.io/codecov/c/github/jaydee-io/bits?token=)](https://codecov.io/gh/jaydee-io/bits)
+<!-- END   BADGES -->
 
 ## What is `bits`?
 `bits` is a C++ 17 library designed to ease bit manipulations from raw buffer. It allow easy inserting and extracting bit fields into/from raw `uint8_t` buffer.
