@@ -4,12 +4,7 @@
 ## This file is distributed under the 3-clause Berkeley Software Distribution
 ## License. See LICENSE for details.
 ################################################################################
-find_package(GTest REQUIRED)
-
-add_executable(bits_tests)
-target_link_libraries(bits_tests bits GTest::GTest GTest::Main)
-
-target_sources(bits_tests PRIVATE
+add_unit_test(bits_tests
     test_insert_carray.cpp
     test_insert_cpparray.cpp
     test_extract_carray.cpp
@@ -18,8 +13,5 @@ target_sources(bits_tests PRIVATE
     test_examples.cpp
 )
 target_enable_warnings(bits_tests PRIVATE)
-
-add_test(
-    NAME bits_tests
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/bits_tests --gtest_color=yes
-)
+target_compile_features(bits_tests PRIVATE ${BITS_CXX_STANDARD})
+target_link_libraries(bits_tests PRIVATE bits)
