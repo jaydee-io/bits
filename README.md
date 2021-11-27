@@ -4,7 +4,7 @@
 [![Github License](https://img.shields.io/github/license/jaydee-io/bits)](https://github.com/jaydee-io/bits/blob/main/LICENSE)
 [![GitHub Release (latest by date)](https://img.shields.io/github/v/release/jaydee-io/bits)](https://github.com/jaydee-io/bits/releases/latest)
 [![Travis Build status](https://img.shields.io/travis/com/jaydee-io/bits)](https://app.travis-ci.com/github/jaydee-io/bits)
-[![Codecov Code coverage](https://img.shields.io/codecov/c/github/jaydee-io/bits?token=)](https://codecov.io/gh/jaydee-io/bits)
+[![Codecov Code coverage](https://img.shields.io/codecov/c/github/jaydee-io/bits?token=0aa2561e-906c-4afa-9f12-b667da9435e1)](https://codecov.io/gh/jaydee-io/bits)
 <!-- END   BADGES -->
 
 ## What is `bits`?
