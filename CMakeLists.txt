@@ -1,3 +1,9 @@
+################################################################################
+##                                    bits
+##
+## This file is distributed under the 3-clause Berkeley Software Distribution
+## License. See LICENSE for details.
+################################################################################
 cmake_minimum_required(VERSION 3.9)
 
 project(bits CXX)

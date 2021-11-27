@@ -1,3 +1,9 @@
+################################################################################
+##                                    bits
+##
+## This file is distributed under the 3-clause Berkeley Software Distribution
+## License. See LICENSE for details.
+################################################################################
 find_package(GTest REQUIRED)
 
 add_executable(bits_tests)
