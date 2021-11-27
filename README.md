@@ -1,3 +1,6 @@
+`bits` - _Manipulate low-level bits from high-level abstractions_
+=================================
+
 ## What is `bits`?
 `bits` is a C++ 17 library designed to ease bit manipulations from raw buffer. It allow easy inserting and extracting bit fields into/from raw `uint8_t` buffer.
 
