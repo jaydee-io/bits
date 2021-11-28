@@ -6,7 +6,20 @@
 ################################################################################
 set(LIB_NAME bits)
 
-add_library(${LIB_NAME} INTERFACE)
+add_library(${LIB_NAME} INTERFACE
+    # Serialization / Deserialization
+    bits/bits.h
+    bits/BitsSerializer.h
+    bits/BitsDeserializer.h
+
+    # Implementation details
+    bits/detail/detail.h
+    bits/detail/infos.h
+    bits/detail/BitsStream.h
+    bits/detail/BitsStreamManipulation.h
+    bits/detail/SkippableBitsStream.h
+    bits/detail/underlying_integral_type.h
+)
 
 target_include_directories(${LIB_NAME} INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -14,7 +27,7 @@ target_include_directories(${LIB_NAME} INTERFACE
 )
 target_code_coverage(${LIB_NAME} INTERFACE)
 
-install(DIRECTORY bits DESTINATION include)
+install(DIRECTORY bits DESTINATION include FILES_MATCHING PATTERN "*.h")
 install(TARGETS ${LIB_NAME} EXPORT BitsExport)
 
 # Unit tests
