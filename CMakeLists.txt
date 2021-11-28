@@ -20,8 +20,8 @@ enable_code_coverage()
 # Main (header-only) library
 add_subdirectory(include)
 
-# Main library unit tests
-add_subdirectory(tests)
+# Code example must compile
+add_subdirectory(doc/examples)
 
 # Install CMake file for all exported targets
 install(EXPORT BitsExport DESTINATION cmake/bits)
