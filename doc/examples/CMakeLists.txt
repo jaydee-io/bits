@@ -5,7 +5,7 @@
 ## License. See LICENSE for details.
 ################################################################################
 set(UNITTESTS_NAME example_tests)
-add_unit_test(${UNITTESTS_NAME}
+add_unit_test(TARGET ${UNITTESTS_NAME} NO_COVERAGE
     Examples.test.cpp
 )
 target_enable_warnings(${UNITTESTS_NAME} PRIVATE)

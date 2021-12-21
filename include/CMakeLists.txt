@@ -36,7 +36,7 @@ install(TARGETS ${LIB_NAME} EXPORT BitsExport)
 
 # Unit tests
 set(UNITTESTS_NAME bits_tests)
-add_unit_test(${UNITTESTS_NAME}
+add_unit_test(TARGET ${UNITTESTS_NAME}
     # Serialization / Deserialization
     bits/bits.test.insert_carray.cpp
     bits/bits.test.insert_cpparray.cpp
