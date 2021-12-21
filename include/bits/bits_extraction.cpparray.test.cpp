@@ -8,7 +8,7 @@
 #include <gmock/gmock.h>
 #include <array>
 
-#include <bits/bits.h>
+#include <bits/bits_extraction.h>
 
 using ::testing::ElementsAre;
 

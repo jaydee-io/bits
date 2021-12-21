@@ -7,7 +7,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <bits/bits.h>
+#include <bits/bits_extraction.h>
 
 using ::testing::ElementsAre;
 

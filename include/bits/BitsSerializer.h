@@ -11,7 +11,7 @@
 #include <cstdlib>
 #include <array>
 
-#include <bits/bits.h>
+#include <bits/bits_insertion.h>
 #include <bits/detail/SkippableBitsStream.h>
 
 namespace bits {

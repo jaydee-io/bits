@@ -37,11 +37,14 @@ install(TARGETS ${LIB_NAME} EXPORT BitsExport)
 # Unit tests
 set(UNITTESTS_NAME bits_tests)
 add_unit_test(TARGET ${UNITTESTS_NAME}
+    # All headers inclusion test
+    bits/bits.test.cpp
+
     # Serialization / Deserialization
-    bits/bits.test.insert_carray.cpp
-    bits/bits.test.insert_cpparray.cpp
-    bits/bits.test.extract_carray.cpp
-    bits/bits.test.extract_cpparray.cpp
+    bits/bits_insertion.carray.test.cpp
+    bits/bits_insertion.cpparray.test.cpp
+    bits/bits_extraction.carray.test.cpp
+    bits/bits_extraction.cpparray.test.cpp
     bits/BitsDeserializer.test.cpp
     bits/BitsSerializer.test.cpp
 
