@@ -15,28 +15,37 @@ namespace detail {
 //-----------------------------------------------------------------------------
 struct BitsStreamManipulation
 {
-    enum {
+    enum class Action {
         STREAM_BITS,
         SKIP_BITS,
-    } action;
+        RESET,
+    };
+    
+    Action action;
     size_t value = 0;
 };
 
 } // namespace bits::detail
 
 //-----------------------------------------------------------------------------
-//- BitsStream manipulation functions
+//- BitsStream manipulation functions :
 //-     - set the number of bits to insert / extract
 //-     - set the number of bits to skip
+//-     - reset stream to begining
 //-----------------------------------------------------------------------------
 inline detail::BitsStreamManipulation nbits(size_t nbBits)
 {
-    return { detail::BitsStreamManipulation::STREAM_BITS, nbBits };
+    return { detail::BitsStreamManipulation::Action::STREAM_BITS, nbBits };
 }
 
 inline detail::BitsStreamManipulation skip(size_t nbBits)
 {
-    return { detail::BitsStreamManipulation::SKIP_BITS, nbBits };
+    return { detail::BitsStreamManipulation::Action::SKIP_BITS, nbBits };
+}
+
+inline detail::BitsStreamManipulation reset(void)
+{
+    return { detail::BitsStreamManipulation::Action::RESET, 0 };
 }
 
 } // namespace bits

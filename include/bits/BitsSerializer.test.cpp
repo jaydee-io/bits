@@ -28,6 +28,9 @@ TEST(BitsSerializer, BitsSkipped)
     stream.skip(8); ASSERT_EQ(stream.nbBitsStreamed(), 14);
     stream.skip(8); ASSERT_EQ(stream.nbBitsStreamed(), 22);
     stream.skip(8); ASSERT_EQ(stream.nbBitsStreamed(), 30);
+
+    stream.reset();
+    ASSERT_EQ(stream.nbBitsStreamed(), 0);
 }
 
 TEST(BitsSerializer, ChainedSkip)

@@ -23,6 +23,7 @@ public:
     using BitsStream::BitsStream;
 
     inline T & skip(size_t nbBits);
+    inline T & reset(void);
 };
 
 //-----------------------------------------------------------------------------
@@ -38,6 +39,16 @@ T & SkippableBitsStream<T>::skip(size_t nbBits)
     checkNbRemainingBits(nbBits, "Unable to skip bits, too few bits remaining");
 
     posBits += nbBits;
+
+    return static_cast<T &>(*this);
+}
+
+//-----------------------------------------------------------------------------
+template<typename T>
+T & SkippableBitsStream<T>::reset(void)
+{
+    posBits = 0;
+    nbBitsNext = 0;
 
     return static_cast<T &>(*this);
 }

@@ -66,8 +66,9 @@ void BitsStream::setManipulation(const BitsStreamManipulation manip)
 {
     switch(manip.action)
     {
-        case BitsStreamManipulation::STREAM_BITS : nbBitsNext = manip.value; break;
-        case BitsStreamManipulation::SKIP_BITS   : posBits += manip.value; break;
+        case BitsStreamManipulation::Action::STREAM_BITS : nbBitsNext = manip.value; break;
+        case BitsStreamManipulation::Action::SKIP_BITS   : posBits += manip.value; break;
+        case BitsStreamManipulation::Action::RESET       : posBits = offsetBits; nbBitsNext = 0; break;
     }
 }
 
