@@ -12,7 +12,7 @@
 #include <assert.h>
 #include <array>
 
-#include "bits/detail/detail.h"
+#include <bits/detail/detail.h>
 
 namespace bits {
 

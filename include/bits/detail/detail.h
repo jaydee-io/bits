@@ -10,8 +10,8 @@
 #include <stdint.h>
 #include <cstdlib>
 
-#include "bits/detail/infos.h"
-#include "bits/detail/underlying_integral_type.h"
+#include <bits/detail/infos.h>
+#include <bits/detail/underlying_integral_type.h>
 
 namespace bits::detail {
 

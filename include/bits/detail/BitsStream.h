@@ -12,7 +12,7 @@
 #include <stdexcept>
 #include <string_view>
 
-#include "bits/detail/BitsStreamManipulation.h"
+#include <bits/detail/BitsStreamManipulation.h>
 
 namespace bits::detail {
 
