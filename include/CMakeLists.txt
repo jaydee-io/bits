@@ -12,6 +12,9 @@ add_library(${LIB_NAME} INTERFACE
     bits/BitsSerializer.h
     bits/BitsDeserializer.h
 
+    # Flags
+    bits/Flags.h
+
     # Implementation details
     bits/detail/detail.h
     bits/detail/infos.h
@@ -19,6 +22,7 @@ add_library(${LIB_NAME} INTERFACE
     bits/detail/BitsStreamManipulation.h
     bits/detail/SkippableBitsStream.h
     bits/detail/underlying_integral_type.h
+    bits/detail/helper_macros.h
 )
 
 target_include_directories(${LIB_NAME} INTERFACE
@@ -33,12 +37,16 @@ install(TARGETS ${LIB_NAME} EXPORT BitsExport)
 # Unit tests
 set(UNITTESTS_NAME bits_tests)
 add_unit_test(${UNITTESTS_NAME}
+    # Serialization / Deserialization
     bits/bits.test.insert_carray.cpp
     bits/bits.test.insert_cpparray.cpp
     bits/bits.test.extract_carray.cpp
     bits/bits.test.extract_cpparray.cpp
     bits/BitsDeserializer.test.cpp
     bits/BitsSerializer.test.cpp
+
+    # Flags
+    bits/Flags.test.cpp
 )
 target_enable_warnings(${UNITTESTS_NAME} PRIVATE)
 target_compile_features(${UNITTESTS_NAME} PRIVATE ${BITS_CXX_STANDARD})
