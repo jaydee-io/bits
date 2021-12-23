@@ -19,12 +19,16 @@ namespace bits::detail {
 //-----------------------------------------------------------------------------
 //- Bits serializer / deserializer base class for common operations
 //-----------------------------------------------------------------------------
+template<typename T>
 class BitsStream
 {
 public:
     inline BitsStream(size_t lengthBufferBits, size_t initialOffsetBits);
 
     inline size_t nbBitsStreamed(void);
+
+    inline T & skip(size_t nbBits);
+    inline T & reset(void);
 
     inline void setManipulation(const BitsStreamManipulation manip);
 
@@ -44,25 +48,50 @@ protected:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-BitsStream::BitsStream(size_t lengthBufferBits, size_t initialOffsetBits)
+template<typename T>
+BitsStream<T>::BitsStream(size_t lengthBufferBits, size_t initialOffsetBits)
 : lengthBits(lengthBufferBits), offsetBits(initialOffsetBits), posBits(initialOffsetBits), nbBitsNext(0)
 {}
 
 //-----------------------------------------------------------------------------
-size_t BitsStream::nbBitsStreamed(void)
+template<typename T>
+size_t BitsStream<T>::nbBitsStreamed(void)
 {
     return posBits - offsetBits;
 }
 
 //-----------------------------------------------------------------------------
-void BitsStream::checkNbRemainingBits(size_t nbBits, std::string_view message)
+template<typename T>
+T & BitsStream<T>::skip(size_t nbBits)
+{
+    checkNbRemainingBits(nbBits, "Unable to skip bits, too few bits remaining");
+
+    posBits += nbBits;
+
+    return static_cast<T &>(*this);
+}
+
+//-----------------------------------------------------------------------------
+template<typename T>
+T & BitsStream<T>::reset(void)
+{
+    posBits = 0;
+    nbBitsNext = 0;
+
+    return static_cast<T &>(*this);
+}
+
+//-----------------------------------------------------------------------------
+template<typename T>
+void BitsStream<T>::checkNbRemainingBits(size_t nbBits, std::string_view message)
 {
     if((posBits + nbBits) > lengthBits)
         throw std::out_of_range(message.data());
 }
 
 //-----------------------------------------------------------------------------
-void BitsStream::setManipulation(const BitsStreamManipulation manip)
+template<typename T>
+void BitsStream<T>::setManipulation(const BitsStreamManipulation manip)
 {
     switch(manip.action)
     {

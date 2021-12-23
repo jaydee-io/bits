@@ -12,14 +12,14 @@
 #include <array>
 
 #include <bits/bits_insertion.h>
-#include <bits/detail/SkippableBitsStream.h>
+#include <bits/detail/BitsStream.h>
 
 namespace bits {
 
 //-----------------------------------------------------------------------------
 //- Bits serializer class
 //-----------------------------------------------------------------------------
-class BitsSerializer : public detail::SkippableBitsStream<BitsSerializer>
+class BitsSerializer : public detail::BitsStream<BitsSerializer>
 {
 public:
     inline BitsSerializer(uint8_t * buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);
@@ -51,7 +51,7 @@ inline BitsSerializer & operator <<(BitsSerializer & bs, const detail::BitsStrea
 
 //-----------------------------------------------------------------------------
 BitsSerializer::BitsSerializer(uint8_t * buffer_, size_t lengthBufferBits, size_t initialOffsetBits)
-: SkippableBitsStream(lengthBufferBits, initialOffsetBits), buffer(buffer_)
+: BitsStream(lengthBufferBits, initialOffsetBits), buffer(buffer_)
 {}
 
 //-----------------------------------------------------------------------------

@@ -20,7 +20,6 @@ add_library(${LIB_NAME} INTERFACE
     bits/detail/infos.h
     bits/detail/BitsStream.h
     bits/detail/BitsStreamManipulation.h
-    bits/detail/SkippableBitsStream.h
     bits/detail/underlying_integral_type.h
     bits/detail/helper_macros.h
 )

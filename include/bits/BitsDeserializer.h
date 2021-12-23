@@ -12,14 +12,14 @@
 #include <array>
 
 #include <bits/bits_extraction.h>
-#include <bits/detail/SkippableBitsStream.h>
+#include <bits/detail/BitsStream.h>
 
 namespace bits {
 
 //-----------------------------------------------------------------------------
 //- Bits deserializer class
 //-----------------------------------------------------------------------------
-class BitsDeserializer : public detail::SkippableBitsStream<BitsDeserializer>
+class BitsDeserializer : public detail::BitsStream<BitsDeserializer>
 {
 public:
     inline BitsDeserializer(const uint8_t * buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);
@@ -47,7 +47,7 @@ inline BitsDeserializer & operator >>(BitsDeserializer & bs, const detail::BitsS
 
 //-----------------------------------------------------------------------------
 BitsDeserializer::BitsDeserializer(const uint8_t * buffer_, size_t lengthBufferBits, size_t initialOffsetBits)
-: SkippableBitsStream(lengthBufferBits, initialOffsetBits), buffer(buffer_)
+: BitsStream(lengthBufferBits, initialOffsetBits), buffer(buffer_)
 {}
 
 //-----------------------------------------------------------------------------
