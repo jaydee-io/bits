@@ -13,5 +13,6 @@
 #include <bits/BitsDeserializer.h>
 
 #include <bits/Flags.h>
+#include <bits/Enum.h>
 
 #endif /* BITS_BITS_H */
