@@ -64,21 +64,12 @@ BitsSerializer::BitsSerializer(std::array<uint8_t, N> & buffer, size_t lengthBuf
 template<typename T>
 BitsSerializer & BitsSerializer::insert(T val, size_t nbBits)
 {
-    checkNbRemainingBits(nbBits, "Unable to insert bits, too few bits remaining");
+    auto nbBitsToInsert = nbBitsNext ? nbBitsNext : nbBits;
+    
+    checkNbRemainingBits(nbBitsToInsert, "Unable to insert bits, too few bits remaining");
 
-    bits::insert<T>(val, buffer, posBits + nbBits - 1, posBits);
-    posBits += nbBits;
-
-    return *this;
-}
-
-//-----------------------------------------------------------------------------
-template<typename T>
-BitsSerializer & BitsSerializer::insertUsingInternalState(T val)
-{
-    auto nbBits = nbBitsNext ? nbBitsNext : sizeof(T) * 8;
-
-    insert<T>(val, nbBits);
+    bits::insert<T>(val, buffer, posBits + nbBitsToInsert - 1, posBits);
+    posBits += nbBitsToInsert;
     nbBitsNext = 0;
 
     return *this;
@@ -88,7 +79,7 @@ BitsSerializer & BitsSerializer::insertUsingInternalState(T val)
 template<typename T>
 inline BitsSerializer & operator <<(BitsSerializer & bs, T val)
 {
-    return bs.insertUsingInternalState<T>(val);
+    return bs.insert<T>(val);
 }
 
 //-----------------------------------------------------------------------------

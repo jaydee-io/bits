@@ -32,12 +32,6 @@ public:
     inline BitsDeserializer & extract(T & val, size_t nbBits = sizeof(T) * 8);
 
 protected:
-    template<typename T>
-    inline BitsDeserializer & extractUsingInternalState(T & val);
-
-    template<typename T>
-    friend inline BitsDeserializer & operator >>(BitsDeserializer & bs, T & val);
-
     const uint8_t * const buffer;
 };
 
@@ -78,20 +72,10 @@ T BitsDeserializer::extract(size_t nbBits)
 template<typename T>
 inline BitsDeserializer & BitsDeserializer::extract(T & val, size_t nbBits)
 {
-    val = extract<T>(nbBits);
-    
-    return *this;
-}
-
-//-----------------------------------------------------------------------------
-template<typename T>
-BitsDeserializer & BitsDeserializer::extractUsingInternalState(T & val)
-{
-    auto nbBits = nbBitsNext ? nbBitsNext : sizeof(T) * 8;
-
-    extract<T>(val, nbBits);
+    auto nbBitsToExtract = nbBitsNext ? nbBitsNext : nbBits;
+    val = extract<T>(nbBitsToExtract);
     nbBitsNext = 0;
-
+   
     return *this;
 }
 
@@ -99,7 +83,7 @@ BitsDeserializer & BitsDeserializer::extractUsingInternalState(T & val)
 template<typename T>
 inline BitsDeserializer & operator >>(BitsDeserializer & bs, T & val)
 {
-    return bs.extractUsingInternalState(val);
+    return bs.extract<T>(val, sizeof(T) * 8);
 }
 
 //-----------------------------------------------------------------------------
