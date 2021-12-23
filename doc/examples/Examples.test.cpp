@@ -5,14 +5,11 @@
 // License. See LICENSE for details.
 ////////////////////////////////////////////////////////////////////////////////
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
 #include <array>
 
 #include <bits/bits.h>
 #include <bits/BitsSerializer.h>
 #include <bits/BitsDeserializer.h>
-
-using ::testing::ElementsAre;
 
 TEST(BitsDetail, BME680_read)
 {
