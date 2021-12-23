@@ -10,14 +10,23 @@
 //-----------------------------------------------------------------------------
 //- Internal helper macros
 //-----------------------------------------------------------------------------
+
+// Namespaces
+#define __BITS_EMPTY_NAMESPACE
+#define __BITS_BEGIN_NAMESPACE(nameSpace)  namespace nameSpace {
+#define __BITS_END_NAMESPACE(nameSpace)    }; // namespace nameSpace
+
+// Arguments count
 #define __BITS_NUM_ARGS(...) __BITS_NUM_ARGS2(__VA_ARGS__, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
 #define __BITS_NUM_ARGS2(N1, N2, N3, N4, N5, N6, N7, N8, N9, N10, N11, N12, N13, N14, N15, N16, N17, N18, N19, N20, N21, N22, N23, N24, N25, N26, N27, N28, N29, N30, N31, N32, N33, N34, N35, N36, N37, N38, N39, N40, N41, N42, N43, N44, N45, N46, N47, N48, N49, N50, N51, N52, N53, N54, N55, N56, N57, N58, N59, N60, N61, N62, N63, N64, N, ...) N
 
+// Recurse macros
 #define __BITS_RECURSE_PAIR(func, ...)                          __BITS_DO2(__BITS_PAIR,   __BITS_NUM_ARGS(__VA_ARGS__))(func, __VA_ARGS__)
 #define __BITS_RECURSE_SINGLE(func, sep, nameSpace, name, ...)  __BITS_DO2(__BITS_SINGLE, __BITS_NUM_ARGS(__VA_ARGS__))(func, sep, nameSpace, name, __VA_ARGS__)
 #define __BITS_DO2(func, N) __BITS_DO3(func, N)
 #define __BITS_DO3(func, N) func ## _ ## N
 
+// Recursively call a macro with a pair of arguments
 #define __BITS_PAIR_2(  func, a, b)       func(a, b)
 #define __BITS_PAIR_4(  func, a, b, ...)  __BITS_PAIR_2(func, a, b) , __BITS_PAIR_2(  func, __VA_ARGS__)
 #define __BITS_PAIR_6(  func, a, b, ...)  __BITS_PAIR_2(func, a, b) , __BITS_PAIR_4(  func, __VA_ARGS__)
@@ -83,6 +92,7 @@
 #define __BITS_PAIR_126(func, a, b, ...)  __BITS_PAIR_2(func, a, b) , __BITS_PAIR_124(func, __VA_ARGS__)
 #define __BITS_PAIR_128(func, a, b, ...)  __BITS_PAIR_2(func, a, b) , __BITS_PAIR_126(func, __VA_ARGS__)
 
+// Recursively call a macro with a single argument (ignoring the second one)
 #define __BITS_SINGLE_2(  func, sep, nameSpace, name, a, b)       func(nameSpace, name, a)
 #define __BITS_SINGLE_4(  func, sep, nameSpace, name, a, b, ...)  __BITS_SINGLE_2(func, sep, nameSpace, name, a, b) sep __BITS_SINGLE_2(  func, sep, nameSpace, name, __VA_ARGS__)
 #define __BITS_SINGLE_6(  func, sep, nameSpace, name, a, b, ...)  __BITS_SINGLE_2(func, sep, nameSpace, name, a, b) sep __BITS_SINGLE_4(  func, sep, nameSpace, name, __VA_ARGS__)

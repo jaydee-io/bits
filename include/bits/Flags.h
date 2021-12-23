@@ -12,6 +12,10 @@
 
 #include <bits/detail/helper_macros.h>
 #include <type_traits>
+#include <string>
+#if __cplusplus >= 202002L
+#include <compare>
+#endif // __cplusplus >= 202002L
 
 namespace bits {
 
@@ -90,7 +94,47 @@ private:
 template<typename T>
 inline constexpr bool is_flags_bits_v = FlagsTraits<T>::value;
 
+//-----------------------------------------------------------------------------
+//- Relationnal operators
+//-----------------------------------------------------------------------------
+#if __cplusplus < 202002L
+template<typename EnumType>
+inline constexpr bool operator < (EnumType lhs, const Flags<EnumType> & rhs) noexcept { return rhs >  lhs; }
+template<typename EnumType>
+inline constexpr bool operator <=(EnumType lhs, const Flags<EnumType> & rhs) noexcept { return rhs >= lhs; }
+template<typename EnumType>
+inline constexpr bool operator > (EnumType lhs, const Flags<EnumType> & rhs) noexcept { return rhs <  lhs; }
+template<typename EnumType>
+inline constexpr bool operator >=(EnumType lhs, const Flags<EnumType> & rhs) noexcept { return rhs <= lhs; }
+template<typename EnumType>
+inline constexpr bool operator ==(EnumType lhs, const Flags<EnumType> & rhs) noexcept { return rhs == lhs; }
+template<typename EnumType>
+inline constexpr bool operator !=(EnumType lhs, const Flags<EnumType> & rhs) noexcept { return rhs != lhs; }
+#endif // __cplusplus < 202002L
+
 } // namespace bits
+
+//-----------------------------------------------------------------------------
+//- Bitwise operators enum/flags
+//-----------------------------------------------------------------------------
+template<typename EnumType>
+inline constexpr bits::Flags<EnumType> operator &(EnumType lhs, const bits::Flags<EnumType> & rhs) noexcept { return rhs & lhs; }
+template<typename EnumType>
+inline constexpr bits::Flags<EnumType> operator |(EnumType lhs, const bits::Flags<EnumType> & rhs) noexcept { return rhs | lhs; }
+template<typename EnumType>
+inline constexpr bits::Flags<EnumType> operator ^(EnumType lhs, const bits::Flags<EnumType> & rhs) noexcept { return rhs ^ lhs; }
+
+//-----------------------------------------------------------------------------
+//- Bitwise operators enum/enum
+//-----------------------------------------------------------------------------
+template<typename EnumType, std::enable_if_t<bits::is_flags_bits_v<EnumType>, bool> = true>
+inline constexpr bits::Flags<EnumType> operator &(EnumType lhs, EnumType rhs) noexcept { return  bits::Flags<EnumType>(lhs) & rhs; }
+template<typename EnumType, std::enable_if_t<bits::is_flags_bits_v<EnumType>, bool> = true>
+inline constexpr bits::Flags<EnumType> operator |(EnumType lhs, EnumType rhs) noexcept { return  bits::Flags<EnumType>(lhs) | rhs; }
+template<typename EnumType, std::enable_if_t<bits::is_flags_bits_v<EnumType>, bool> = true>
+inline constexpr bits::Flags<EnumType> operator ^(EnumType lhs, EnumType rhs) noexcept { return  bits::Flags<EnumType>(lhs) ^ rhs; }
+template<typename EnumType, std::enable_if_t<bits::is_flags_bits_v<EnumType>, bool> = true>
+inline constexpr bits::Flags<EnumType> operator ~(EnumType lhs)               noexcept { return ~bits::Flags<EnumType>(lhs); }
 
 //-----------------------------------------------------------------------------
 //- Helper macros to declare flags.
@@ -110,29 +154,30 @@ inline constexpr bool is_flags_bits_v = FlagsTraits<T>::value;
     __BITS_FLAGS_DECLARE_ENUM(name, __VA_ARGS__) \
     __BITS_FLAGS_DECLARE_USING(name) \
     __BITS_FLAGS_DECLARE_TO_STRING(name, __VA_ARGS__) \
-    __BITS_FLAGS_DECLARE_TRAIT(__BITS_FLAGS_EMPTY_NAMESPACE, name, __VA_ARGS__)
+    __BITS_FLAGS_DECLARE_TRAIT(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__)
 
 #define BITS_DECLARE_FLAGS_WITH_TYPE(name, rawType, ...) \
     __BITS_FLAGS_DECLARE_ENUM_WITH_TYPE(name, rawType, __VA_ARGS__) \
     __BITS_FLAGS_DECLARE_USING(name) \
     __BITS_FLAGS_DECLARE_TO_STRING(name, __VA_ARGS__) \
-    __BITS_FLAGS_DECLARE_TRAIT(__BITS_FLAGS_EMPTY_NAMESPACE, name, __VA_ARGS__)
+    __BITS_FLAGS_DECLARE_TRAIT(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__)
 
 #define BITS_DECLARE_FLAGS_WITH_NAMESPACE(nameSpace, name, ...) \
-    __BITS_FLAGS_BEGIN_NAMESPACE(nameSpace) \
+    __BITS_BEGIN_NAMESPACE(nameSpace) \
     __BITS_FLAGS_DECLARE_ENUM(name, __VA_ARGS__) \
     __BITS_FLAGS_DECLARE_USING(name) \
     __BITS_FLAGS_DECLARE_TO_STRING(name, __VA_ARGS__) \
-    __BITS_FLAGS_END_NAMESPACE(nameSpace) \
+    __BITS_END_NAMESPACE(nameSpace) \
     __BITS_FLAGS_DECLARE_TRAIT(nameSpace::, name, __VA_ARGS__)
 
 #define BITS_DECLARE_FLAGS_WITH_TYPE_AND_NAMESPACE(nameSpace, name, rawType, ...) \
-    __BITS_FLAGS_BEGIN_NAMESPACE(nameSpace) \
+    __BITS_BEGIN_NAMESPACE(nameSpace) \
     __BITS_FLAGS_DECLARE_ENUM_WITH_TYPE(name, rawType, __VA_ARGS__) \
     __BITS_FLAGS_DECLARE_USING(name) \
     __BITS_FLAGS_DECLARE_TO_STRING(name, __VA_ARGS__) \
-    __BITS_FLAGS_END_NAMESPACE(nameSpace) \
+    __BITS_END_NAMESPACE(nameSpace) \
     __BITS_FLAGS_DECLARE_TRAIT(nameSpace::, name, __VA_ARGS__)
+
 
 
 
@@ -142,53 +187,12 @@ inline constexpr bool is_flags_bits_v = FlagsTraits<T>::value;
 //- Implementation
 //-
 //-----------------------------------------------------------------------------
-namespace bits {
-
-// Relationnal operators
-#if __cplusplus < 202002L
-template<typename EnumType>
-inline constexpr bool operator < (EnumType lhs, const Flags<EnumType> & rhs) noexcept { return rhs >  lhs; }
-template<typename EnumType>
-inline constexpr bool operator <=(EnumType lhs, const Flags<EnumType> & rhs) noexcept { return rhs >= lhs; }
-template<typename EnumType>
-inline constexpr bool operator > (EnumType lhs, const Flags<EnumType> & rhs) noexcept { return rhs <  lhs; }
-template<typename EnumType>
-inline constexpr bool operator >=(EnumType lhs, const Flags<EnumType> & rhs) noexcept { return rhs <= lhs; }
-template<typename EnumType>
-inline constexpr bool operator ==(EnumType lhs, const Flags<EnumType> & rhs) noexcept { return rhs == lhs; }
-template<typename EnumType>
-inline constexpr bool operator !=(EnumType lhs, const Flags<EnumType> & rhs) noexcept { return rhs != lhs; }
-#endif // __cplusplus < 202002L
-
-} // namespace bits
-
-// Bitwise operators
-template<typename EnumType>
-inline constexpr bits::Flags<EnumType> operator &(EnumType lhs, const bits::Flags<EnumType> & rhs) noexcept { return rhs & lhs; }
-template<typename EnumType>
-inline constexpr bits::Flags<EnumType> operator |(EnumType lhs, const bits::Flags<EnumType> & rhs) noexcept { return rhs | lhs; }
-template<typename EnumType>
-inline constexpr bits::Flags<EnumType> operator ^(EnumType lhs, const bits::Flags<EnumType> & rhs) noexcept { return rhs ^ lhs; }
-
-template<typename EnumType, std::enable_if_t<bits::is_flags_bits_v<EnumType>, bool> = true>
-inline constexpr bits::Flags<EnumType> operator &(EnumType lhs, EnumType rhs) noexcept { return  bits::Flags<EnumType>(lhs) & rhs; }
-template<typename EnumType, std::enable_if_t<bits::is_flags_bits_v<EnumType>, bool> = true>
-inline constexpr bits::Flags<EnumType> operator |(EnumType lhs, EnumType rhs) noexcept { return  bits::Flags<EnumType>(lhs) | rhs; }
-template<typename EnumType, std::enable_if_t<bits::is_flags_bits_v<EnumType>, bool> = true>
-inline constexpr bits::Flags<EnumType> operator ^(EnumType lhs, EnumType rhs) noexcept { return  bits::Flags<EnumType>(lhs) ^ rhs; }
-template<typename EnumType, std::enable_if_t<bits::is_flags_bits_v<EnumType>, bool> = true>
-inline constexpr bits::Flags<EnumType> operator ~(EnumType lhs)               noexcept { return ~bits::Flags<EnumType>(lhs); }
 
 //-----------------------------------------------------------------------------
 //- Internal macros
 //-----------------------------------------------------------------------------
 // Flags type name
 #define __BITS_FLAGS_NAME(name) Flags ## name
-
-// Namespaces
-#define __BITS_FLAGS_EMPTY_NAMESPACE
-#define __BITS_FLAGS_BEGIN_NAMESPACE(nameSpace)  namespace nameSpace {
-#define __BITS_FLAGS_END_NAMESPACE(nameSpace)    }; // namespace nameSpace
 
 // Enum type
 #define __BITS_FLAGS_DECLARE_ENUM(name, ...) \
@@ -199,8 +203,8 @@ enum class name { \
 enum class name : rawType { \
     __BITS_FLAGS_DECLARE_ALL_ENUM_VALUES(__VA_ARGS__) \
 };
-#define __BITS_FLAGS_DECLARE_ALL_ENUM_VALUES(...)    __BITS_RECURSE_PAIR(__BITS_FLAGS_DECLARE_ENUM_VALUE, __VA_ARGS__) 
-#define __BITS_FLAGS_DECLARE_ENUM_VALUE(name, val)   name = (1 << val)
+#define __BITS_FLAGS_DECLARE_ALL_ENUM_VALUES(...)    __BITS_RECURSE_PAIR(__BITS_FLAGS_DECLARE_ENUM_VALUE, __VA_ARGS__)
+#define __BITS_FLAGS_DECLARE_ENUM_VALUE(name, val)   name = (1 << (val))
 
 // Flags type using
 #define __BITS_FLAGS_DECLARE_USING(name) using __BITS_FLAGS_NAME(name) = bits::Flags<name>;
@@ -215,7 +219,7 @@ struct FlagsTraits<nameSpace name> : std::true_type{ \
     ; \
 }; \
 }; // namespace bits
-#define __BITS_FLAGS_DECLARE_ALL_TRAIT_VALUES(nameSpace, name, ...)    __BITS_RECURSE_SINGLE(__BITS_FLAGS_DECLARE_TRAIT_VALUE, |, nameSpace, name, __VA_ARGS__) 
+#define __BITS_FLAGS_DECLARE_ALL_TRAIT_VALUES(nameSpace, name, ...)    __BITS_RECURSE_SINGLE(__BITS_FLAGS_DECLARE_TRAIT_VALUE, |, nameSpace, name, __VA_ARGS__)
 #define __BITS_FLAGS_DECLARE_TRAIT_VALUE(nameSpace, name, val)         nameSpace __BITS_FLAGS_NAME(name)::MaskType(nameSpace name::val)
 
 // Flags to string free standing function
@@ -227,7 +231,7 @@ inline std::string to_string(__BITS_FLAGS_NAME(name) value) { \
     __BITS_FLAGS_DECLARE_ALL_TO_STRING_VALUES(name, __VA_ARGS__) \
     return "{ " + result.substr(0, result.size() - 3) + " }"; \
 }
-#define __BITS_FLAGS_DECLARE_ALL_TO_STRING_VALUES(name, ...)            __BITS_RECURSE_SINGLE(__BITS_FLAGS_DECLARE_TO_STRING_VALUE, , __BITS_FLAGS_EMPTY_NAMESPACE, name, __VA_ARGS__) 
+#define __BITS_FLAGS_DECLARE_ALL_TO_STRING_VALUES(name, ...)            __BITS_RECURSE_SINGLE(__BITS_FLAGS_DECLARE_TO_STRING_VALUE, , __BITS_EMPTY_NAMESPACE, name, __VA_ARGS__)
 #define __BITS_FLAGS_DECLARE_TO_STRING_VALUE(nameSpace, name, val)      if(value & name::val) result += #val " | ";
 
 #endif /* BITS_FLAGS_H */

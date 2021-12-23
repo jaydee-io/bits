@@ -58,7 +58,7 @@ TEST(Flags, Construction) {
     EXPECT_EQ(flags3, TestType::BIT_0 | TestType::BIT_2);
 }
 
-TEST(Flags_WithNamespace, Construction) {
+TEST(Flags, Construction_WithNamespace) {
     // Default construction
     testNamespace::FlagsTestType flags0;
     EXPECT_TRUE(!flags0);
@@ -99,7 +99,7 @@ TEST(Flags, Assignment) {
     EXPECT_EQ(flags4, TestType::BIT_4);
 }
 
-TEST(Flags_WithNamespace, Assignment) {
+TEST(Flags, Assignment_WithNamespace) {
     testNamespace::FlagsTestType flags0 = testNamespace::TestType::NS_BIT_3;
 
     // Direct assignment
@@ -151,7 +151,7 @@ TEST(Flags, BitwiseOperators) {
     EXPECT_EQ(~TestType::BIT_1, flags4Complementary); // Bitwise NOT
 }
 
-TEST(Flags_WithNamespace, BitwiseOperators) {
+TEST(Flags, BitwiseOperators_WithNamespace) {
     testNamespace::FlagsTestType flags0 = testNamespace::TestType::NS_BIT_3;
     testNamespace::FlagsTestType flags1 = testNamespace::TestType::NS_BIT_3;
     testNamespace::FlagsTestType flags2 = testNamespace::TestType::NS_BIT_1;
@@ -217,7 +217,7 @@ TEST(Flags, RelationnalOperators) {
     EXPECT_NE(TestType::BIT_3, TestType::BIT_2);    // Not equal to
 }
 
-TEST(Flags_WithNamespace, RelationnalOperators) {
+TEST(Flags, RelationnalOperators_WithNamespace) {
     testNamespace::FlagsTestType flags = testNamespace::TestType::NS_BIT_3;
     testNamespace::FlagsTestType flagsGreater = testNamespace::TestType::NS_BIT_4;
     testNamespace::FlagsTestType flagsLesser = testNamespace::TestType::NS_BIT_1;
@@ -265,7 +265,7 @@ TEST(Flags, Cast) {
     EXPECT_EQ(uint8_t { 3 }, static_cast<uint8_t>(flags1));
 }
 
-TEST(Flags_WithoutType, Cast) {
+TEST(Flags, Cast_WithoutType) {
     FlagsTestWithoutType flags0;
     EXPECT_TRUE(!flags0);
     EXPECT_EQ(0, static_cast<int>(flags0));
@@ -275,7 +275,7 @@ TEST(Flags_WithoutType, Cast) {
     EXPECT_EQ(3, static_cast<int>(flags1));
 }
 
-TEST(Flags_WithNamespace, Cast) {
+TEST(Flags, Cast_WithNamespace) {
     testNamespace::FlagsTestType flags0;
     EXPECT_TRUE(!flags0);
     EXPECT_EQ(uint8_t { 0 }, static_cast<uint8_t>(flags0));
@@ -285,7 +285,7 @@ TEST(Flags_WithNamespace, Cast) {
     EXPECT_EQ(uint8_t { 3 }, static_cast<uint8_t>(flags1));
 }
 
-TEST(Flags_WithNamespace_WithoutType, Cast) {
+TEST(Flags, Cast_WithNamespace_WithoutType) {
     testNamespace::FlagsTestWithoutType flags0;
     EXPECT_TRUE(!flags0);
     EXPECT_EQ(0, static_cast<int>(flags0));
@@ -311,7 +311,7 @@ TEST(Flags, SettingAndCheckingBits) {
     EXPECT_TRUE(flags.isNotSet(TestType::BIT_3));
 }
 
-TEST(Flags_WithNamespace, SettingAndCheckingBits) {
+TEST(Flags, SettingAndCheckingBits_WithNamespace) {
     testNamespace::FlagsTestType flags;
 
     flags.set(testNamespace::TestType::NS_BIT_1);
@@ -350,7 +350,7 @@ TEST(Flags, ToString) {
     EXPECT_EQ(to_string(flags), "{ BIT_0 | BIT_1 | BIT_2 | BIT_3 | BIT_4 }");
 }
 
-TEST(Flags_WithoutType, ToString) {
+TEST(Flags, ToString_WithoutType) {
     // Empty flags
     FlagsTestWithoutType flags;
     EXPECT_EQ(to_string(flags), "{}");
@@ -373,7 +373,7 @@ TEST(Flags_WithoutType, ToString) {
     EXPECT_EQ(to_string(flags), "{ BIT_0 | BIT_1 | BIT_2 | BIT_3 | BIT_4 }");
 }
 
-TEST(Flags_WithNamespace, ToString) {
+TEST(Flags, ToString_WithNamespace) {
     // Empty flags
     testNamespace::FlagsTestType flags;
     EXPECT_EQ(to_string(flags), "{}");
@@ -396,7 +396,7 @@ TEST(Flags_WithNamespace, ToString) {
     EXPECT_EQ(to_string(flags), "{ NS_BIT_0 | NS_BIT_1 | NS_BIT_2 | NS_BIT_3 | NS_BIT_4 }");
 }
 
-TEST(Flags_WithNamespace_WithoutType, ToString) {
+TEST(Flags, ToString_WithNamespace_WithoutType) {
     // Empty flags
     testNamespace::FlagsTestWithoutType flags;
     EXPECT_EQ(to_string(flags), "{}");
