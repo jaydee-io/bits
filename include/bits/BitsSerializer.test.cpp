@@ -49,6 +49,14 @@ TEST(BitsSerializer, ChainedSkip)
     ASSERT_EQ(stream.nbBitsStreamed(), 30);
 }
 
+TEST(BitsSerializer, OutOfRange)
+{
+    std::array<uint8_t, BUFFER_SIZE> buffer = {};
+    bits::BitsSerializer stream(buffer);
+
+    ASSERT_THROW(stream.skip(128), std::out_of_range);
+}
+
 //-----------------------------------------------------------------------------
 //- BitsSerializer specific tests
 //-----------------------------------------------------------------------------
@@ -71,11 +79,11 @@ TEST(BitsSerializer, ChainedInsert)
     bits::BitsSerializer serializer(buffer);
 
     serializer
-        .insert(0x03, 4)
-        .insert(0x01, 2)
-        .insert(0x7F, 8)
-        .insert(0xDC, 8)
-        .insert(0x0D, 8)
+        .insert(uint8_t { 0x03 }, 4)
+        .insert(uint8_t { 0x01 }, 2)
+        .insert(uint8_t { 0x7F }, 8)
+        .insert(uint8_t { 0xDC }, 8)
+        .insert(uint8_t { 0x0D }, 8)
     ;
     
     ASSERT_THAT(buffer, ElementsAre(0x35, 0xFF, 0x70, 0x34, 0x00, 0x00, 0x00, 0x00));
@@ -97,18 +105,46 @@ TEST(BitsSerializer, ChainedInsert_AutoSize)
     ASSERT_THAT(buffer, ElementsAre(0xD8, 0xE9, 0xA5, 0xA5, 0xB6, 0xB6, 0xB6, 0xB6, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7));
 }
 
-TEST(BitsSerializer, BitsManipulation_ChainedInsert)
+TEST(BitsSerializer, ChainedInsert_Operator)
+{
+    std::array<uint8_t, BUFFER_SIZE * 2> buffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    bits::BitsSerializer serializer(buffer);
+
+    serializer
+        << uint8_t  { 0xD8 }
+        << uint8_t  { 0xE9 }
+        << uint16_t { 0xA5A5 }
+        << uint32_t { 0xB6B6'B6B6 }
+        << uint64_t { 0xC7C7'C7C7'C7C7'C7C7 }
+    ;
+    
+    ASSERT_THAT(buffer, ElementsAre(0xD8, 0xE9, 0xA5, 0xA5, 0xB6, 0xB6, 0xB6, 0xB6, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7));
+}
+
+TEST(BitsSerializer, BitsManipulation_nbits)
 {
     std::array<uint8_t, BUFFER_SIZE> buffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
     bits::BitsSerializer serializer(buffer);
 
     serializer
-        << bits::nbits(4) << 0x03    // 2 bits serialized
-        << bits::nbits(2) << 0x01    // 4 bits serialized
-        << uint8_t { 0x7F }          // 8 bits serialized
-        << uint8_t { 0xDC }          // 8 bits serialized
-        << uint8_t { 0x0D }          // 8 bits serialized
+        << bits::nbits(4) << uint8_t { 0x03 }     // 4 bits serialized
+        << bits::nbits(2) << uint8_t { 0x01 }     // 2 bits serialized
+        << bits::nbits(4) << uint16_t { 0x07 }    // 4 bits serialized
+        << bits::nbits(2) << uint32_t { 0x03 }    // 2 bits serialized
+        << bits::nbits(4) << uint64_t { 0x0F }    // 4 bits serialized
     ;
     
-    ASSERT_THAT(buffer, ElementsAre(0x35, 0xFF, 0x70, 0x34, 0x00, 0x00, 0x00, 0x00));
+    ASSERT_THAT(buffer, ElementsAre(0x35, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00));
+}
+
+TEST(BitsSerializer, BitsManipulation_SkipAndReset)
+{
+    std::array<uint8_t, BUFFER_SIZE> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
+    bits::BitsSerializer serializer(buffer);
+
+    serializer << bits::skip(8);
+    ASSERT_EQ(serializer.nbBitsStreamed(), 8);
+
+    serializer << bits::reset();
+    ASSERT_EQ(serializer.nbBitsStreamed(), 0);
 }

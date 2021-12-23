@@ -343,6 +343,11 @@ TEST(Flags, ToString) {
     // Flags are printed respecting order of declaration, not in order they have been set
     flags |= TestType::BIT_1;
     EXPECT_EQ(to_string(flags), "{ BIT_1 | BIT_2 | BIT_4 }");
+
+    // All enum values
+    flags |= TestType::BIT_0;
+    flags |= TestType::BIT_3;
+    EXPECT_EQ(to_string(flags), "{ BIT_0 | BIT_1 | BIT_2 | BIT_3 | BIT_4 }");
 }
 
 TEST(Flags_WithoutType, ToString) {
@@ -361,6 +366,11 @@ TEST(Flags_WithoutType, ToString) {
     // Flags are printed respecting order of declaration, not in order they have been set
     flags |= TestWithoutType::BIT_1;
     EXPECT_EQ(to_string(flags), "{ BIT_1 | BIT_2 | BIT_4 }");
+
+    // All enum values
+    flags |= TestWithoutType::BIT_0;
+    flags |= TestWithoutType::BIT_3;
+    EXPECT_EQ(to_string(flags), "{ BIT_0 | BIT_1 | BIT_2 | BIT_3 | BIT_4 }");
 }
 
 TEST(Flags_WithNamespace, ToString) {
@@ -379,6 +389,11 @@ TEST(Flags_WithNamespace, ToString) {
     // Flags are printed respecting order of declaration, not in order they have been set
     flags |= testNamespace::TestType::NS_BIT_1;
     EXPECT_EQ(to_string(flags), "{ NS_BIT_1 | NS_BIT_2 | NS_BIT_4 }");
+
+    // All enum values
+    flags |= testNamespace::TestType::NS_BIT_0;
+    flags |= testNamespace::TestType::NS_BIT_3;
+    EXPECT_EQ(to_string(flags), "{ NS_BIT_0 | NS_BIT_1 | NS_BIT_2 | NS_BIT_3 | NS_BIT_4 }");
 }
 
 TEST(Flags_WithNamespace_WithoutType, ToString) {
@@ -397,4 +412,9 @@ TEST(Flags_WithNamespace_WithoutType, ToString) {
     // Flags are printed respecting order of declaration, not in order they have been set
     flags |= testNamespace::TestWithoutType::NS_BIT_1;
     EXPECT_EQ(to_string(flags), "{ NS_BIT_1 | NS_BIT_2 | NS_BIT_4 }");
+
+    // All enum values
+    flags |= testNamespace::TestWithoutType::NS_BIT_0;
+    flags |= testNamespace::TestWithoutType::NS_BIT_3;
+    EXPECT_EQ(to_string(flags), "{ NS_BIT_0 | NS_BIT_1 | NS_BIT_2 | NS_BIT_3 | NS_BIT_4 }");
 }

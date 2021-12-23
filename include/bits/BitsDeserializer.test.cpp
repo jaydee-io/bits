@@ -49,6 +49,14 @@ TEST(BitsDeserializer, ChainedSkip)
     ASSERT_EQ(stream.nbBitsStreamed(), 30);
 }
 
+TEST(BitsDeserializer, OutOfRange)
+{
+    std::array<uint8_t, BUFFER_SIZE> buffer = {};
+    bits::BitsDeserializer stream(buffer);
+
+    ASSERT_THROW(stream.skip(128), std::out_of_range);
+}
+
 //-----------------------------------------------------------------------------
 //- BitsDeserializer specific tests
 //-----------------------------------------------------------------------------
@@ -115,29 +123,66 @@ TEST(BitsDeserializer, ChainedExtract_AutoSize)
     ASSERT_EQ(val5, 0xC7C7'C7C7'C7C7'C7C7);
 }
 
-TEST(BitsDeserializer, BitsManipulation_ChainedExtract)
+TEST(BitsDeserializer, ChainedExtract_Operator)
+{
+    std::array<uint8_t, BUFFER_SIZE * 2> buffer = { 0xD8, 0xE9, 0xA5, 0xA5, 0xB6, 0xB6, 0xB6, 0xB6, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7 };
+    bits::BitsDeserializer deserializer(buffer);
+    uint8_t val1 = 0;
+    uint8_t val2 = 0;
+    uint16_t val3 = 0;
+    uint32_t val4 = 0;
+    uint64_t val5 = 0;
+
+    deserializer
+        >> val1
+        >> val2
+        >> val3
+        >> val4
+        >> val5
+    ;
+    
+    ASSERT_EQ(val1, 0xD8);
+    ASSERT_EQ(val2, 0xE9);
+    ASSERT_EQ(val3, 0xA5A5);
+    ASSERT_EQ(val4, 0xB6B6'B6B6);
+    ASSERT_EQ(val5, 0xC7C7'C7C7'C7C7'C7C7);
+}
+
+TEST(BitsDeserializer, BitsManipulation_nbits)
 {
     std::array<uint8_t, BUFFER_SIZE> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
     bits::BitsDeserializer deserializer(buffer);
     uint8_t val1 = 0;
     uint8_t val2 = 0;
-    uint8_t val3 = 0;
-    uint8_t val4 = 0;
-    uint8_t val5 = 0;
+    uint16_t val3 = 0;
+    uint32_t val4 = 0;
+    uint64_t val5 = 0;
 
     deserializer
         >> bits::nbits(4) >> val1    // 4 bits extracted
         >> bits::nbits(2) >> val2    // 2 bits extracted
-        >> val3                      // 8 bits extracted
-        >> val4                      // 8 bits extracted
-        >> val5                      // 8 bits extracted
+        >> bits::nbits(4) >> val3    // 4 bits extracted
+        >> bits::nbits(2) >> val4    // 2 bits extracted
+        >> bits::nbits(4) >> val5    // 4 bits extracted
     ;
     
     ASSERT_EQ(val1, 0x03);
     ASSERT_EQ(val2, 0x01);
-    ASSERT_EQ(val3, 0x7F);
-    ASSERT_EQ(val4, 0xDC);
-    ASSERT_EQ(val5, 0x0D);
+    ASSERT_EQ(val3, 0x07);
+    ASSERT_EQ(val4, 0x03);
+    ASSERT_EQ(val5, 0x0F);
+}
+
+TEST(BitsDeserializer, BitsManipulation_SkipAndReset)
+{
+    std::array<uint8_t, BUFFER_SIZE> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
+    bits::BitsDeserializer deserializer(buffer);
+
+    deserializer >> bits::skip(8);
+    ASSERT_EQ(deserializer.nbBitsStreamed(), 8);
+
+    deserializer >> bits::reset();
+    ASSERT_EQ(deserializer.nbBitsStreamed(), 0);
 }
 
 TEST(BitsDeserializer, Deserialize_size_t)
@@ -147,6 +192,8 @@ TEST(BitsDeserializer, Deserialize_size_t)
     size_t val = 0;
 
     deserializer >> val;
-    
     ASSERT_EQ(val, 0xCAFEBABE'A5B6C7D8);
+
+    deserializer >> bits::reset() >> bits::nbits(8) >> val;
+    ASSERT_EQ(val, 0xCA);
 }
