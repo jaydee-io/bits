@@ -46,7 +46,7 @@ inline BitsDeserializer & operator >>(BitsDeserializer & bs, const detail::BitsS
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-BitsDeserializer::BitsDeserializer(const uint8_t * buffer_, size_t lengthBufferBits, size_t initialOffsetBits)
+inline BitsDeserializer::BitsDeserializer(const uint8_t * buffer_, size_t lengthBufferBits, size_t initialOffsetBits)
 : BitsStream(lengthBufferBits, initialOffsetBits), buffer(buffer_)
 {}
 
@@ -58,7 +58,7 @@ inline BitsDeserializer::BitsDeserializer(const std::array<uint8_t, N> & buffer,
 
 //-----------------------------------------------------------------------------
 template<typename T, std::enable_if_t< ! std::is_same_v<T, BitsDeserializer>, int>>
-T BitsDeserializer::extract(size_t nbBits)
+inline T BitsDeserializer::extract(size_t nbBits)
 {
     checkNbRemainingBits(nbBits, "Unable to extract bits, too few bits remaining");
 
@@ -75,7 +75,7 @@ inline BitsDeserializer & BitsDeserializer::extract(T & val, size_t nbBits)
     auto nbBitsToExtract = nbBitsNext ? nbBitsNext : nbBits;
     val = extract<T>(nbBitsToExtract);
     nbBitsNext = 0;
-   
+
     return *this;
 }
 
