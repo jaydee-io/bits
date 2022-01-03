@@ -14,5 +14,6 @@
 
 #include <bits/Flags.h>
 #include <bits/Enum.h>
+#include <bits/BitsField.h>
 
 #endif /* BITS_BITS_H */

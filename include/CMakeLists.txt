@@ -12,9 +12,10 @@ add_library(${LIB_NAME} INTERFACE
     bits/BitsSerializer.h
     bits/BitsDeserializer.h
 
-    # Flags / Enum
+    # Flags / Enum / BitsField
     bits/Flags.h
     bits/Enum.h
+    bits/BitsField.h
 
     # Implementation details
     bits/detail/detail.h
@@ -48,9 +49,10 @@ add_unit_test(TARGET ${UNITTESTS_NAME}
     bits/BitsDeserializer.test.cpp
     bits/BitsSerializer.test.cpp
 
-    # Flags / Enum
+    # Flags / Enum / BitsField
     bits/Flags.test.cpp
     bits/Enum.test.cpp
+    bits/BitsField.test.cpp
 )
 target_enable_warnings(${UNITTESTS_NAME} PRIVATE)
 target_compile_features(${UNITTESTS_NAME} PRIVATE ${BITS_CXX_STANDARD})
