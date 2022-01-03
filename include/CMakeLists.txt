@@ -18,8 +18,9 @@ add_library(${LIB_NAME} INTERFACE
     bits/BitsField.h
 
     # Implementation details
-    bits/detail/detail.h
-    bits/detail/infos.h
+    bits/detail/BaseSerialization.h
+    bits/detail/Serializer.h
+    bits/detail/Deserializer.h
     bits/detail/BitsStream.h
     bits/detail/BitsStreamManipulation.h
     bits/detail/underlying_integral_type.h
