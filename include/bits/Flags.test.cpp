@@ -205,6 +205,16 @@ TEST(Flags, RelationnalOperators) {
     EXPECT_EQ(TestType::BIT_3, flagsEqual);     // Equal to
     EXPECT_NE(TestType::BIT_3, flagsNotEqual);  // Not equal to
 
+    // *** Flags/Enum relationnal operators ***
+    EXPECT_GT(flagsGreater  , TestType::BIT_3);  // Greater than
+    EXPECT_GE(flagsGreater  , TestType::BIT_3);  // Greater than or equal to (greater)
+    EXPECT_GE(flagsEqual    , TestType::BIT_3);  // Greater than or equal to (equal)
+    EXPECT_LT(flagsLesser   , TestType::BIT_3);  // Less than
+    EXPECT_LE(flagsLesser   , TestType::BIT_3);  // Less than or equal to (less)
+    EXPECT_LE(flagsEqual    , TestType::BIT_3);  // Less than or equal to (equal)
+    EXPECT_EQ(flagsEqual    , TestType::BIT_3);  // Equal to
+    EXPECT_NE(flagsNotEqual , TestType::BIT_3);  // Not equal to
+
     // *** Enum/Enum relationnal operators (One Enum is implicitly converted to Flags) ***
     EXPECT_LT(TestType::BIT_3, TestType::BIT_4);    // Less than
     EXPECT_LE(TestType::BIT_3, TestType::BIT_4);    // Less than or equal to (less)

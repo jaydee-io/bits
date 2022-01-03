@@ -37,12 +37,13 @@ struct FlagsTraits : std::false_type {
 //-     - stricly ordered
 //-----------------------------------------------------------------------------
 template<typename EnumType>
-class Flags {
+class Flags
+{
 public:
     using MaskType = typename std::underlying_type<EnumType>::type;
 
     // Constructors
-    constexpr Flags(void) noexcept;
+    constexpr Flags(void) noexcept = default;
     constexpr Flags(EnumType val) noexcept;
     constexpr Flags(const Flags & val) noexcept = default;
     constexpr explicit Flags(MaskType val) noexcept;
@@ -86,7 +87,7 @@ public:
     constexpr bool isNotSet(const Flags & val) const noexcept;
 
 private:
-    MaskType mask;
+    MaskType mask = 0;
 };
 
 //-----------------------------------------------------------------------------
@@ -196,11 +197,6 @@ namespace bits {
 //- Constructors
 //-----------------------------------------------------------------------------
 template<typename EnumType>
-constexpr Flags<EnumType>::Flags(void) noexcept
-: mask(0)
-{}
-
-template<typename EnumType>
 constexpr Flags<EnumType>::Flags(EnumType val) noexcept
 : mask(static_cast<MaskType>(val))
 {}
@@ -277,7 +273,6 @@ template<typename EnumType>
 constexpr bool Flags<EnumType>::isSet   (const Flags & val) const noexcept { return static_cast<bool>( (*this) & val); }
 template<typename EnumType>
 constexpr bool Flags<EnumType>::isNotSet(const Flags & val) const noexcept { return static_cast<bool>(~(*this) & val); }
-
 
 //-----------------------------------------------------------------------------
 //- Relationnal operators
