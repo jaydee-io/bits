@@ -1,6 +1,10 @@
 ## Change log
 
 ### Not yet released
+- Add trait on Enum & Flags : size()
+- Add BitsField type
+- Add Enum type
+- Add Flags type
 - Add support for unsigned types
 - Fix issue with size_t deserialization
 - Add `operator <<` and `operator >>` to bits streams
