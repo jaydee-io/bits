@@ -427,3 +427,10 @@ TEST(Flags, ToString_WithNamespace_WithoutType) {
     flags |= testNamespace::TestWithoutType::NS_BIT_3;
     EXPECT_EQ(to_string(flags), "{ NS_BIT_0 | NS_BIT_1 | NS_BIT_2 | NS_BIT_3 | NS_BIT_4 }");
 }
+
+TEST(Flags, Size) {
+    EXPECT_EQ(bits::EnumTraits<TestType>::size(), 5);
+    EXPECT_EQ(bits::EnumTraits<TestWithoutType>::size(), 5);
+    EXPECT_EQ(bits::EnumTraits<testNamespace::TestType>::size(), 5);
+    EXPECT_EQ(bits::EnumTraits<testNamespace::TestWithoutType>::size(), 5);
+}

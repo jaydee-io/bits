@@ -7,6 +7,8 @@
 #ifndef BITS_BITS_H
 #define BITS_BITS_H
 
+#include <bits/BitsTraits.h>
+
 #include <bits/bits_insertion.h>
 #include <bits/bits_extraction.h>
 #include <bits/BitsSerializer.h>

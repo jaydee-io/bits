@@ -7,8 +7,10 @@
 set(LIB_NAME bits)
 
 add_library(${LIB_NAME} INTERFACE
-    # Serialization / Deserialization
     bits/bits.h
+    bits/BitsTraits.h
+
+    # Serialization / Deserialization
     bits/BitsSerializer.h
     bits/BitsDeserializer.h
 

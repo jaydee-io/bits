@@ -25,12 +25,27 @@
 //-----------------------------------------------------------------------------
 #define BITS_DECLARE_ENUM(name, ...) \
     __BITS_ENUM_DECLARE_ENUM(name, __VA_ARGS__) \
-    __BITS_ENUM_DECLARE_TO_STRING(name, __VA_ARGS__)
+    __BITS_ENUM_DECLARE_TO_STRING(name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_TRAITS(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__)
 
 #define BITS_DECLARE_ENUM_WITH_TYPE(name, rawType, ...) \
     __BITS_ENUM_DECLARE_ENUM_WITH_TYPE(name, rawType, __VA_ARGS__) \
-    __BITS_ENUM_DECLARE_TO_STRING(name, __VA_ARGS__)
+    __BITS_ENUM_DECLARE_TO_STRING(name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_TRAITS(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__)
 
+#define BITS_DECLARE_ENUM_WITH_NAMESPACE(nameSpace, name, ...) \
+    __BITS_BEGIN_NAMESPACE(nameSpace) \
+    __BITS_ENUM_DECLARE_ENUM(name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_TO_STRING(name, __VA_ARGS__) \
+    __BITS_END_NAMESPACE(nameSpace) \
+    __BITS_ENUM_DECLARE_TRAITS(nameSpace::, name, __VA_ARGS__)
+
+#define BITS_DECLARE_ENUM_WITH_TYPE_AND_NAMESPACE(nameSpace, name, rawType, ...) \
+    __BITS_BEGIN_NAMESPACE(nameSpace) \
+    __BITS_ENUM_DECLARE_ENUM_WITH_TYPE(name, rawType, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_TO_STRING(name, __VA_ARGS__) \
+    __BITS_END_NAMESPACE(nameSpace) \
+    __BITS_ENUM_DECLARE_TRAITS(nameSpace::, name, __VA_ARGS__)
 
 
 //-----------------------------------------------------------------------------
