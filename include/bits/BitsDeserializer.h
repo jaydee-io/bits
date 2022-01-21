@@ -7,7 +7,7 @@
 #ifndef BITS_BITS_DESERIALIZER_H
 #define BITS_BITS_DESERIALIZER_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <cstdlib>
 #include <array>
 

@@ -7,7 +7,7 @@
 #ifndef BITS_BITS_SERIALIZER_H
 #define BITS_BITS_SERIALIZER_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <cstdlib>
 #include <array>
 
@@ -35,7 +35,7 @@ protected:
 
     template<typename T>
     friend inline BitsSerializer & operator <<(BitsSerializer & bs, T val);
-    
+
     uint8_t * const buffer;
 };
 
@@ -65,7 +65,7 @@ template<typename T>
 BitsSerializer & BitsSerializer::insert(T val, size_t nbBits)
 {
     auto nbBitsToInsert = nbBitsNext ? nbBitsNext : nbBits;
-    
+
     checkNbRemainingBits(nbBitsToInsert, "Unable to insert bits, too few bits remaining");
 
     bits::insert<T>(val, buffer, posBits + nbBitsToInsert - 1, posBits);
@@ -85,7 +85,7 @@ inline BitsSerializer & operator <<(BitsSerializer & bs, T val)
 //-----------------------------------------------------------------------------
 inline BitsSerializer & operator <<(BitsSerializer & bs, const detail::BitsStreamManipulation manip)
 {
-    bs.setManipulation(manip); 
+    bs.setManipulation(manip);
     return bs;
 }
 

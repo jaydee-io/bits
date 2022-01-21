@@ -7,9 +7,9 @@
 #ifndef BITS_BITS_INSERTION_H
 #define BITS_BITS_INSERTION_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <cstdlib>
-#include <assert.h>
+#include <cassert>
 #include <array>
 
 #include <bits/detail/Serializer.h>

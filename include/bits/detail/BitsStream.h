@@ -7,7 +7,7 @@
 #ifndef BITS_BITS_STREAM_H
 #define BITS_BITS_STREAM_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <cstdlib>
 #include <stdexcept>
 #include <string_view>
