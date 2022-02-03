@@ -217,6 +217,7 @@ IpHeader extractIpHeader(std::span<const uint8_t> buffer)
         >>                    ipHeader.checksum
     ;
 
+    // For now, bits doesn't support array (de)serialization, but it's coming soon :-)
     for(auto i=0ul; i<sizeof(ipHeader.source); i++)
         deserializer >> ipHeader.source[i];
     for(auto i=0ul; i<sizeof(ipHeader.destination); i++)

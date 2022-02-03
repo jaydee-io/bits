@@ -15,7 +15,7 @@
 //-
 //- BITS_DECLARE_ENUM[...]
 //- (
-//-     Name,            => declare an enum <Name> and a flags type named Flags<Name>
+//-     Name,            => declare an enum <Name>
 //-     Type,            => optional underlying enum type
 //-     VAL_1, 0x32      => declare an enum value named 'VAL_1' with value '0x32'
 //-     VAL_4, (4 * 256) => declare an enum value named 'VAL_4' with value 1024 (4 * 256)

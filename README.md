@@ -8,189 +8,258 @@
 <!-- END   BADGES -->
 
 ## What is `bits`?
-`bits` is a C++ 17 library designed to ease bit manipulations from raw buffer. It allow easy inserting and extracting bit fields into/from raw `uint8_t` buffer.
+`bits` is a C++ 17 library designed to ease low-level bits manipulation from expressive high-level abstractions.
+
+In details, `bits` allows :
+- inserting or extracting arbitrary size bits fields into/from raw `uint8_t` buffer ([detail](#bits-insertion-extraction))
+- arbitrary size bits fields streaming to/from raw `uint8_t` buffer (like `std:ostream` and `std::istream`) ([detail](#bits-streaming))
+- handling flag bits (set or not set bits) that can be combined within a bits field ([detail](#flags))
+- strongly types enumerations with associated helpers ([detail](#enumeration))
 
 :heavy_exclamation_mark:**DISCLAIMER** : This a still a beta project for now and the API is subject to change until the `V1.0` release.:heavy_exclamation_mark:
 
-See all the details of the latest version from [CHANGELOG](https://github.com/jaydee-io/bits/blob/master/CHANGELOG.md).
-
-Current build & test status:
-
-[![TravisCI Build Status](https://travis-ci.org/jaydee-io/bits.svg?branch=master)](https://travis-ci.org/jaydee-io/bits)
+See all the details of the latest version from [CHANGELOG](CHANGELOG.md).
 
 ## TODO
 There's a lot in progress :-)
 
-Have a look at the [TODO](https://github.com/jaydee-io/bits/blob/master/TODO.md) list.
+Have a look at the [TODO](TODO.md) list.
 
-## Example #1 : _Hardware register access_
-`bits` could be very usefull to manipulate low-level hardware bits, extract meaningfull information and raise up abstraction level.
+---
 
-As an example, the following code show how to configure and retrieve values from a [BME680 Environmental Sensor](https://www.bosch-sensortec.com/bst/products/all_products/bme680) from Bosch Sensortec ([Datasheet available here](https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BME680-DS001.pdf)).
+## Bits insertion / extraction
+`bits` provides several `insert()` functions overload to easily insert bits into raw buffer (could be `uint8_t *` or `std::array<uint8_t, ...>`). `bits` also provides several `extract()` functions overload to easily extract bits from raw buffer (could be `const uint8_t *` or `std::array<const uint8_t, ...>`).
 
-#### Reading registers
-Below is an extract of the datasheet showing part of the Memory Map (page 28).
+Be aware that bits range parameters order is `high` first then `low`.
 
-![BME680 Memory Map](https://github.com/jaydee-io/bits/raw/master/doc/BST-BME680-DS001-28-1.jpg)
-
-To demonstrate bits extraction, we will focus on `gas_r` registers, particulary the `gas_r` and `gas_valid_r` fields, accessible from I2C address `0x2A` to `0x2B`. The datasheet defines this fields as follow (pages 35 and 37).
-
-![gas_r registers definition 1](https://github.com/jaydee-io/bits/raw/master/doc/BST-BME680-DS001-35.jpg)
-![gas_r registers definition 2](https://github.com/jaydee-io/bits/raw/master/doc/BST-BME680-DS001-37.jpg)
-
-The following code shows how to extract this fields using `bits`.
+The behaviour is undefined if :
+- parameters `high` and `low` order is inverted
+- `high` or `low` overflow the buffer size
 
 ```c++
-#include <bits/bits.h>
+#include <bits/bits_insertion.h>
 
-std::array<uint8_t, 2> buffer;
+template<typename T>
+constexpr void insert(T val, uint8_t * buffer, size_t high, size_t low);
 
-// ... Read 2 bytes from I2C bus, starting at address 0x2A, into the buffer ...
+template<typename T, size_t N>
+constexpr void insert(T val, std::array<uint8_t, N> & buffer, size_t high, size_t low);
 
-enum class GasValid
-{
-    INVALID = 0,
-    VALID = 1,
-};
 
-auto gas_resistance_data  = bits::extract<uint16_t,  9,  0>(buffer);
-auto gas_is_valid_as_enum = bits::extract<GasValid, 10, 10>(buffer);
-auto gas_is_valid_as_bool = bits::extract<bool,     10, 10>(buffer);
 
-if(gas_is_valid_as_bool)                    // Using bool type
-if(gas_is_valid_as_enum == GasValid::VALID) // Using 'GasValid' strong type
-    std::cout << "Gas value = " << gas_resistance_data << std::endl;
-else
-    std::cout << "Gas value NOT valid" << std::endl;
+#include <bits/bits_extraction.h>
+
+template<typename T>
+constexpr T extract(const uint8_t * buffer, size_t high, size_t low);
+
+template<typename T, size_t N>
+constexpr T extract(const std::array<const uint8_t, N> & buffer, size_t high, size_t low);
 ```
 
-From this code, we could notice 2 things:
-* The `gas_valid` field can be extracted either directly as a `boolean` or as a strong type like the `GasValidType` enumeration class.
-* The `gas_resistance` field spans accross two registers. Notice the bit numbers starting from 0 (first byte) to 9 (second byte). But this is completly transparent to `bits`. Fields could span on any number of bytes.
-
-#### Writing registers
-Below is another extract of the datasheet showing antoher part of the Memory Map (page 28).
-
-![BME680 Memory Map](https://github.com/jaydee-io/bits/raw/master/doc/BST-BME680-DS001-28-2.jpg)
-
-For bits insertion, we will focus on `ctrl_meas` register, particulary the `osrs_t` field, accessible from I2C address `0x74`. The datasheet defines this field as follow (pages 30).
-
-![gas_r registers definition 1](https://github.com/jaydee-io/bits/raw/master/doc/BST-BME680-DS001-30.jpg)
-
-The following code shows how to insert this field.
+If `high` and `low` are known at compile time, they could be specified as template parameters.
 
 ```c++
-#include <bits/bits.h>
+#include <bits/bits_insertion.h>
 
-std::array<uint8_t, 1> buffer = { 0x00 };
+template<typename T, size_t high, size_t low>
+constexpr void insert(T val, uint8_t * buffer);
 
-// ... Read 1 byte from I2C bus, at address 0x74, into the buffer ...
+template<typename T, size_t high, size_t low, size_t N>
+constexpr void insert(T val, std::array<uint8_t, N> & buffer);
 
-// ... Update the temperature oversampling setting ...
-enum class Oversampling
-{
-    NO_OVERSAMPLING = 0,
-    OVERSAMPLING_X1 = 1,
-    OVERSAMPLING_X2 = 2,
-    OVERSAMPLING_X4 = 3,
-    OVERSAMPLING_X8 = 4,
-    OVERSAMPLING_X16 = 5,
-};
 
-bits::insert<Oversampling, 7, 5>(Oversampling::OVERSAMPLING_X4, buffer);
 
-// ... Write back the byte on I2C bus, at address 0x74 ...
-```
-Obviously, the register must be read before updating the field. This is due to the fact that we don't want to modify the two other fields `osrs_p` and `mode` in the same register.
+#include <bits/bits_extraction.h>
 
-## Example #2 : _Message (de)serialization_
-Another use case where `bits` could be very usefull, is for message serializing / deserialzing. This allows to extract meaningfull information and raise up abstraction level from low-level messages.
+template<typename T, size_t high, size_t low>
+constexpr T extract(const uint8_t * buffer);
 
-The following code shows an example of a server receiving and decoding a time update request and then encode and send back a response. Says that messages are formated this way:
-```c++
-// Field size in bits:   |   2   |   2   |    4    |    8   |   32   |     32     |
-//                       ---------------------------------------------------------
-// Time update request:  | Type  | Group | Service | Length | Second | Nanosecond | 
-//                       ---------------------------------------------------------
-
-// Field size in bits:   |   2   |   2   |    4    |    8   |    8   |
-//                       ---------------------------------------------
-// Time update response: | Type  | Group | Service | Length | Status |
-//                       ---------------------------------------------
+template<typename T, size_t high, size_t low, size_t N>
+constexpr T extract(const std::array<const uint8_t, N> & buffer);
 ```
 
-First we define some meaningfull types for the messages.
-```c++
-enum class MessageType
-{
-    REQUEST = 0x0,
-    RESPONSE = 0x1,
-    // ...
-};
+View some usage examples :
+- [Hardware register access](doc/Example_Insertion_Extraction.md#example-hardware-register-access)
 
-enum class MessageGroup
-{
-    TIME = 0x0,
-    // ...
-};
+## Bits streaming
+`bits` offers handy bits streaming classes : `BitsSerializer` to chains bits insertions and `BitsDeserializer` to chains bits extractions.
 
-enum class TimeServices
-{
-    UPDATE = 0x0,
-    RETRIEVE = 0x1,
-    // ...
-};
+`insert()` and `extract()` methods could be used to respectively insert and extract bits.
 
-enum class TimeUpdateStatus
-{
-    SUCCESS = 0,
-    ERROR = 1,
-};
+These classes also provides method :
+- `nbBitsStreamed()` to get the number of bits currently streamed (including initial offset)
+- `skip(size_t nbBits)` to skip a specified number of bits
+- `reset()` to reset the stream at the begining. _Beware that this reset the stream to position `0` and NOT to initial offset._
 
-using Second = uint32_t;
-using NanoSecond = uint32_t;
-````
-
-Then we can receive the request, decode it, encode a response and send it back:
 ```c++
 #include <bits/BitsSerializer.h>
+
+class BitsSerializer
+{
+public:
+    inline BitsSerializer(uint8_t * buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);
+    template<size_t N>
+    inline BitsSerializer(std::array<uint8_t, N> & buffer, size_t lengthBufferBits = N * 8, size_t initialOffsetBits = 0);
+
+    template<typename T>
+    inline BitsSerializer & insert(T val, size_t nbBits = sizeof(T) * 8);
+
+    inline size_t nbBitsStreamed(void);
+
+    inline BitsSerializer & skip(size_t nbBits);
+    inline BitsSerializer & reset(void);
+};
+```
+
+```c++
 #include <bits/BitsDeserializer.h>
 
-std::array<uint8_t, 16> buffer = { };
+class BitsDeserializer
+{
+public:
+    inline BitsDeserializer(const uint8_t * buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);
+    template<size_t N>
+    inline BitsDeserializer(const std::array<uint8_t, N> & buffer, size_t lengthBufferBits = N * 8, size_t initialOffsetBits = 0);
 
-// ... Read incoming message into the buffer ...
+    template<typename T, std::enable_if_t< ! std::is_same_v<T, BitsDeserializer>, int> = 0>
+    inline T extract(size_t nbBits);
+    template<typename T>
+    inline BitsDeserializer & extract(T & val, size_t nbBits = sizeof(T) * 8);
 
-// Deserialize request
-bits::BitsDeserializer deserializer(buffer, buffer.size() * 8);
-MessageType type;
-MessageGroup group;
-TimeServices service;
-deserializer
-    >> bits::nbits(2) >> type
-    >> bits::nbits(2) >> group
-    >> bits::nbits(4) >> service
-    >> bits::skip(8); // Skip 'length' field
+    inline size_t nbBitsStreamed(void);
 
-// Check this is a time update request
-if(!(type == MessageType::REQUEST
-&& group == MessageGroup::TIME
-&& service == TimeServices::UPDATE))
-    return;
+    inline BitsSerializer & skip(size_t nbBits);
+    inline BitsSerializer & reset(void);
 
-auto second = deserializer.extract<Second>(sizeof(Second));
-auto nanoSecond = deserializer.extract<NanoSecond>(sizeof(NanoSecond));
-
-std::cout << "Second = " << second << std::endl;
-std::cout << "Nano second = " << nanoSecond << std::endl;
-
-// Serialize response
-bits::BitsSerializer serializer(buffer, buffer.size() * 8);
-serializer
-    << bits::nbits(2) << MessageType::RESPONSE
-    << bits::nbits(2) << MessageGroup::TIME
-    << bits::nbits(4) << TimeServices::UPDATE
-    << bits::skip(8) // Skip 'length' field
-    << bits::nbits(8) << TimeUpdateStatus::SUCCESS;
-
-// ... Write back response message from the buffer ...
+};
 ```
+In addition to members functions, `bits` provides _streaming operators_ free standing functions `operator <<` and `operator >>`. Free standing functions are also provided to manipulate stream state : number of bits to insert/extract/skip and stream reseting.
+
+```c++
+template<typename T>
+inline BitsSerializer & operator <<(BitsSerializer & bs, T val);
+inline BitsSerializer & operator <<(BitsSerializer & bs, const detail::BitsStreamManipulation manip);
+
+template<typename T>
+inline BitsDeserializer & operator >>(BitsDeserializer & bs, T & val);
+inline BitsDeserializer & operator >>(BitsDeserializer & bs, const detail::BitsStreamManipulation manip);
+
+inline detail::BitsStreamManipulation nbits(size_t nbBits);
+inline detail::BitsStreamManipulation skip(size_t nbBits);
+inline detail::BitsStreamManipulation reset(void);
+```
+
+View some usage examples :
+- [Message (de)serialization](doc/Example_Streaming.md#example-message-de-serialization)
+- [TCP/IP Packet deserialization](doc/Example_Streaming.md#example-tcp-ip-packet-deserialization)
+
+## Flags
+The `Flags` wrapper type helps handling flags, that is a set of bits that could bet set/unsed and tested using a convenient name from a strongly typed enum.
+As a wrapper over a strongly typed enumeration, `Flags` provides all relationnal, logical, bitwise and assignment operators as well as casting to `bool` and underlying strongly typed enumeration.
+It also provides _expressive_ member functions :
+- `set()`, `unset()` and `toggle()` to write the specified flag bit
+- `isSet()` and `isNotSet()` to read the specified flag bit
+
+```c++
+template<typename EnumType>
+class Flags
+{
+public:
+    // Constructors
+    constexpr Flags(void) noexcept = default;
+    constexpr Flags(EnumType val) noexcept;
+    constexpr Flags(const Flags & val) noexcept = default;
+    constexpr explicit Flags(MaskType val) noexcept;
+
+    // Relationnal operators
+    constexpr auto operator <=>(const Flags & rhs) const noexcept;
+
+    // Logical operator
+    constexpr bool operator !(void) const noexcept;
+
+    // Bitwise operators
+    constexpr Flags operator &(const Flags & rhs) const noexcept;
+    constexpr Flags operator |(const Flags & rhs) const noexcept;
+    constexpr Flags operator ^(const Flags & rhs) const noexcept;
+    constexpr Flags operator ~(void)              const noexcept;
+
+    // Assignment operators
+    constexpr Flags & operator  =(const Flags & rhs) noexcept;
+    constexpr Flags & operator &=(const Flags & rhs) noexcept;
+    constexpr Flags & operator |=(const Flags & rhs) noexcept;
+    constexpr Flags & operator ^=(const Flags & rhs) noexcept;
+
+    // Cast operators
+    explicit constexpr operator bool    (void) const noexcept;
+    explicit constexpr operator MaskType(void) const noexcept;
+
+    // Basic flag setting and checking
+    constexpr void set     (const Flags & val) noexcept;
+    constexpr void unset   (const Flags & val) noexcept;
+    constexpr void toggle  (const Flags & val) noexcept;
+    constexpr bool isSet   (const Flags & val) const noexcept;
+    constexpr bool isNotSet(const Flags & val) const noexcept;
+};
+```
+
+Additionnaly, `bits` provides some helper macros to easily declare a flag and the corresponding strongly type enumeration. This declares :
+- a strongly typed enum type, named _`name`_, defined with all the pairs of _name_ / _bit position_ specified. The enumerated value is equal to `1 << bit_position`
+- a flag wrapper class alias named `Flags`_`name`_
+- a free standing function `bits::to_string()` to convert flags value to string (example: "`{ VAL_1 | BIT_4 }`" or "`{}`")
+- all helpers defined for `bits` strong enumeration (See [Enumeration](#enumeration))
+
+
+```c++
+#include <bits/Flags.h>
+
+#define BITS_DECLARE_FLAGS                          (name, ...)                     [...]
+#define BITS_DECLARE_FLAGS_WITH_TYPE                (name, rawType, ...)            [...]
+#define BITS_DECLARE_FLAGS_WITH_NAMESPACE           (nameSpace, name, ...)          [...]
+#define BITS_DECLARE_FLAGS_WITH_TYPE_AND_NAMESPACE  (nameSpace, name, rawType, ...) [...]
+
+#define BITS_DECLARE_FLAGS[...]
+(
+    [NameSpace]   // declare enum and flags types into namespace
+    Name,         // declare an enum <Name> and a flags type named Flags<Name>
+    [rawType],    // optional underlying enum type
+    VAL_1, 2      // declare an enum value named 'VAL_1' with third bit set : 0b000100
+    BIT_4, 4      // declare an enum value named 'BIT_4' with fifth bit set : 0b010000
+    ...
+)
+
+inline std::string bits::to_string(nameSpace::FlagsName value);
+```
+
+View some usage examples :
+- [TCP/IP Packet deserialization](doc/Example_Streaming.md#example-tcp-ip-packet-deserialization)
+
+## Enumeration
+`bits` provides some helper macros to easily declare a strongly type enumeration. This declares :
+- a strongly typed enum type, named _`name`_, defined with all the pairs of _name_ / _value_ specified.
+- a free standing function `bits::to_string()` to convert strongly typed enumeration value to string_view (example: "`VAL_1`" or "`<invalid>`")
+- an `EnumTraits` specialization for the strongly typed enumeration, which provides :
+  - `bits::EnumTraits<nameSpace::Name>::size()` to get the number of enumerations
+
+```c++
+#include <bits/Enum.h>
+
+#define BITS_DECLARE_ENUM                          (name, ...)                     [...]
+#define BITS_DECLARE_ENUM_WITH_TYPE                (name, rawType, ...)            [...]
+#define BITS_DECLARE_ENUM_WITH_NAMESPACE           (nameSpace, name, ...)          [...]
+#define BITS_DECLARE_ENUM_WITH_TYPE_AND_NAMESPACE  (nameSpace, name, rawType, ...) [...]
+
+#define BITS_DECLARE_ENUM[...]
+(
+    Name,            // declare an enum <Name>
+    [Type],          // optional underlying enum type
+    VAL_1, 0x32      // declare an enum value named 'VAL_1' with value '0x32'
+    VAL_4, (4 * 256) // declare an enum value named 'VAL_4' with value 1024 (4 * 256)
+    ...
+)
+
+inline std::string_view bits::to_string(nameSpace::Name value);
+inline static constexpr size_t bits::EnumTraits<nameSpace::Name>::size(void);
+```
+
+View some usage examples :
+- [TCP/IP Packet deserialization](doc/Example_Streaming.md#example-tcp-ip-packet-deserialization)
