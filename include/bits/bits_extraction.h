@@ -10,7 +10,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cassert>
-#include <array>
+#include <span>
 
 #include <bits/detail/Deserializer.h>
 
@@ -19,11 +19,8 @@ namespace bits {
 //-----------------------------------------------------------------------------
 //- Free standing functions
 //-----------------------------------------------------------------------------
-template<typename T>           constexpr T extract(const uint8_t * buffer, size_t high, size_t low);
-template<typename T, size_t N> constexpr T extract(const std::array<const uint8_t, N> & buffer, size_t high, size_t low);
-
-template<typename T, size_t high, size_t low>           constexpr T extract(const uint8_t * buffer);
-template<typename T, size_t high, size_t low, size_t N> constexpr T extract(const std::array<const uint8_t, N> & buffer);
+template<typename T>                          constexpr T extract(const std::span<const uint8_t> buffer, size_t high, size_t low);
+template<typename T, size_t high, size_t low> constexpr T extract(const std::span<const uint8_t> buffer);
 
 //-----------------------------------------------------------------------------
 //-
@@ -33,40 +30,25 @@ template<typename T, size_t high, size_t low, size_t N> constexpr T extract(cons
 
 //-----------------------------------------------------------------------------
 template<typename T>
-constexpr T extract(const uint8_t * buffer, size_t high, size_t low)
+constexpr T extract(const std::span<const uint8_t> buffer, size_t high, size_t low)
 {
     assert((sizeof(T) * 8) >= (high - low + 1));
 
-    const detail::Deserializer deserializer(sizeof(T) * 8, high, low);
+    const detail::Deserializer deserializer(sizeof(T) * CHAR_BIT, high, low);
 
     return deserializer.extract<T>(buffer);
 }
 
 //-----------------------------------------------------------------------------
-template<typename T, size_t N>
-constexpr T extract(const std::array<const uint8_t, N> & buffer, size_t high, size_t low)
-{
-    return bits::extract<T>(buffer.data(), high, low);
-}
-
-//-----------------------------------------------------------------------------
 template<typename T, size_t high, size_t low>
-constexpr T extract(const uint8_t * buffer)
+constexpr T extract(const std::span<const uint8_t> buffer)
 {
+    assert((buffer.size() * 8) >= (high - low + 1));
     static_assert((sizeof(T) * 8) >= (high - low + 1));
 
     constexpr detail::Deserializer deserializer(sizeof(T) * 8, high, low);
 
     return deserializer.extract<T>(buffer);
-}
-
-//-----------------------------------------------------------------------------
-template<typename T, size_t high, size_t low, size_t N>
-constexpr T extract(const std::array<const uint8_t, N> & buffer)
-{
-    static_assert((N * 8) >= (high - low + 1));
-
-    return bits::extract<T, high, low>(buffer.data());
 }
 
 } // namespace bits

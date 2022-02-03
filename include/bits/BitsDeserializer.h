@@ -9,7 +9,7 @@
 
 #include <cstdint>
 #include <cstdlib>
-#include <array>
+#include <span>
 
 #include <bits/bits_extraction.h>
 #include <bits/detail/BitsStream.h>
@@ -22,9 +22,7 @@ namespace bits {
 class BitsDeserializer : public detail::BitsStream<BitsDeserializer>
 {
 public:
-    inline BitsDeserializer(const uint8_t * buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);
-    template<size_t N>
-    inline BitsDeserializer(const std::array<uint8_t, N> & buffer, size_t lengthBufferBits = N * 8, size_t initialOffsetBits = 0);
+    inline BitsDeserializer(const std::span<const uint8_t> buffer, size_t initialOffsetBits = 0);
 
     template<typename T, std::enable_if_t< ! std::is_same_v<T, BitsDeserializer>, int> = 0>
     inline T extract(size_t nbBits);
@@ -32,7 +30,7 @@ public:
     inline BitsDeserializer & extract(T & val, size_t nbBits = sizeof(T) * 8);
 
 protected:
-    const uint8_t * const buffer;
+    const std::span<const uint8_t> buffer;
 };
 
 template<typename T>
@@ -46,14 +44,8 @@ inline BitsDeserializer & operator >>(BitsDeserializer & bs, const detail::BitsS
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-inline BitsDeserializer::BitsDeserializer(const uint8_t * buffer_, size_t lengthBufferBits, size_t initialOffsetBits)
-: BitsStream(lengthBufferBits, initialOffsetBits), buffer(buffer_)
-{}
-
-//-----------------------------------------------------------------------------
-template<size_t N>
-inline BitsDeserializer::BitsDeserializer(const std::array<uint8_t, N> & buffer, size_t lengthBufferBits, size_t initialOffsetBits)
-: BitsDeserializer(buffer.data(), lengthBufferBits, initialOffsetBits)
+inline BitsDeserializer::BitsDeserializer(const std::span<const uint8_t> buffer_, size_t initialOffsetBits)
+: BitsStream(buffer_.size() * CHAR_BIT, initialOffsetBits), buffer(buffer_)
 {}
 
 //-----------------------------------------------------------------------------

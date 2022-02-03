@@ -9,6 +9,7 @@
 
 #include <bits/detail/BaseSerialization.h>
 #include <bits/detail/underlying_integral_type.h>
+#include <span>
 
 namespace bits::detail {
 
@@ -20,14 +21,14 @@ class Serializer : public BaseSerialization
 public:
     constexpr Serializer(size_t high, size_t low) noexcept;
 
-    template<typename T> constexpr void insert(T val, uint8_t * buffer) const noexcept;
+    template<typename T> constexpr void insert(T val, const std::span<uint8_t> buffer) const noexcept;
 
 private:
     constexpr uint8_t serialize_first_byte_mask_8bits(size_t low, size_t high) const noexcept;
 
-    template<typename T> constexpr void insert_last_byte(T & val, uint8_t * buffer) const noexcept;
-    template<typename T> constexpr void insert_intermediate_bytes(T & val, uint8_t * buffer) const noexcept;
-    template<typename T> constexpr void insert_first_byte(T & val, uint8_t * buffer) const noexcept;
+    template<typename T> constexpr void insert_last_byte(T & val, const std::span<uint8_t> buffer) const noexcept;
+    template<typename T> constexpr void insert_intermediate_bytes(T & val, const std::span<uint8_t> buffer) const noexcept;
+    template<typename T> constexpr void insert_first_byte(T & val, const std::span<uint8_t> buffer) const noexcept;
 
     const uint8_t first_byte_mask;
 };
@@ -52,7 +53,7 @@ constexpr Serializer::Serializer(size_t high, size_t low) noexcept
 
 //-----------------------------------------------------------------------------
 template<typename T>
-void constexpr Serializer::insert(T val, uint8_t * buffer) const noexcept
+void constexpr Serializer::insert(T val, const std::span<uint8_t> buffer) const noexcept
 {
     auto rawVal = static_cast<underlying_integral_type_t<T>>(val);
 
@@ -72,7 +73,7 @@ constexpr uint8_t Serializer::serialize_first_byte_mask_8bits(size_t low, size_t
 
 //-----------------------------------------------------------------------------
 template<typename T>
-void constexpr Serializer::insert_last_byte(T & val, uint8_t * buffer) const noexcept
+void constexpr Serializer::insert_last_byte(T & val, const std::span<uint8_t> buffer) const noexcept
 {
     if(not isSameByte())
     {
@@ -85,7 +86,7 @@ void constexpr Serializer::insert_last_byte(T & val, uint8_t * buffer) const noe
 
 //-----------------------------------------------------------------------------
 template<typename T>
-void constexpr Serializer::insert_intermediate_bytes(T & val, uint8_t * buffer) const noexcept
+void constexpr Serializer::insert_intermediate_bytes(T & val, const std::span<uint8_t> buffer) const noexcept
 {
     for(size_t i=byte_end ? byte_end - 1 : byte_start; i>byte_start; i--)
     {
@@ -96,7 +97,7 @@ void constexpr Serializer::insert_intermediate_bytes(T & val, uint8_t * buffer) 
 
 //-----------------------------------------------------------------------------
 template<typename T>
-void constexpr Serializer::insert_first_byte(T & val, uint8_t * buffer) const noexcept
+void constexpr Serializer::insert_first_byte(T & val, const std::span<uint8_t> buffer) const noexcept
 {
     if(isSameByte())
         val = (val << first_byte_shift) & ~first_byte_mask;

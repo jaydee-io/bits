@@ -9,7 +9,7 @@
 
 #include <cstdint>
 #include <cstdlib>
-#include <array>
+#include <span>
 
 #include <bits/bits_insertion.h>
 #include <bits/detail/BitsStream.h>
@@ -22,9 +22,7 @@ namespace bits {
 class BitsSerializer : public detail::BitsStream<BitsSerializer>
 {
 public:
-    inline BitsSerializer(uint8_t * buffer, size_t lengthBufferBits, size_t initialOffsetBits = 0);
-    template<size_t N>
-    inline BitsSerializer(std::array<uint8_t, N> & buffer, size_t lengthBufferBits = N * 8, size_t initialOffsetBits = 0);
+    inline BitsSerializer(const std::span<uint8_t> buffer, size_t initialOffsetBits = 0);
 
     template<typename T>
     inline BitsSerializer & insert(T val, size_t nbBits = sizeof(T) * 8);
@@ -36,7 +34,7 @@ protected:
     template<typename T>
     friend inline BitsSerializer & operator <<(BitsSerializer & bs, T val);
 
-    uint8_t * const buffer;
+    const std::span<uint8_t> buffer;
 };
 
 template<typename T>
@@ -50,14 +48,8 @@ inline BitsSerializer & operator <<(BitsSerializer & bs, const detail::BitsStrea
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-BitsSerializer::BitsSerializer(uint8_t * buffer_, size_t lengthBufferBits, size_t initialOffsetBits)
-: BitsStream(lengthBufferBits, initialOffsetBits), buffer(buffer_)
-{}
-
-//-----------------------------------------------------------------------------
-template<size_t N>
-BitsSerializer::BitsSerializer(std::array<uint8_t, N> & buffer, size_t lengthBufferBits, size_t initialOffsetBits)
-: BitsSerializer(buffer.data(), lengthBufferBits, initialOffsetBits)
+BitsSerializer::BitsSerializer(const std::span<uint8_t> buffer_, size_t initialOffsetBits)
+: BitsStream(buffer_.size() * CHAR_BIT, initialOffsetBits), buffer(buffer_)
 {}
 
 //-----------------------------------------------------------------------------

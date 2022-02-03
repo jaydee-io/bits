@@ -9,6 +9,7 @@
 
 #include <bits/detail/BaseSerialization.h>
 #include <bits/detail/underlying_integral_type.h>
+#include <span>
 
 namespace bits::detail {
 
@@ -20,14 +21,14 @@ class Deserializer : public BaseSerialization
 public :
     constexpr Deserializer(size_t type_size, size_t high, size_t low) noexcept;
 
-    template<typename T> constexpr T extract(const uint8_t * buffer) const noexcept;
+    template<typename T> constexpr T extract(const std::span<const uint8_t> buffer) const noexcept;
 
 private:
     constexpr uint8_t deserialize_first_byte_mask_8bits(size_t low, size_t high) const noexcept;
 
-    template<typename T> constexpr void extract_first_byte(T & val, const uint8_t * buffer) const noexcept;
-    template<typename T> constexpr void extract_intermediate_bytes(T & val, const uint8_t * buffer) const noexcept;
-    template<typename T> constexpr void extract_last_byte(T & val, const uint8_t * buffer) const noexcept;
+    template<typename T> constexpr void extract_first_byte(T & val, const std::span<const uint8_t> buffer) const noexcept;
+    template<typename T> constexpr void extract_intermediate_bytes(T & val, const std::span<const uint8_t> buffer) const noexcept;
+    template<typename T> constexpr void extract_last_byte(T & val, const std::span<const uint8_t> buffer) const noexcept;
     template<typename T> constexpr void extend_sign(T & val) const noexcept;
 
     const uint8_t first_byte_mask;
@@ -65,7 +66,7 @@ constexpr uint8_t Deserializer::deserialize_first_byte_mask_8bits(size_t low, si
 
 //-----------------------------------------------------------------------------
 template<typename T>
-constexpr T Deserializer::extract(const uint8_t * buffer) const noexcept
+constexpr T Deserializer::extract(const std::span<const uint8_t> buffer) const noexcept
 {
     underlying_integral_type_t<T> val = {};
 
@@ -81,7 +82,7 @@ constexpr T Deserializer::extract(const uint8_t * buffer) const noexcept
 
 //-----------------------------------------------------------------------------
 template<typename T>
-constexpr void Deserializer::extract_first_byte(T & val, const uint8_t * buffer) const noexcept
+constexpr void Deserializer::extract_first_byte(T & val, const std::span<const uint8_t> buffer) const noexcept
 {
     val = buffer[byte_start];
     if(isSameByte())
@@ -91,7 +92,7 @@ constexpr void Deserializer::extract_first_byte(T & val, const uint8_t * buffer)
 
 //-----------------------------------------------------------------------------
 template<typename T>
-constexpr void Deserializer::extract_intermediate_bytes(T & val, const uint8_t * buffer) const noexcept
+constexpr void Deserializer::extract_intermediate_bytes(T & val, const std::span<const uint8_t> buffer) const noexcept
 {
     for(size_t i=byte_start + 1; i<byte_end; i++)
         val = (val << 8) | buffer[i];
@@ -99,7 +100,7 @@ constexpr void Deserializer::extract_intermediate_bytes(T & val, const uint8_t *
 
 //-----------------------------------------------------------------------------
 template<typename T>
-constexpr void Deserializer::extract_last_byte(T & val, const uint8_t * buffer) const noexcept
+constexpr void Deserializer::extract_last_byte(T & val, const std::span<const uint8_t> buffer) const noexcept
 {
     if(not isSameByte())
         val = (val << last_byte_shift) | (buffer[byte_end] >> (8 - last_byte_shift));
