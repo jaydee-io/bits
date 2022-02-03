@@ -48,37 +48,46 @@ BITS_DECLARE_ENUM_WITH_TYPE_AND_NAMESPACE(testNamespace, TestEnumType, uint8_t,
 )
 
 TEST(Enum, ToString) {
+    EXPECT_EQ(bits::to_string(TestEnumType {}), "<invalid>"); // Empty enum
+    EXPECT_EQ(bits::to_string(TestEnumType::VAL_1), "VAL_1");
+    EXPECT_EQ(bits::to_string(TestEnumType::VAL_2), "VAL_2");
+    EXPECT_EQ(bits::to_string(TestEnumType::VAL_3), "VAL_3");
+    EXPECT_EQ(bits::to_string(TestEnumType::VAL_4), "VAL_4");
 
-    EXPECT_EQ(to_string(TestEnumType {}), "<invalid>"); // Empty enum
-    EXPECT_EQ(to_string(TestEnumType::VAL_1), "VAL_1");
-    EXPECT_EQ(to_string(TestEnumType::VAL_2), "VAL_2");
-    EXPECT_EQ(to_string(TestEnumType::VAL_3), "VAL_3");
-    EXPECT_EQ(to_string(TestEnumType::VAL_4), "VAL_4");
+    EXPECT_EQ(bits::to_string(TestEnum8Values {}), "<invalid>"); // Empty enum
+    EXPECT_EQ(bits::to_string(TestEnum8Values::VAL_1), "VAL_1");
+    EXPECT_EQ(bits::to_string(TestEnum8Values::VAL_2), "VAL_2");
+    EXPECT_EQ(bits::to_string(TestEnum8Values::VAL_3), "VAL_3");
+    EXPECT_EQ(bits::to_string(TestEnum8Values::VAL_4), "VAL_4");
+    EXPECT_EQ(bits::to_string(TestEnum8Values::VAL_5), "VAL_5");
+    EXPECT_EQ(bits::to_string(TestEnum8Values::VAL_6), "VAL_6");
+    EXPECT_EQ(bits::to_string(TestEnum8Values::VAL_7), "VAL_7");
+    EXPECT_EQ(bits::to_string(TestEnum8Values::VAL_8), "VAL_8");
 }
 
 TEST(Enum, ToString_WithoutType) {
-    EXPECT_EQ(to_string(TestEnumWithoutType {}), "<invalid>"); // Empty enum
-    EXPECT_EQ(to_string(TestEnumWithoutType::VAL_1), "VAL_1");
-    EXPECT_EQ(to_string(TestEnumWithoutType::VAL_2), "VAL_2");
-    EXPECT_EQ(to_string(TestEnumWithoutType::VAL_3), "VAL_3");
-    EXPECT_EQ(to_string(TestEnumWithoutType::VAL_4), "VAL_4");
+    EXPECT_EQ(bits::to_string(TestEnumWithoutType {}), "<invalid>"); // Empty enum
+    EXPECT_EQ(bits::to_string(TestEnumWithoutType::VAL_1), "VAL_1");
+    EXPECT_EQ(bits::to_string(TestEnumWithoutType::VAL_2), "VAL_2");
+    EXPECT_EQ(bits::to_string(TestEnumWithoutType::VAL_3), "VAL_3");
+    EXPECT_EQ(bits::to_string(TestEnumWithoutType::VAL_4), "VAL_4");
 }
 
 TEST(Enum, ToString_WithNamespace) {
 
-    EXPECT_EQ(to_string(testNamespace::TestEnumType {}), "<invalid>"); // Empty enum
-    EXPECT_EQ(to_string(testNamespace::TestEnumType::VAL_1), "VAL_1");
-    EXPECT_EQ(to_string(testNamespace::TestEnumType::VAL_2), "VAL_2");
-    EXPECT_EQ(to_string(testNamespace::TestEnumType::VAL_3), "VAL_3");
-    EXPECT_EQ(to_string(testNamespace::TestEnumType::VAL_4), "VAL_4");
+    EXPECT_EQ(bits::to_string(testNamespace::TestEnumType {}), "<invalid>"); // Empty enum
+    EXPECT_EQ(bits::to_string(testNamespace::TestEnumType::VAL_1), "VAL_1");
+    EXPECT_EQ(bits::to_string(testNamespace::TestEnumType::VAL_2), "VAL_2");
+    EXPECT_EQ(bits::to_string(testNamespace::TestEnumType::VAL_3), "VAL_3");
+    EXPECT_EQ(bits::to_string(testNamespace::TestEnumType::VAL_4), "VAL_4");
 }
 
 TEST(Enum, ToString_WithNamespace_WithoutType) {
-    EXPECT_EQ(to_string(testNamespace::TestEnumWithoutType {}), "<invalid>"); // Empty enum
-    EXPECT_EQ(to_string(testNamespace::TestEnumWithoutType::VAL_1), "VAL_1");
-    EXPECT_EQ(to_string(testNamespace::TestEnumWithoutType::VAL_2), "VAL_2");
-    EXPECT_EQ(to_string(testNamespace::TestEnumWithoutType::VAL_3), "VAL_3");
-    EXPECT_EQ(to_string(testNamespace::TestEnumWithoutType::VAL_4), "VAL_4");
+    EXPECT_EQ(bits::to_string(testNamespace::TestEnumWithoutType {}), "<invalid>"); // Empty enum
+    EXPECT_EQ(bits::to_string(testNamespace::TestEnumWithoutType::VAL_1), "VAL_1");
+    EXPECT_EQ(bits::to_string(testNamespace::TestEnumWithoutType::VAL_2), "VAL_2");
+    EXPECT_EQ(bits::to_string(testNamespace::TestEnumWithoutType::VAL_3), "VAL_3");
+    EXPECT_EQ(bits::to_string(testNamespace::TestEnumWithoutType::VAL_4), "VAL_4");
 }
 
 TEST(Enum, Size) {
@@ -87,6 +96,14 @@ TEST(Enum, Size) {
     EXPECT_EQ(bits::EnumTraits<TestEnumWithoutType>::size(), 4);
     EXPECT_EQ(bits::EnumTraits<testNamespace::TestEnumType>::size(), 4);
     EXPECT_EQ(bits::EnumTraits<testNamespace::TestEnumWithoutType>::size(), 4);
+}
+
+TEST(Enum, Sizeof) {
+    EXPECT_EQ(sizeof(TestEnum8Values), sizeof(int));
+    EXPECT_EQ(sizeof(TestEnumType), sizeof(uint8_t));
+    EXPECT_EQ(sizeof(TestEnumWithoutType), sizeof(int));
+    EXPECT_EQ(sizeof(testNamespace::TestEnumType), sizeof(uint8_t));
+    EXPECT_EQ(sizeof(testNamespace::TestEnumWithoutType), sizeof(int));
 }
 
 TEST(Enum, NotBitsEnum) {

@@ -268,21 +268,21 @@ void printEthernetHeader(EthernetHeader & ethernetHeader)
     printf("%02X", ':', ethernetHeader.src);
     printf(" -> ");
     printf("%02X", ':', ethernetHeader.dest);
-    printf(" | %.*s", to_string(ethernetHeader.proto));
+    printf(" | %.*s", bits::to_string(ethernetHeader.proto));
     printf("\n");
 }
 
 void printIpHeader(IpHeader & ipHeader)
 {
     printf("IP  : Version=%d | Header=%d bytes", ipHeader.version, ipHeader.ihl * 4);
-    printf(" | ToS=%.*s", to_string(ipHeader.tos));
+    printf(" | ToS=%.*s", bits::to_string(ipHeader.tos));
     printf(" | PRIO=%d", ipHeader.precedence);
     printf(" | Length=%d", ipHeader.length);
     printf(" | ID=%d", ipHeader.identification);
-    printf(" | Flags=%.*s", to_string(ipHeader.flags));
+    printf(" | Flags=%.*s", bits::to_string(ipHeader.flags));
     printf(" | Frag offset=%d", ipHeader.fragmentOffset);
     printf(" | TTL=%d", ipHeader.ttl);
-    printf(" | Proto=%.*s", to_string(ipHeader.protocol));
+    printf(" | Proto=%.*s", bits::to_string(ipHeader.protocol));
     printf(" | Check=0x%04X", ipHeader.checksum);
     printf(" | Src=");
     printf("%d", '.', ipHeader.source);
@@ -297,7 +297,7 @@ void printTcpHeader(TcpHeader & tcpHeader)
     printf(" | SEQ=%u", tcpHeader.sequenceNumber);
     printf(" | ACK=%u", tcpHeader.acknowledgementNumber);
     printf(" | Data Offset=%d bytes", tcpHeader.dataOffset * 4);
-    printf(" | Flags=%.*s", to_string(tcpHeader.flags));
+    printf(" | Flags=%.*s", bits::to_string(tcpHeader.flags));
     printf(" | Window=%d", tcpHeader.windowSize);
     printf(" | Checksum=0x%04X", tcpHeader.checksum);
     printf(" | URG=%d", tcpHeader.urgentPointer);

@@ -155,36 +155,44 @@ inline constexpr bits::Flags<EnumType> operator ~(EnumType lhs) noexcept;
 //- )
 //-----------------------------------------------------------------------------
 #define BITS_DECLARE_FLAGS(name, ...) \
-    __BITS_FLAGS_DECLARE_ENUM(name, __VA_ARGS__) \
+    __BITS_FLAGS_DECLARE_ENUM(name, , __VA_ARGS__) \
     __BITS_FLAGS_DECLARE_USING(name) \
-    __BITS_FLAGS_DECLARE_TO_STRING(name, __VA_ARGS__) \
+    __BITS_BEGIN_NAMESPACE(bits) \
+    __BITS_FLAGS_DECLARE_TO_STRING(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
     __BITS_FLAGS_DECLARE_TRAIT(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
-    __BITS_ENUM_DECLARE_TRAITS(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__)
+    __BITS_ENUM_DECLARE_TRAITS(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
+    __BITS_END_NAMESPACE(bits)
 
 #define BITS_DECLARE_FLAGS_WITH_TYPE(name, rawType, ...) \
-    __BITS_FLAGS_DECLARE_ENUM_WITH_TYPE(name, rawType, __VA_ARGS__) \
+    __BITS_FLAGS_DECLARE_ENUM(name, : rawType, __VA_ARGS__) \
     __BITS_FLAGS_DECLARE_USING(name) \
-    __BITS_FLAGS_DECLARE_TO_STRING(name, __VA_ARGS__) \
+    __BITS_BEGIN_NAMESPACE(bits) \
+    __BITS_FLAGS_DECLARE_TO_STRING(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
     __BITS_FLAGS_DECLARE_TRAIT(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
-    __BITS_ENUM_DECLARE_TRAITS(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__)
+    __BITS_ENUM_DECLARE_TRAITS(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
+    __BITS_END_NAMESPACE(bits)
 
 #define BITS_DECLARE_FLAGS_WITH_NAMESPACE(nameSpace, name, ...) \
     __BITS_BEGIN_NAMESPACE(nameSpace) \
-    __BITS_FLAGS_DECLARE_ENUM(name, __VA_ARGS__) \
+    __BITS_FLAGS_DECLARE_ENUM(name, , __VA_ARGS__) \
     __BITS_FLAGS_DECLARE_USING(name) \
-    __BITS_FLAGS_DECLARE_TO_STRING(name, __VA_ARGS__) \
     __BITS_END_NAMESPACE(nameSpace) \
+    __BITS_BEGIN_NAMESPACE(bits) \
+    __BITS_FLAGS_DECLARE_TO_STRING(nameSpace::, name, __VA_ARGS__) \
     __BITS_FLAGS_DECLARE_TRAIT(nameSpace::, name, __VA_ARGS__) \
-    __BITS_ENUM_DECLARE_TRAITS(nameSpace::, name, __VA_ARGS__)
+    __BITS_ENUM_DECLARE_TRAITS(nameSpace::, name, __VA_ARGS__) \
+    __BITS_END_NAMESPACE(bits)
 
 #define BITS_DECLARE_FLAGS_WITH_TYPE_AND_NAMESPACE(nameSpace, name, rawType, ...) \
     __BITS_BEGIN_NAMESPACE(nameSpace) \
-    __BITS_FLAGS_DECLARE_ENUM_WITH_TYPE(name, rawType, __VA_ARGS__) \
+    __BITS_FLAGS_DECLARE_ENUM(name, : rawType, __VA_ARGS__) \
     __BITS_FLAGS_DECLARE_USING(name) \
-    __BITS_FLAGS_DECLARE_TO_STRING(name, __VA_ARGS__) \
     __BITS_END_NAMESPACE(nameSpace) \
+    __BITS_BEGIN_NAMESPACE(bits) \
+    __BITS_FLAGS_DECLARE_TO_STRING(nameSpace::, name, __VA_ARGS__) \
     __BITS_FLAGS_DECLARE_TRAIT(nameSpace::, name, __VA_ARGS__) \
-    __BITS_ENUM_DECLARE_TRAITS(nameSpace::, name, __VA_ARGS__)
+    __BITS_ENUM_DECLARE_TRAITS(nameSpace::, name, __VA_ARGS__) \
+    __BITS_END_NAMESPACE(bits)
 
 
 
@@ -328,12 +336,8 @@ inline constexpr bits::Flags<EnumType> operator ~(EnumType lhs)               no
 #define __BITS_FLAGS_NAME(name) Flags ## name
 
 // Enum type
-#define __BITS_FLAGS_DECLARE_ENUM(name, ...) \
-enum class name { \
-    __BITS_FLAGS_DECLARE_ALL_ENUM_VALUES(__VA_ARGS__) \
-};
-#define __BITS_FLAGS_DECLARE_ENUM_WITH_TYPE(name, rawType, ...) \
-enum class name : rawType { \
+#define __BITS_FLAGS_DECLARE_ENUM(name, rawTypeSpec, ...) \
+enum class name rawTypeSpec { \
     __BITS_FLAGS_DECLARE_ALL_ENUM_VALUES(__VA_ARGS__) \
 };
 #define __BITS_FLAGS_DECLARE_ALL_ENUM_VALUES(...)    __BITS_RECURSE_PAIR(__BITS_FLAGS_DECLARE_ENUM_VALUE, __VA_ARGS__)
@@ -344,27 +348,25 @@ enum class name : rawType { \
 
 // Flags traits
 #define __BITS_FLAGS_DECLARE_TRAIT(nameSpace, name, ...) \
-namespace bits { \
 template<> \
 struct FlagsTraits<nameSpace name> : std::true_type { \
     static constexpr const auto ALL_FLAGS = \
         __BITS_FLAGS_DECLARE_ALL_TRAIT_VALUES(nameSpace, name, __VA_ARGS__) \
     ; \
-}; \
-}; // namespace bits
+};
 #define __BITS_FLAGS_DECLARE_ALL_TRAIT_VALUES(nameSpace, name, ...)    __BITS_RECURSE_SINGLE(__BITS_FLAGS_DECLARE_TRAIT_VALUE, |, nameSpace, name, __VA_ARGS__)
 #define __BITS_FLAGS_DECLARE_TRAIT_VALUE(nameSpace, name, val)         nameSpace __BITS_FLAGS_NAME(name)::MaskType(nameSpace name::val)
 
 // Flags to string free standing function
-#define __BITS_FLAGS_DECLARE_TO_STRING(name, ...) \
-inline std::string to_string(__BITS_FLAGS_NAME(name) value) { \
+#define __BITS_FLAGS_DECLARE_TO_STRING(nameSpace, name, ...) \
+inline std::string to_string(nameSpace __BITS_FLAGS_NAME(name) value) { \
     if(not value) \
         return "{}"; \
     std::string result; \
-    __BITS_FLAGS_DECLARE_ALL_TO_STRING_VALUES(name, __VA_ARGS__) \
+    __BITS_FLAGS_DECLARE_ALL_TO_STRING_VALUES(nameSpace, name, __VA_ARGS__) \
     return "{ " + result.substr(0, result.size() - 3) + " }"; \
 }
-#define __BITS_FLAGS_DECLARE_ALL_TO_STRING_VALUES(name, ...)            __BITS_RECURSE_SINGLE(__BITS_FLAGS_DECLARE_TO_STRING_VALUE, , __BITS_EMPTY_NAMESPACE, name, __VA_ARGS__)
-#define __BITS_FLAGS_DECLARE_TO_STRING_VALUE(nameSpace, name, val)      if(value & name::val) result += #val " | ";
+#define __BITS_FLAGS_DECLARE_ALL_TO_STRING_VALUES(nameSpace, name, ...) __BITS_RECURSE_SINGLE(__BITS_FLAGS_DECLARE_TO_STRING_VALUE, , nameSpace, name, __VA_ARGS__)
+#define __BITS_FLAGS_DECLARE_TO_STRING_VALUE(nameSpace, name, val)      if(value & nameSpace name::val) result += #val " | ";
 
 #endif /* BITS_FLAGS_H */

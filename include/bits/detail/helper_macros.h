@@ -20,8 +20,8 @@
 
 // Enum traits : size()
 #define __BITS_ENUM_DECLARE_TRAITS(nameSpace, name, ...) \
-template<> struct bits::detail::IsBitEnum<nameSpace name> : std::true_type {}; \
-template<> struct bits::EnumTraits<nameSpace name> { \
+template<> struct detail::IsBitEnum<nameSpace name> : std::true_type {}; \
+template<> struct EnumTraits<nameSpace name> { \
     inline static constexpr size_t size(void) { return __BITS_NUM_ARGS(__VA_ARGS__) / 2u; } \
 };
 
