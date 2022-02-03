@@ -13,9 +13,7 @@
 #include <bits/detail/helper_macros.h>
 #include <type_traits>
 #include <string>
-#if __cplusplus >= 202002L
 #include <compare>
-#endif // __cplusplus >= 202002L
 
 namespace bits {
 
@@ -50,16 +48,7 @@ public:
     constexpr explicit Flags(MaskType val) noexcept;
 
     // Relationnal operators
-#if __cplusplus >= 202002L
     constexpr auto operator <=>(const Flags & rhs) const noexcept = default;
-#else // __cplusplus < 202002L
-    constexpr bool operator  < (const Flags & rhs) const noexcept;
-    constexpr bool operator  <=(const Flags & rhs) const noexcept;
-    constexpr bool operator  > (const Flags & rhs) const noexcept;
-    constexpr bool operator  >=(const Flags & rhs) const noexcept;
-    constexpr bool operator  ==(const Flags & rhs) const noexcept;
-    constexpr bool operator  !=(const Flags & rhs) const noexcept;
-#endif // __cplusplus >= 202002L
 
     // Logical operator
     constexpr bool operator !(void) const noexcept;
@@ -96,24 +85,6 @@ private:
 //-----------------------------------------------------------------------------
 template<typename T>
 inline constexpr bool is_flags_bits_v = FlagsTraits<T>::value;
-
-//-----------------------------------------------------------------------------
-//- Relationnal operators
-//-----------------------------------------------------------------------------
-#if __cplusplus < 202002L
-template<typename EnumType>
-inline constexpr bool operator < (EnumType lhs, const Flags<EnumType> & rhs) noexcept;
-template<typename EnumType>
-inline constexpr bool operator <=(EnumType lhs, const Flags<EnumType> & rhs) noexcept;
-template<typename EnumType>
-inline constexpr bool operator > (EnumType lhs, const Flags<EnumType> & rhs) noexcept;
-template<typename EnumType>
-inline constexpr bool operator >=(EnumType lhs, const Flags<EnumType> & rhs) noexcept;
-template<typename EnumType>
-inline constexpr bool operator ==(EnumType lhs, const Flags<EnumType> & rhs) noexcept;
-template<typename EnumType>
-inline constexpr bool operator !=(EnumType lhs, const Flags<EnumType> & rhs) noexcept;
-#endif // __cplusplus < 202002L
 
 //-----------------------------------------------------------------------------
 //- Bitwise operators enum/flags
@@ -224,24 +195,6 @@ constexpr Flags<EnumType>::Flags(MaskType val) noexcept
 {}
 
 //-----------------------------------------------------------------------------
-//- Relationnal operators
-//-----------------------------------------------------------------------------
-#if __cplusplus < 202002L
-template<typename EnumType>
-constexpr bool Flags<EnumType>::operator < (const Flags & rhs) const noexcept { return mask <  rhs.mask; }
-template<typename EnumType>
-constexpr bool Flags<EnumType>::operator <=(const Flags & rhs) const noexcept { return mask <= rhs.mask; }
-template<typename EnumType>
-constexpr bool Flags<EnumType>::operator > (const Flags & rhs) const noexcept { return mask >  rhs.mask; }
-template<typename EnumType>
-constexpr bool Flags<EnumType>::operator >=(const Flags & rhs) const noexcept { return mask >= rhs.mask; }
-template<typename EnumType>
-constexpr bool Flags<EnumType>::operator ==(const Flags & rhs) const noexcept { return mask == rhs.mask; }
-template<typename EnumType>
-constexpr bool Flags<EnumType>::operator !=(const Flags & rhs) const noexcept { return mask != rhs.mask; }
-#endif // __cplusplus >= 202002L
-
-//-----------------------------------------------------------------------------
 //- Logical operator
 //-----------------------------------------------------------------------------
 template<typename EnumType>
@@ -290,24 +243,6 @@ template<typename EnumType>
 constexpr bool Flags<EnumType>::isSet   (const Flags & val) const noexcept { return static_cast<bool>( (*this) & val); }
 template<typename EnumType>
 constexpr bool Flags<EnumType>::isNotSet(const Flags & val) const noexcept { return static_cast<bool>(~(*this) & val); }
-
-//-----------------------------------------------------------------------------
-//- Relationnal operators
-//-----------------------------------------------------------------------------
-#if __cplusplus < 202002L
-template<typename EnumType>
-inline constexpr bool operator < (EnumType lhs, const Flags<EnumType> & rhs) noexcept { return rhs >  lhs; }
-template<typename EnumType>
-inline constexpr bool operator <=(EnumType lhs, const Flags<EnumType> & rhs) noexcept { return rhs >= lhs; }
-template<typename EnumType>
-inline constexpr bool operator > (EnumType lhs, const Flags<EnumType> & rhs) noexcept { return rhs <  lhs; }
-template<typename EnumType>
-inline constexpr bool operator >=(EnumType lhs, const Flags<EnumType> & rhs) noexcept { return rhs <= lhs; }
-template<typename EnumType>
-inline constexpr bool operator ==(EnumType lhs, const Flags<EnumType> & rhs) noexcept { return rhs == lhs; }
-template<typename EnumType>
-inline constexpr bool operator !=(EnumType lhs, const Flags<EnumType> & rhs) noexcept { return rhs != lhs; }
-#endif // __cplusplus < 202002L
 
 //-----------------------------------------------------------------------------
 //- Bitwise operators enum/flags

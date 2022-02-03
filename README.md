@@ -8,7 +8,7 @@
 <!-- END   BADGES -->
 
 ## What is `bits`?
-`bits` is a C++ 17 library designed to ease low-level bits manipulation from expressive high-level abstractions.
+`bits` is a C++ 20 library designed to ease low-level bits manipulation from expressive high-level abstractions.
 
 In details, `bits` allows :
 - inserting or extracting arbitrary size bits fields into/from raw `uint8_t` buffer ([detail](#bits-insertion-extraction))

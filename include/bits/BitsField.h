@@ -8,9 +8,7 @@
 #define BITS_BITS_FIELD_H
 
 #include <cstdint>
-#if __cplusplus >= 202002L
 #include <compare>
-#endif // __cplusplus >= 202002L
 
 namespace bits {
 
@@ -36,16 +34,7 @@ public:
     constexpr inline BitsField & operator =(BitsField && rhs) noexcept = default;
 
     // Relationnal operators
-#if __cplusplus >= 202002L
     constexpr auto operator <=>(const BitsField & rhs) const noexcept = default;
-#else // __cplusplus < 202002L
-    constexpr bool operator  < (const BitsField & rhs) const noexcept;
-    constexpr bool operator  <=(const BitsField & rhs) const noexcept;
-    constexpr bool operator  > (const BitsField & rhs) const noexcept;
-    constexpr bool operator  >=(const BitsField & rhs) const noexcept;
-    constexpr bool operator  ==(const BitsField & rhs) const noexcept;
-    constexpr bool operator  !=(const BitsField & rhs) const noexcept;
-#endif // __cplusplus >= 202002L
 
     // Logical operator
     constexpr bool operator !(void) const noexcept;
@@ -97,24 +86,6 @@ constexpr inline BitsField<T, HIGH, LOW> & BitsField<T, HIGH, LOW>::operator =(T
     value = std::move(rhs);
     return *this;
 }
-
-//-----------------------------------------------------------------------------
-//- Relationnal operators
-//-----------------------------------------------------------------------------
-#if __cplusplus < 202002L
-template<typename T, size_t HIGH, size_t LOW>
-constexpr bool BitsField<T, HIGH, LOW>::operator < (const BitsField & rhs) const noexcept { return value <  rhs.value; }
-template<typename T, size_t HIGH, size_t LOW>
-constexpr bool BitsField<T, HIGH, LOW>::operator <=(const BitsField & rhs) const noexcept { return value <= rhs.value; }
-template<typename T, size_t HIGH, size_t LOW>
-constexpr bool BitsField<T, HIGH, LOW>::operator > (const BitsField & rhs) const noexcept { return value >  rhs.value; }
-template<typename T, size_t HIGH, size_t LOW>
-constexpr bool BitsField<T, HIGH, LOW>::operator >=(const BitsField & rhs) const noexcept { return value >= rhs.value; }
-template<typename T, size_t HIGH, size_t LOW>
-constexpr bool BitsField<T, HIGH, LOW>::operator ==(const BitsField & rhs) const noexcept { return value == rhs.value; }
-template<typename T, size_t HIGH, size_t LOW>
-constexpr bool BitsField<T, HIGH, LOW>::operator !=(const BitsField & rhs) const noexcept { return value != rhs.value; }
-#endif // __cplusplus >= 202002L
 
 //-----------------------------------------------------------------------------
 //- Logical operator
