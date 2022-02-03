@@ -75,7 +75,7 @@ T & BitsStream<T>::skip(size_t nbBits)
 template<typename T>
 T & BitsStream<T>::reset(void)
 {
-    posBits = 0;
+    posBits = offsetBits;
     nbBitsNext = 0;
 
     return static_cast<T &>(*this);
@@ -97,7 +97,7 @@ void BitsStream<T>::setManipulation(const BitsStreamManipulation manip)
     {
         case BitsStreamManipulation::Action::STREAM_BITS : nbBitsNext = manip.value; break;
         case BitsStreamManipulation::Action::SKIP_BITS   : posBits += manip.value; break;
-        case BitsStreamManipulation::Action::RESET       : posBits = offsetBits; nbBitsNext = 0; break;
+        case BitsStreamManipulation::Action::RESET       : posBits = offsetBits; break;
     }
 }
 

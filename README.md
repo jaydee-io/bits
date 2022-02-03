@@ -75,9 +75,9 @@ View some usage examples :
 `insert()` and `extract()` methods could be used to respectively insert and extract bits.
 
 These classes also provides method :
-- `nbBitsStreamed()` to get the number of bits currently streamed (including initial offset)
+- `nbBitsStreamed()` to get the number of bits currently streamed (excluding initial offset)
 - `skip(size_t nbBits)` to skip a specified number of bits
-- `reset()` to reset the stream at the begining. _Beware that this reset the stream to position `0` and NOT to initial offset._
+- `reset()` to reset the stream at the begining. _This reset the stream position to initial offset (`0` if not specified)._
 
 ```c++
 #include <bits/BitsSerializer.h>
