@@ -14,7 +14,7 @@ using ::testing::ElementsAre;
 
 TEST(BitsExtraction_CppArray, Unsigned_8bits)
 {
-    std::array<uint8_t, 8> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
+    std::array<const uint8_t, 8> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
 
     ASSERT_EQ(bits::extract<uint8_t>(buffer, 3,  0 ), 0x03);
     ASSERT_EQ(bits::extract<uint8_t>(buffer, 5,  4 ), 0x01);
@@ -25,7 +25,7 @@ TEST(BitsExtraction_CppArray, Unsigned_8bits)
 
 TEST(BitsExtraction_CppArray, Unsigned_16bits)
 {
-    std::array<uint8_t, 8> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
+    std::array<const uint8_t, 8> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
 
     ASSERT_EQ(bits::extract<uint16_t>(buffer, 3,  0 ), 0x0003);
     ASSERT_EQ(bits::extract<uint16_t>(buffer, 5,  4 ), 0x0001);
@@ -35,7 +35,7 @@ TEST(BitsExtraction_CppArray, Unsigned_16bits)
 
 TEST(BitsExtraction_CppArray, Unsigned_32bits)
 {
-    std::array<uint8_t, 8> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
+    std::array<const uint8_t, 8> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
 
     ASSERT_EQ(bits::extract<uint32_t>(buffer, 3,  0 ), 0x00000003);
     ASSERT_EQ(bits::extract<uint32_t>(buffer, 5,  4 ), 0x00000001);
@@ -46,7 +46,7 @@ TEST(BitsExtraction_CppArray, Unsigned_32bits)
 
 TEST(BitsExtraction_CppArray, Unsigned_8bits_with_offset)
 {
-    std::array<uint8_t, 8> buffer = { 0x00, 0x00, 0x00, 0x00, 0x0D, 0x7F, 0xDC, 0x0D };
+    std::array<const uint8_t, 8> buffer = { 0x00, 0x00, 0x00, 0x00, 0x0D, 0x7F, 0xDC, 0x0D };
 
     ASSERT_EQ(bits::extract<uint8_t>(buffer, 37, 34), 0x03);
     ASSERT_EQ(bits::extract<uint8_t>(buffer, 39, 38), 0x01);
@@ -57,7 +57,7 @@ TEST(BitsExtraction_CppArray, Unsigned_8bits_with_offset)
 
 TEST(BitsExtraction_CppArray, Unsigned_16bits_with_offset)
 {
-    std::array<uint8_t, 8> buffer = { 0x00, 0x00, 0x00, 0x00, 0x03, 0x5F, 0xF7, 0x03 };
+    std::array<const uint8_t, 8> buffer = { 0x00, 0x00, 0x00, 0x00, 0x03, 0x5F, 0xF7, 0x03 };
 
     ASSERT_EQ(bits::extract<uint16_t>(buffer, 39, 36), 0x0003);
     ASSERT_EQ(bits::extract<uint16_t>(buffer, 41, 40), 0x0001);
@@ -67,7 +67,7 @@ TEST(BitsExtraction_CppArray, Unsigned_16bits_with_offset)
 
 TEST(BitsExtraction_CppArray, Unsigned_32bits_with_offset)
 {
-    std::array<uint8_t, 8> buffer = { 0x00, 0x0D, 0x7F, 0xDC, 0x0D, 0x7F, 0xDC, 0x0D };
+    std::array<const uint8_t, 8> buffer = { 0x00, 0x0D, 0x7F, 0xDC, 0x0D, 0x7F, 0xDC, 0x0D };
 
     ASSERT_EQ(bits::extract<uint32_t>(buffer, 13, 10), 0x00000003);
     ASSERT_EQ(bits::extract<uint32_t>(buffer, 15, 14), 0x00000001);
@@ -78,7 +78,7 @@ TEST(BitsExtraction_CppArray, Unsigned_32bits_with_offset)
 
 TEST(BitsExtraction_CppArray, Signed_8bits)
 {
-    std::array<uint8_t, 8> buffer = { 0xDC, 0xFE, 0x3D, 0xCF, 0xDC, 0xFE, 0x3D, 0xC7 };
+    std::array<const uint8_t, 8> buffer = { 0xDC, 0xFE, 0x3D, 0xCF, 0xDC, 0xFE, 0x3D, 0xC7 };
 
     ASSERT_EQ(bits::extract<int8_t>(buffer, 3,  0 ),   -3);
     ASSERT_EQ(bits::extract<int8_t>(buffer, 5,  4 ),   -1);
@@ -89,7 +89,7 @@ TEST(BitsExtraction_CppArray, Signed_8bits)
 
 TEST(BitsExtraction_CppArray, Signed_16bits)
 {
-    std::array<uint8_t, 8> buffer = { 0xDC, 0xFE, 0x3D, 0xCF, 0xDC, 0xFE, 0x3D, 0xC7 };
+    std::array<const uint8_t, 8> buffer = { 0xDC, 0xFE, 0x3D, 0xCF, 0xDC, 0xFE, 0x3D, 0xC7 };
 
     ASSERT_EQ(bits::extract<int16_t>(buffer, 3,  0 ),    -3);
     ASSERT_EQ(bits::extract<int16_t>(buffer, 5,  4 ),    -1);
@@ -99,7 +99,7 @@ TEST(BitsExtraction_CppArray, Signed_16bits)
 
 TEST(BitsExtraction_CppArray, Signed_32bits)
 {
-    std::array<uint8_t, 8> buffer = { 0xDC, 0xFE, 0x3D, 0xCF, 0xDC, 0xFE, 0x3D, 0xC7 };
+    std::array<const uint8_t, 8> buffer = { 0xDC, 0xFE, 0x3D, 0xCF, 0xDC, 0xFE, 0x3D, 0xC7 };
 
     ASSERT_EQ(bits::extract<int32_t>(buffer, 3,  0 ),      -3);
     ASSERT_EQ(bits::extract<int32_t>(buffer, 5,  4 ),      -1);
@@ -114,7 +114,7 @@ TEST(BitsExtraction_CppArray, Signed_32bits)
 
 TEST(BitsExtraction_CppArray, TemplatedPosition_Unsigned_8bits)
 {
-    std::array<uint8_t, 8> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
+    std::array<const uint8_t, 8> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
 
     ASSERT_EQ((bits::extract<uint8_t, 3,  0 >(buffer)), 0x03);
     ASSERT_EQ((bits::extract<uint8_t, 5,  4 >(buffer)), 0x01);
@@ -125,7 +125,7 @@ TEST(BitsExtraction_CppArray, TemplatedPosition_Unsigned_8bits)
 
 TEST(BitsExtraction_CppArray, TemplatedPosition_Unsigned_16bits)
 {
-    std::array<uint8_t, 8> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
+    std::array<const uint8_t, 8> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
 
     ASSERT_EQ((bits::extract<uint16_t, 3,  0 >(buffer)), 0x0003);
     ASSERT_EQ((bits::extract<uint16_t, 5,  4 >(buffer)), 0x0001);
@@ -135,7 +135,7 @@ TEST(BitsExtraction_CppArray, TemplatedPosition_Unsigned_16bits)
 
 TEST(BitsExtraction_CppArray, TemplatedPosition_Unsigned_32bits)
 {
-    std::array<uint8_t, 8> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
+    std::array<const uint8_t, 8> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
 
     ASSERT_EQ((bits::extract<uint32_t, 3,  0 >(buffer)), 0x00000003);
     ASSERT_EQ((bits::extract<uint32_t, 5,  4 >(buffer)), 0x00000001);
@@ -146,7 +146,7 @@ TEST(BitsExtraction_CppArray, TemplatedPosition_Unsigned_32bits)
 
 TEST(BitsExtraction_CppArray, TemplatedPosition_Unsigned_8bits_with_offset)
 {
-    std::array<uint8_t, 8> buffer = { 0x00, 0x00, 0x00, 0x00, 0x0D, 0x7F, 0xDC, 0x0D };
+    std::array<const uint8_t, 8> buffer = { 0x00, 0x00, 0x00, 0x00, 0x0D, 0x7F, 0xDC, 0x0D };
 
     ASSERT_EQ((bits::extract<uint8_t, 37, 34>(buffer)), 0x03);
     ASSERT_EQ((bits::extract<uint8_t, 39, 38>(buffer)), 0x01);
@@ -157,7 +157,7 @@ TEST(BitsExtraction_CppArray, TemplatedPosition_Unsigned_8bits_with_offset)
 
 TEST(BitsExtraction_CppArray, TemplatedPosition_Unsigned_16bits_with_offset)
 {
-    std::array<uint8_t, 8> buffer = { 0x00, 0x00, 0x00, 0x00, 0x03, 0x5F, 0xF7, 0x03 };
+    std::array<const uint8_t, 8> buffer = { 0x00, 0x00, 0x00, 0x00, 0x03, 0x5F, 0xF7, 0x03 };
 
     ASSERT_EQ((bits::extract<uint16_t, 39, 36>(buffer)), 0x0003);
     ASSERT_EQ((bits::extract<uint16_t, 41, 40>(buffer)), 0x0001);
@@ -167,7 +167,7 @@ TEST(BitsExtraction_CppArray, TemplatedPosition_Unsigned_16bits_with_offset)
 
 TEST(BitsExtraction_CppArray, TemplatedPosition_Unsigned_32bits_with_offset)
 {
-    std::array<uint8_t, 8> buffer = { 0x00, 0x0D, 0x7F, 0xDC, 0x0D, 0x7F, 0xDC, 0x0D };
+    std::array<const uint8_t, 8> buffer = { 0x00, 0x0D, 0x7F, 0xDC, 0x0D, 0x7F, 0xDC, 0x0D };
 
     ASSERT_EQ((bits::extract<uint32_t, 13, 10>(buffer)), 0x00000003);
     ASSERT_EQ((bits::extract<uint32_t, 15, 14>(buffer)), 0x00000001);
@@ -178,7 +178,7 @@ TEST(BitsExtraction_CppArray, TemplatedPosition_Unsigned_32bits_with_offset)
 
 TEST(BitsExtraction_CppArray, TemplatedPosition_Signed_8bits)
 {
-    std::array<uint8_t, 8> buffer = { 0xDC, 0xFE, 0x3D, 0xCF, 0xDC, 0xFE, 0x3D, 0xC7 };
+    std::array<const uint8_t, 8> buffer = { 0xDC, 0xFE, 0x3D, 0xCF, 0xDC, 0xFE, 0x3D, 0xC7 };
 
     ASSERT_EQ((bits::extract<int8_t, 3,  0 >(buffer)),   -3);
     ASSERT_EQ((bits::extract<int8_t, 5,  4 >(buffer)),   -1);
@@ -189,7 +189,7 @@ TEST(BitsExtraction_CppArray, TemplatedPosition_Signed_8bits)
 
 TEST(BitsExtraction_CppArray, TemplatedPosition_Signed_16bits)
 {
-    std::array<uint8_t, 8> buffer = { 0xDC, 0xFE, 0x3D, 0xCF, 0xDC, 0xFE, 0x3D, 0xC7 };
+    std::array<const uint8_t, 8> buffer = { 0xDC, 0xFE, 0x3D, 0xCF, 0xDC, 0xFE, 0x3D, 0xC7 };
 
     ASSERT_EQ((bits::extract<int16_t, 3,  0 >(buffer)),    -3);
     ASSERT_EQ((bits::extract<int16_t, 5,  4 >(buffer)),    -1);
@@ -199,7 +199,7 @@ TEST(BitsExtraction_CppArray, TemplatedPosition_Signed_16bits)
 
 TEST(BitsExtraction_CppArray, TemplatedPosition_Signed_32bits)
 {
-    std::array<uint8_t, 8> buffer = { 0xDC, 0xFE, 0x3D, 0xCF, 0xDC, 0xFE, 0x3D, 0xC7 };
+    std::array<const uint8_t, 8> buffer = { 0xDC, 0xFE, 0x3D, 0xCF, 0xDC, 0xFE, 0x3D, 0xC7 };
 
     ASSERT_EQ((bits::extract<int32_t, 3,  0 >(buffer)),      -3);
     ASSERT_EQ((bits::extract<int32_t, 5,  4 >(buffer)),      -1);

@@ -20,10 +20,10 @@ namespace bits {
 //- Free standing functions
 //-----------------------------------------------------------------------------
 template<typename T>           constexpr T extract(const uint8_t * buffer, size_t high, size_t low);
-template<typename T, size_t N> constexpr T extract(const std::array<uint8_t, N> & buffer, size_t high, size_t low);
+template<typename T, size_t N> constexpr T extract(const std::array<const uint8_t, N> & buffer, size_t high, size_t low);
 
 template<typename T, size_t high, size_t low>           constexpr T extract(const uint8_t * buffer);
-template<typename T, size_t high, size_t low, size_t N> constexpr T extract(const std::array<uint8_t, N> & buffer);
+template<typename T, size_t high, size_t low, size_t N> constexpr T extract(const std::array<const uint8_t, N> & buffer);
 
 //-----------------------------------------------------------------------------
 //-
@@ -44,7 +44,7 @@ constexpr T extract(const uint8_t * buffer, size_t high, size_t low)
 
 //-----------------------------------------------------------------------------
 template<typename T, size_t N>
-constexpr T extract(const std::array<uint8_t, N> & buffer, size_t high, size_t low)
+constexpr T extract(const std::array<const uint8_t, N> & buffer, size_t high, size_t low)
 {
     return bits::extract<T>(buffer.data(), high, low);
 }
@@ -62,7 +62,7 @@ constexpr T extract(const uint8_t * buffer)
 
 //-----------------------------------------------------------------------------
 template<typename T, size_t high, size_t low, size_t N>
-constexpr T extract(const std::array<uint8_t, N> & buffer)
+constexpr T extract(const std::array<const uint8_t, N> & buffer)
 {
     static_assert((N * 8) >= (high - low + 1));
 
