@@ -8,7 +8,6 @@
 #define BITS_ENUM_H
 
 #include <bits/detail/helper_macros.h>
-#include <string_view>
 
 //-----------------------------------------------------------------------------
 //- Helper macros to declare strongly type enums.
@@ -65,16 +64,5 @@ enum class name rawTypeSpec { \
 };
 #define __BITS_ENUM_DECLARE_ALL_ENUM_VALUES(...)    __BITS_RECURSE_PAIR(__BITS_ENUM_DECLARE_ENUM_VALUE, __VA_ARGS__)
 #define __BITS_ENUM_DECLARE_ENUM_VALUE(name, val)   name = val
-
-// Enum to string_view free standing function
-#define __BITS_ENUM_DECLARE_TO_STRING(nameSpace, name, ...) \
-inline std::string_view to_string(nameSpace name value) { \
-    switch(value) { \
-        __BITS_ENUM_DECLARE_ALL_TO_STRING_VALUES(nameSpace, name, __VA_ARGS__) \
-    } \
-    return "<invalid>"; \
-}
-#define __BITS_ENUM_DECLARE_ALL_TO_STRING_VALUES(nameSpace, name, ...)  __BITS_RECURSE_SINGLE(__BITS_ENUM_DECLARE_TO_STRING_VALUE, , nameSpace, name, __VA_ARGS__)
-#define __BITS_ENUM_DECLARE_TO_STRING_VALUE(nameSpace, name, val)       case nameSpace name::val : return #val;
 
 #endif // BITS_ENUM_H

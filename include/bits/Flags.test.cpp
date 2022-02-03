@@ -359,6 +359,15 @@ TEST(Flags, ToString) {
     EXPECT_EQ(bits::to_string(flags), "{ BIT_0 | BIT_1 | BIT_2 | BIT_3 | BIT_4 }");
 }
 
+TEST(Flags, ToStringEnum) {
+    EXPECT_EQ(bits::to_string(TestType {}), "<invalid>"); // Empty enum
+    EXPECT_EQ(bits::to_string(TestType::BIT_0), "BIT_0");
+    EXPECT_EQ(bits::to_string(TestType::BIT_1), "BIT_1");
+    EXPECT_EQ(bits::to_string(TestType::BIT_2), "BIT_2");
+    EXPECT_EQ(bits::to_string(TestType::BIT_3), "BIT_3");
+    EXPECT_EQ(bits::to_string(TestType::BIT_4), "BIT_4");
+}
+
 TEST(Flags, ToString_WithoutType) {
     // Empty flags
     FlagsTestWithoutType flags;
@@ -380,6 +389,15 @@ TEST(Flags, ToString_WithoutType) {
     flags |= TestWithoutType::BIT_0;
     flags |= TestWithoutType::BIT_3;
     EXPECT_EQ(bits::to_string(flags), "{ BIT_0 | BIT_1 | BIT_2 | BIT_3 | BIT_4 }");
+}
+
+TEST(Flags, ToStringEnum_WithoutType) {
+    EXPECT_EQ(bits::to_string(TestWithoutType {}), "<invalid>"); // Empty enum
+    EXPECT_EQ(bits::to_string(TestWithoutType::BIT_0), "BIT_0");
+    EXPECT_EQ(bits::to_string(TestWithoutType::BIT_1), "BIT_1");
+    EXPECT_EQ(bits::to_string(TestWithoutType::BIT_2), "BIT_2");
+    EXPECT_EQ(bits::to_string(TestWithoutType::BIT_3), "BIT_3");
+    EXPECT_EQ(bits::to_string(TestWithoutType::BIT_4), "BIT_4");
 }
 
 TEST(Flags, ToString_WithNamespace) {
@@ -405,6 +423,15 @@ TEST(Flags, ToString_WithNamespace) {
     EXPECT_EQ(bits::to_string(flags), "{ NS_BIT_0 | NS_BIT_1 | NS_BIT_2 | NS_BIT_3 | NS_BIT_4 }");
 }
 
+TEST(Flags, ToStringEnum_WithNamespace) {
+    EXPECT_EQ(bits::to_string(testNamespace::TestType {}), "<invalid>"); // Empty enum
+    EXPECT_EQ(bits::to_string(testNamespace::TestType::NS_BIT_0), "NS_BIT_0");
+    EXPECT_EQ(bits::to_string(testNamespace::TestType::NS_BIT_1), "NS_BIT_1");
+    EXPECT_EQ(bits::to_string(testNamespace::TestType::NS_BIT_2), "NS_BIT_2");
+    EXPECT_EQ(bits::to_string(testNamespace::TestType::NS_BIT_3), "NS_BIT_3");
+    EXPECT_EQ(bits::to_string(testNamespace::TestType::NS_BIT_4), "NS_BIT_4");
+}
+
 TEST(Flags, ToString_WithNamespace_WithoutType) {
     // Empty flags
     testNamespace::FlagsTestWithoutType flags;
@@ -426,6 +453,15 @@ TEST(Flags, ToString_WithNamespace_WithoutType) {
     flags |= testNamespace::TestWithoutType::NS_BIT_0;
     flags |= testNamespace::TestWithoutType::NS_BIT_3;
     EXPECT_EQ(bits::to_string(flags), "{ NS_BIT_0 | NS_BIT_1 | NS_BIT_2 | NS_BIT_3 | NS_BIT_4 }");
+}
+
+TEST(Flags, ToStringEnum_WithNamespace_WithoutType) {
+    EXPECT_EQ(bits::to_string(testNamespace::TestWithoutType {}), "<invalid>"); // Empty enum
+    EXPECT_EQ(bits::to_string(testNamespace::TestWithoutType::NS_BIT_0), "NS_BIT_0");
+    EXPECT_EQ(bits::to_string(testNamespace::TestWithoutType::NS_BIT_1), "NS_BIT_1");
+    EXPECT_EQ(bits::to_string(testNamespace::TestWithoutType::NS_BIT_2), "NS_BIT_2");
+    EXPECT_EQ(bits::to_string(testNamespace::TestWithoutType::NS_BIT_3), "NS_BIT_3");
+    EXPECT_EQ(bits::to_string(testNamespace::TestWithoutType::NS_BIT_4), "NS_BIT_4");
 }
 
 TEST(Flags, Size) {

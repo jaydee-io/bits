@@ -159,7 +159,8 @@ inline constexpr bits::Flags<EnumType> operator ~(EnumType lhs) noexcept;
     __BITS_FLAGS_DECLARE_USING(name) \
     __BITS_BEGIN_NAMESPACE(bits) \
     __BITS_FLAGS_DECLARE_TO_STRING(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
-    __BITS_FLAGS_DECLARE_TRAIT(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
+    __BITS_FLAGS_DECLARE_TRAITS(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_TO_STRING(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
     __BITS_ENUM_DECLARE_TRAITS(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
     __BITS_END_NAMESPACE(bits)
 
@@ -168,7 +169,8 @@ inline constexpr bits::Flags<EnumType> operator ~(EnumType lhs) noexcept;
     __BITS_FLAGS_DECLARE_USING(name) \
     __BITS_BEGIN_NAMESPACE(bits) \
     __BITS_FLAGS_DECLARE_TO_STRING(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
-    __BITS_FLAGS_DECLARE_TRAIT(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
+    __BITS_FLAGS_DECLARE_TRAITS(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_TO_STRING(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
     __BITS_ENUM_DECLARE_TRAITS(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
     __BITS_END_NAMESPACE(bits)
 
@@ -179,7 +181,8 @@ inline constexpr bits::Flags<EnumType> operator ~(EnumType lhs) noexcept;
     __BITS_END_NAMESPACE(nameSpace) \
     __BITS_BEGIN_NAMESPACE(bits) \
     __BITS_FLAGS_DECLARE_TO_STRING(nameSpace::, name, __VA_ARGS__) \
-    __BITS_FLAGS_DECLARE_TRAIT(nameSpace::, name, __VA_ARGS__) \
+    __BITS_FLAGS_DECLARE_TRAITS(nameSpace::, name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_TO_STRING(nameSpace::, name, __VA_ARGS__) \
     __BITS_ENUM_DECLARE_TRAITS(nameSpace::, name, __VA_ARGS__) \
     __BITS_END_NAMESPACE(bits)
 
@@ -190,7 +193,8 @@ inline constexpr bits::Flags<EnumType> operator ~(EnumType lhs) noexcept;
     __BITS_END_NAMESPACE(nameSpace) \
     __BITS_BEGIN_NAMESPACE(bits) \
     __BITS_FLAGS_DECLARE_TO_STRING(nameSpace::, name, __VA_ARGS__) \
-    __BITS_FLAGS_DECLARE_TRAIT(nameSpace::, name, __VA_ARGS__) \
+    __BITS_FLAGS_DECLARE_TRAITS(nameSpace::, name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_TO_STRING(nameSpace::, name, __VA_ARGS__) \
     __BITS_ENUM_DECLARE_TRAITS(nameSpace::, name, __VA_ARGS__) \
     __BITS_END_NAMESPACE(bits)
 
@@ -347,7 +351,7 @@ enum class name rawTypeSpec { \
 #define __BITS_FLAGS_DECLARE_USING(name) using __BITS_FLAGS_NAME(name) = bits::Flags<name>;
 
 // Flags traits
-#define __BITS_FLAGS_DECLARE_TRAIT(nameSpace, name, ...) \
+#define __BITS_FLAGS_DECLARE_TRAITS(nameSpace, name, ...) \
 template<> \
 struct FlagsTraits<nameSpace name> : std::true_type { \
     static constexpr const auto ALL_FLAGS = \
