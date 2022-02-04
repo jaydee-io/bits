@@ -105,10 +105,8 @@ class BitsDeserializer
 public:
     inline BitsDeserializer(const std::span<const std::byte> buffer, size_t lengthBufferBits = N * 8, size_t initialOffsetBits = 0);
 
-    template<typename T, std::enable_if_t< ! std::is_same_v<T, BitsDeserializer>, int> = 0>
-    inline T extract(size_t nbBits);
-    template<typename T>
-    inline BitsDeserializer & extract(T & val, size_t nbBits = sizeof(T) * 8);
+    template<typename T> inline T extract(size_t nbBits);
+    template<typename T> inline BitsDeserializer & extract(T & val, size_t nbBits = sizeof(T) * 8);
 
     inline size_t nbBitsStreamed(void);
 

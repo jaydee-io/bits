@@ -24,7 +24,8 @@ class BitsDeserializer : public detail::BitsStream<BitsDeserializer>
 public:
     inline BitsDeserializer(const std::span<const std::byte> buffer, size_t initialOffsetBits = 0);
 
-    template<typename T, std::enable_if_t< ! std::is_same_v<T, BitsDeserializer>, int> = 0>
+    template<typename T>
+    requires (not std::is_same_v<T, BitsDeserializer>)
     inline T extract(size_t nbBits);
     template<typename T>
     inline BitsDeserializer & extract(T & val, size_t nbBits = sizeof(T) * 8);
@@ -49,7 +50,8 @@ inline BitsDeserializer::BitsDeserializer(const std::span<const std::byte> buffe
 {}
 
 //-----------------------------------------------------------------------------
-template<typename T, std::enable_if_t< ! std::is_same_v<T, BitsDeserializer>, int>>
+template<typename T>
+requires (not std::is_same_v<T, BitsDeserializer>)
 inline T BitsDeserializer::extract(size_t nbBits)
 {
     checkNbRemainingBits(nbBits, "Unable to extract bits, too few bits remaining");
