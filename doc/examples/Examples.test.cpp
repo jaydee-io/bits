@@ -4,16 +4,17 @@
 // This file is distributed under the 3-clause Berkeley Software Distribution
 // License. See LICENSE for details.
 ////////////////////////////////////////////////////////////////////////////////
-#include <gtest/gtest.h>
+#include <iostream>
 #include <array>
+#include <cstddef>
 
 #include <bits/bits.h>
 #include <bits/BitsSerializer.h>
 #include <bits/BitsDeserializer.h>
 
-TEST(BitsDetail, BME680_read)
+void BME680_read(void)
 {
-    std::array<uint8_t, 2> buffer = { 0x00, 0x20 };
+    std::array<std::byte, 2> buffer = { std::byte(0x00), std::byte(0x20) };
 
     // ... Read 2 bytes from I2C bus, starting at address 0x2A, into the buffer ...
 
@@ -38,9 +39,9 @@ TEST(BitsDetail, BME680_read)
         std::cout << "Gas value NOT valid" << std::endl;
 }
 
-TEST(BitsDetail, BME680_write)
+void BME680_write(void)
 {
-    std::array<uint8_t, 1> buffer = { 0x00 };
+    std::array<std::byte, 1> buffer = {};
 
     // ... Read 1 byte from I2C bus, at address 0x74, into the buffer ...
     // ...
@@ -66,14 +67,13 @@ TEST(BitsDetail, BME680_write)
 
     std::cout << "std::is_integral_v<Oversampling>  = " << std::is_integral_v<Oversampling> << std::endl;
     std::cout << "std::is_integral_v<Oversampling2> = " << std::is_integral_v<Oversampling2> << std::endl;
-    std::cout << "std::is_integral_v<uint8_t>       = " << std::is_integral_v<uint8_t> << std::endl;
 
     bits::insert<Oversampling, 7, 5>(Oversampling::OVERSAMPLING_X4, buffer);
 
     // ... Write back the byte on I2C bus, at address 0x74 ...
 }
 
-TEST(BitsDetail, TimeMessage)
+void TimeMessage(void)
 {
     enum class MessageType
     {
@@ -105,7 +105,7 @@ TEST(BitsDetail, TimeMessage)
     using NanoSecond = uint32_t;
 
 
-    std::array<uint8_t, 16> buffer = { };
+    std::array<std::byte, 16> buffer = {};
 
     // ... Read incoming message into the buffer ...
 
@@ -142,4 +142,9 @@ TEST(BitsDetail, TimeMessage)
         << bits::nbits(8) << TimeUpdateStatus::SUCCESS;
 
     // ... Write back response message from the buffer ...
+}
+
+int main(int, char *[])
+{
+    return 0;
 }

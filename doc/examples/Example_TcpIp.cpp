@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <array>
 #include <span>
+#include <cstddef>
 
 #include <pcap.h>
 
@@ -184,9 +185,9 @@ struct TcpHeader {
     uint16_t urgentPointer;
 };
 
-EthernetHeader extractEthernetHeader(std::span<const uint8_t> buffer)
+EthernetHeader extractEthernetHeader(std::span<const std::byte> buffer)
 {
-    bits::BitsDeserializer deserializer(buffer.data(), buffer.size() * CHAR_BIT);
+    bits::BitsDeserializer deserializer(buffer);
     EthernetHeader ethernetHeader;
 
     for(auto & byte : ethernetHeader.dest)
@@ -198,9 +199,9 @@ EthernetHeader extractEthernetHeader(std::span<const uint8_t> buffer)
     return ethernetHeader;
 }
 
-IpHeader extractIpHeader(std::span<const uint8_t> buffer)
+IpHeader extractIpHeader(std::span<const std::byte> buffer)
 {
-    bits::BitsDeserializer deserializer(buffer.data(), buffer.size() * CHAR_BIT);
+    bits::BitsDeserializer deserializer(buffer);
     IpHeader ipHeader;
 
     deserializer
@@ -226,9 +227,9 @@ IpHeader extractIpHeader(std::span<const uint8_t> buffer)
     return ipHeader;
 }
 
-TcpHeader extractTcpHeader(std::span<const uint8_t> buffer)
+TcpHeader extractTcpHeader(std::span<const std::byte> buffer)
 {
-    bits::BitsDeserializer deserializer(buffer.data(), buffer.size() * CHAR_BIT);
+    bits::BitsDeserializer deserializer(buffer);
     TcpHeader tcpHeader;
 
     deserializer
@@ -305,23 +306,23 @@ void printTcpHeader(TcpHeader & tcpHeader)
     printf("\n");
 }
 
-void printBuffer(std::span<const uint8_t> buffer)
+void printBuffer(std::span<const std::byte> buffer)
 {
     for(size_t i=0; i<buffer.size(); i++)
     {
         printf("%08zX :", i);
 
         for(size_t j=0; j<8 and i<buffer.size(); j++, i++)
-            printf(" %02X", buffer[i]);
+            printf(" %02hhX", buffer[i]);
         printf("    ");
         for(size_t j=0; j<8 and i<buffer.size(); j++, i++)
-            printf(" %02X", buffer[i]);
+            printf(" %02hhX", buffer[i]);
         printf("    ");
         for(size_t j=0; j<8 and i<buffer.size(); j++, i++)
-            printf(" %02X", buffer[i]);
+            printf(" %02hhX", buffer[i]);
         printf("    ");
         for(size_t j=0; j<8 and i<buffer.size(); j++, i++)
-            printf(" %02X", buffer[i]);
+            printf(" %02hhX", buffer[i]);
         printf("\n");
 
         i--;
@@ -330,7 +331,7 @@ void printBuffer(std::span<const uint8_t> buffer)
 
 void onPacket(uint8_t * /*args*/, const struct pcap_pkthdr * packet_header, const uint8_t * packet_body)
 {
-    auto packet = std::span(packet_body, packet_header->caplen);
+    auto packet = std::span(reinterpret_cast<const std::byte *>(packet_body), packet_header->caplen);
     auto ethernetHeader = extractEthernetHeader(packet);
     auto ipHeader = extractIpHeader(packet.subspan(sizeof(ethernetHeader)));
 

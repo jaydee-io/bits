@@ -21,7 +21,7 @@ The following code shows how to extract this fields using `bits`.
 ```c++
 #include <bits/bits_insertion.h>
 
-std::array<uint8_t, 2> buffer;
+std::array<std::byte, 2> buffer;
 
 // ... Read 2 bytes from I2C bus, starting at address 0x2A, into the buffer ...
 
@@ -60,7 +60,7 @@ The following code shows how to insert this field.
 ```c++
 #include <bits/bits_extraction.h>
 
-std::array<uint8_t, 1> buffer = { 0x00 };
+std::array<std::byte, 1> buffer = { 0x00 };
 
 // ... Read 1 byte from I2C bus, at address 0x74, into the buffer ...
 

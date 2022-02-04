@@ -7,10 +7,17 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <array>
+#include <cstddef>
 
 #include <bits/BitsDeserializer.h>
 
-using ::testing::ElementsAre;
+using ::testing::ElementsAreArray;
+
+template<typename... Ts>
+constexpr std::array<const std::byte, sizeof...(Ts)> make_array(Ts && ... args) noexcept
+{
+    return { std::byte(std::forward<Ts>(args))... };
+}
 
 const size_t BUFFER_SIZE = 8;
 
@@ -19,7 +26,7 @@ const size_t BUFFER_SIZE = 8;
 //-----------------------------------------------------------------------------
 TEST(BitsDeserializer, BitsSkipped)
 {
-    std::array<uint8_t, BUFFER_SIZE> buffer = {};
+    const std::array<const std::byte, BUFFER_SIZE> buffer = {};
     bits::BitsDeserializer stream(buffer);
 
     ASSERT_EQ(stream.nbBitsStreamed(), 0);
@@ -35,7 +42,7 @@ TEST(BitsDeserializer, BitsSkipped)
 
 TEST(BitsDeserializer, ChainedSkip)
 {
-    std::array<uint8_t, BUFFER_SIZE> buffer = {};
+    const std::array<const std::byte, BUFFER_SIZE> buffer = {};
     bits::BitsDeserializer stream(buffer);
 
     ASSERT_EQ(stream.nbBitsStreamed(), 0);
@@ -45,13 +52,13 @@ TEST(BitsDeserializer, ChainedSkip)
         .skip(8)
         .skip(8)
         .skip(8);
-    
+
     ASSERT_EQ(stream.nbBitsStreamed(), 30);
 }
 
 TEST(BitsDeserializer, OutOfRange)
 {
-    std::array<uint8_t, BUFFER_SIZE> buffer = {};
+    const std::array<const std::byte, BUFFER_SIZE> buffer = {};
     bits::BitsDeserializer stream(buffer);
 
     ASSERT_THROW(stream.skip(128), std::out_of_range);
@@ -62,7 +69,7 @@ TEST(BitsDeserializer, OutOfRange)
 //-----------------------------------------------------------------------------
 TEST(BitsDeserializer, NbBitsDeserialized)
 {
-    std::array<uint8_t, BUFFER_SIZE> buffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    const std::array<const std::byte, BUFFER_SIZE> buffer = {};
     bits::BitsDeserializer deserializer(buffer);
 
     ASSERT_EQ(deserializer.nbBitsStreamed(), 0);
@@ -75,7 +82,7 @@ TEST(BitsDeserializer, NbBitsDeserialized)
 
 TEST(BitsDeserializer, ChainedExtract)
 {
-    std::array<uint8_t, BUFFER_SIZE> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
+    const auto buffer = make_array(0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF);
     bits::BitsDeserializer deserializer(buffer);
     uint8_t val1 = 0;
     uint8_t val2 = 0;
@@ -90,7 +97,7 @@ TEST(BitsDeserializer, ChainedExtract)
         .extract(val4, 8)
         .extract(val5, 8)
     ;
-    
+
     ASSERT_EQ(val1, 0x03);
     ASSERT_EQ(val2, 0x01);
     ASSERT_EQ(val3, 0x7F);
@@ -100,7 +107,7 @@ TEST(BitsDeserializer, ChainedExtract)
 
 TEST(BitsDeserializer, ChainedExtract_AutoSize)
 {
-    std::array<uint8_t, BUFFER_SIZE * 2> buffer = { 0xD8, 0xE9, 0xA5, 0xA5, 0xB6, 0xB6, 0xB6, 0xB6, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7 };
+    const auto buffer = make_array(0xD8, 0xE9, 0xA5, 0xA5, 0xB6, 0xB6, 0xB6, 0xB6, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7);
     bits::BitsDeserializer deserializer(buffer);
     uint8_t val1 = 0;
     uint8_t val2 = 0;
@@ -115,7 +122,7 @@ TEST(BitsDeserializer, ChainedExtract_AutoSize)
         .extract(val4)
         .extract(val5)
     ;
-    
+
     ASSERT_EQ(val1, 0xD8);
     ASSERT_EQ(val2, 0xE9);
     ASSERT_EQ(val3, 0xA5A5);
@@ -125,7 +132,7 @@ TEST(BitsDeserializer, ChainedExtract_AutoSize)
 
 TEST(BitsDeserializer, ChainedExtract_Operator)
 {
-    std::array<uint8_t, BUFFER_SIZE * 2> buffer = { 0xD8, 0xE9, 0xA5, 0xA5, 0xB6, 0xB6, 0xB6, 0xB6, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7 };
+    const auto buffer = make_array(0xD8, 0xE9, 0xA5, 0xA5, 0xB6, 0xB6, 0xB6, 0xB6, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7);
     bits::BitsDeserializer deserializer(buffer);
     uint8_t val1 = 0;
     uint8_t val2 = 0;
@@ -140,7 +147,7 @@ TEST(BitsDeserializer, ChainedExtract_Operator)
         >> val4
         >> val5
     ;
-    
+
     ASSERT_EQ(val1, 0xD8);
     ASSERT_EQ(val2, 0xE9);
     ASSERT_EQ(val3, 0xA5A5);
@@ -150,7 +157,7 @@ TEST(BitsDeserializer, ChainedExtract_Operator)
 
 TEST(BitsDeserializer, BitsManipulation_nbits)
 {
-    std::array<uint8_t, BUFFER_SIZE> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
+    const auto buffer = make_array(0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF);
     bits::BitsDeserializer deserializer(buffer);
     uint8_t val1 = 0;
     uint8_t val2 = 0;
@@ -165,7 +172,7 @@ TEST(BitsDeserializer, BitsManipulation_nbits)
         >> bits::nbits(2) >> val4    // 2 bits extracted
         >> bits::nbits(4) >> val5    // 4 bits extracted
     ;
-    
+
     ASSERT_EQ(val1, 0x03);
     ASSERT_EQ(val2, 0x01);
     ASSERT_EQ(val3, 0x07);
@@ -175,7 +182,7 @@ TEST(BitsDeserializer, BitsManipulation_nbits)
 
 TEST(BitsDeserializer, BitsManipulation_SkipAndReset)
 {
-    std::array<uint8_t, BUFFER_SIZE> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
+    const auto buffer = make_array(0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF);
     bits::BitsDeserializer deserializer(buffer);
 
     deserializer >> bits::skip(8);
@@ -187,7 +194,7 @@ TEST(BitsDeserializer, BitsManipulation_SkipAndReset)
 
 TEST(BitsDeserializer, Deserialize_size_t)
 {
-    std::array<uint8_t, BUFFER_SIZE> buffer = { 0xCA, 0xFE, 0xBA, 0xBE, 0xA5, 0xB6, 0xC7, 0xD8 };
+    const auto buffer = make_array(0xCA, 0xFE, 0xBA, 0xBE, 0xA5, 0xB6, 0xC7, 0xD8);
     bits::BitsDeserializer deserializer(buffer);
     size_t val = 0;
 

@@ -8,6 +8,7 @@
 #define BITS_BITS_INSERTION_H
 
 #include <cstdint>
+#include <cstddef>
 #include <cstdlib>
 #include <cassert>
 #include <span>
@@ -19,8 +20,8 @@ namespace bits {
 //-----------------------------------------------------------------------------
 //- Free standing functions
 //-----------------------------------------------------------------------------
-template<typename T>                          constexpr void insert(T val, const std::span<uint8_t> buffer, size_t high, size_t low);
-template<typename T, size_t high, size_t low> constexpr void insert(T val, const std::span<uint8_t> buffer);
+template<typename T>                          constexpr void insert(T val, const std::span<std::byte> buffer, size_t high, size_t low);
+template<typename T, size_t high, size_t low> constexpr void insert(T val, const std::span<std::byte> buffer);
 
 //-----------------------------------------------------------------------------
 //-
@@ -30,7 +31,7 @@ template<typename T, size_t high, size_t low> constexpr void insert(T val, const
 
 //-----------------------------------------------------------------------------
 template<typename T>
-constexpr void insert(T val, const std::span<uint8_t> buffer, size_t high, size_t low)
+constexpr void insert(T val, const std::span<std::byte> buffer, size_t high, size_t low)
 {
     assert((buffer.size() * CHAR_BIT) >= (high - low + 1));
     assert((sizeof(T) * CHAR_BIT) >= (high - low + 1));
@@ -42,7 +43,7 @@ constexpr void insert(T val, const std::span<uint8_t> buffer, size_t high, size_
 
 //-----------------------------------------------------------------------------
 template<typename T, size_t high, size_t low>
-constexpr void insert(T val, const std::span<uint8_t> buffer)
+constexpr void insert(T val, const std::span<std::byte> buffer)
 {
     assert((buffer.size() * CHAR_BIT) >= (high - low + 1));
     static_assert((sizeof(T) * CHAR_BIT) >= (high - low + 1));

@@ -7,10 +7,17 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <array>
+#include <cstddef>
 
 #include <bits/BitsSerializer.h>
 
-using ::testing::ElementsAre;
+using ::testing::ElementsAreArray;
+
+template<typename... Ts>
+constexpr std::array<std::byte, sizeof...(Ts)> make_array(Ts && ... args) noexcept
+{
+    return { std::byte(std::forward<Ts>(args))... };
+}
 
 const size_t BUFFER_SIZE = 8;
 
@@ -19,7 +26,7 @@ const size_t BUFFER_SIZE = 8;
 //-----------------------------------------------------------------------------
 TEST(BitsSerializer, BitsSkipped)
 {
-    std::array<uint8_t, BUFFER_SIZE> buffer = {};
+    std::array<std::byte, BUFFER_SIZE> buffer = {};
     bits::BitsSerializer stream(buffer);
 
     ASSERT_EQ(stream.nbBitsStreamed(), 0);
@@ -35,7 +42,7 @@ TEST(BitsSerializer, BitsSkipped)
 
 TEST(BitsSerializer, ChainedSkip)
 {
-    std::array<uint8_t, BUFFER_SIZE> buffer = {};
+    std::array<std::byte, BUFFER_SIZE> buffer = {};
     bits::BitsSerializer stream(buffer);
 
     ASSERT_EQ(stream.nbBitsStreamed(), 0);
@@ -45,13 +52,13 @@ TEST(BitsSerializer, ChainedSkip)
         .skip(8)
         .skip(8)
         .skip(8);
-    
+
     ASSERT_EQ(stream.nbBitsStreamed(), 30);
 }
 
 TEST(BitsSerializer, OutOfRange)
 {
-    std::array<uint8_t, BUFFER_SIZE> buffer = {};
+    std::array<std::byte, BUFFER_SIZE> buffer = {};
     bits::BitsSerializer stream(buffer);
 
     ASSERT_THROW(stream.skip(128), std::out_of_range);
@@ -62,7 +69,7 @@ TEST(BitsSerializer, OutOfRange)
 //-----------------------------------------------------------------------------
 TEST(BitsSerializer, NbBitsSerialized)
 {
-    std::array<uint8_t, BUFFER_SIZE> buffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    auto buffer = make_array(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     bits::BitsSerializer serializer(buffer);
 
     ASSERT_EQ(serializer.nbBitsStreamed(), 0);
@@ -75,7 +82,7 @@ TEST(BitsSerializer, NbBitsSerialized)
 
 TEST(BitsSerializer, ChainedInsert)
 {
-    std::array<uint8_t, BUFFER_SIZE> buffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    std::array<std::byte, BUFFER_SIZE> buffer = {};
     bits::BitsSerializer serializer(buffer);
 
     serializer
@@ -85,13 +92,13 @@ TEST(BitsSerializer, ChainedInsert)
         .insert(uint8_t { 0xDC }, 8)
         .insert(uint8_t { 0x0D }, 8)
     ;
-    
-    ASSERT_THAT(buffer, ElementsAre(0x35, 0xFF, 0x70, 0x34, 0x00, 0x00, 0x00, 0x00));
+
+    ASSERT_THAT(buffer, ElementsAreArray(make_array(0x35, 0xFF, 0x70, 0x34, 0x00, 0x00, 0x00, 0x00)));
 }
 
 TEST(BitsSerializer, ChainedInsert_AutoSize)
 {
-    std::array<uint8_t, BUFFER_SIZE * 2> buffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    std::array<std::byte, BUFFER_SIZE * 2> buffer = {};
     bits::BitsSerializer serializer(buffer);
 
     serializer
@@ -101,13 +108,13 @@ TEST(BitsSerializer, ChainedInsert_AutoSize)
         .insert<uint32_t>(0xB6B6'B6B6)
         .insert<uint64_t>(0xC7C7'C7C7'C7C7'C7C7)
     ;
-    
-    ASSERT_THAT(buffer, ElementsAre(0xD8, 0xE9, 0xA5, 0xA5, 0xB6, 0xB6, 0xB6, 0xB6, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7));
+
+    ASSERT_THAT(buffer, ElementsAreArray(make_array(0xD8, 0xE9, 0xA5, 0xA5, 0xB6, 0xB6, 0xB6, 0xB6, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7)));
 }
 
 TEST(BitsSerializer, ChainedInsert_Operator)
 {
-    std::array<uint8_t, BUFFER_SIZE * 2> buffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    std::array<std::byte, BUFFER_SIZE * 2> buffer = {};
     bits::BitsSerializer serializer(buffer);
 
     serializer
@@ -117,13 +124,13 @@ TEST(BitsSerializer, ChainedInsert_Operator)
         << uint32_t { 0xB6B6'B6B6 }
         << uint64_t { 0xC7C7'C7C7'C7C7'C7C7 }
     ;
-    
-    ASSERT_THAT(buffer, ElementsAre(0xD8, 0xE9, 0xA5, 0xA5, 0xB6, 0xB6, 0xB6, 0xB6, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7));
+
+    ASSERT_THAT(buffer, ElementsAreArray(make_array(0xD8, 0xE9, 0xA5, 0xA5, 0xB6, 0xB6, 0xB6, 0xB6, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7, 0xC7)));
 }
 
 TEST(BitsSerializer, BitsManipulation_nbits)
 {
-    std::array<uint8_t, BUFFER_SIZE> buffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    std::array<std::byte, BUFFER_SIZE> buffer = {};
     bits::BitsSerializer serializer(buffer);
 
     serializer
@@ -133,18 +140,21 @@ TEST(BitsSerializer, BitsManipulation_nbits)
         << bits::nbits(2) << uint32_t { 0x03 }    // 2 bits serialized
         << bits::nbits(4) << uint64_t { 0x0F }    // 4 bits serialized
     ;
-    
-    ASSERT_THAT(buffer, ElementsAre(0x35, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00));
+
+    ASSERT_THAT(buffer, ElementsAreArray(make_array(0x35, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)));
 }
 
 TEST(BitsSerializer, BitsManipulation_SkipAndReset)
 {
-    std::array<uint8_t, BUFFER_SIZE> buffer = { 0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF };
-    bits::BitsSerializer serializer(buffer);
+    auto buffer = make_array(0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF);
+    bits::BitsSerializer serializer(buffer, 8);
 
     serializer << bits::skip(8);
     ASSERT_EQ(serializer.nbBitsStreamed(), 8);
 
     serializer << bits::reset();
     ASSERT_EQ(serializer.nbBitsStreamed(), 0);
+
+    serializer << uint8_t(0xAA);
+    ASSERT_EQ(buffer[1], std::byte(0xAA));
 }

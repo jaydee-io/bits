@@ -11,8 +11,8 @@
 `bits` is a C++ 20 library designed to ease low-level bits manipulation from expressive high-level abstractions.
 
 In details, `bits` allows :
-- inserting or extracting arbitrary size bits fields into/from raw `uint8_t` buffer ([detail](#bits-insertion-extraction))
-- arbitrary size bits fields streaming to/from raw `uint8_t` buffer (like `std:ostream` and `std::istream`) ([detail](#bits-streaming))
+- inserting or extracting arbitrary size bits fields into/from raw `std::byte` buffer ([detail](#bits-insertion-extraction))
+- arbitrary size bits fields streaming to/from raw `std::byte` buffer (like `std:ostream` and `std::istream`) ([detail](#bits-streaming))
 - handling flag bits (set or not set bits) that can be combined within a bits field ([detail](#flags))
 - strongly types enumerations with associated helpers ([detail](#enumeration))
 
@@ -28,7 +28,7 @@ Have a look at the [TODO](TODO.md) list.
 ---
 
 ## Bits insertion / extraction
-`bits` provides several `insert()` functions overload to easily insert bits into raw buffer (anything convertible to `std::span<uint8_t>`). `bits` also provides several `extract()` functions overload to easily extract bits from raw buffer (anything convertible to `std::span<uint8_t>`).
+`bits` provides several `insert()` functions overload to easily insert bits into raw buffer (anything convertible to `std::span<std::byte>`). `bits` also provides several `extract()` functions overload to easily extract bits from raw buffer (anything convertible to `std::span<std::byte>`).
 
 Be aware that bits range parameters order is `high` first then `low`.
 
@@ -40,14 +40,14 @@ The behaviour is undefined if :
 #include <bits/bits_insertion.h>
 
 template<typename T>
-constexpr void insert(T val, const std::span<uint8_t> buffer, size_t high, size_t low);
+constexpr void insert(T val, const std::span<std::byte> buffer, size_t high, size_t low);
 
 
 
 #include <bits/bits_extraction.h>
 
 template<typename T>
-constexpr T extract(const std::span<const uint8_t> buffer, size_t high, size_t low);
+constexpr T extract(const std::span<const std::byte> buffer, size_t high, size_t low);
 ```
 
 If `high` and `low` are known at compile time, they could be specified as template parameters.
@@ -56,14 +56,14 @@ If `high` and `low` are known at compile time, they could be specified as templa
 #include <bits/bits_insertion.h>
 
 template<typename T, size_t high, size_t low>
-constexpr void insert(T val, const std::span<uint8_t> buffer);
+constexpr void insert(T val, const std::span<std::byte> buffer);
 
 
 
 #include <bits/bits_extraction.h>
 
 template<typename T, size_t high, size_t low>
-constexpr T extract(const std::span<const uint8_t> buffer);
+constexpr T extract(const std::span<const std::byte> buffer);
 ```
 
 View some usage examples :
@@ -85,7 +85,7 @@ These classes also provides method :
 class BitsSerializer
 {
 public:
-    inline BitsSerializer(const std::span<uint8_t> buffer, size_t lengthBufferBits = N * 8, size_t initialOffsetBits = 0);
+    inline BitsSerializer(const std::span<std::byte> buffer, size_t lengthBufferBits = N * 8, size_t initialOffsetBits = 0);
 
     template<typename T>
     inline BitsSerializer & insert(T val, size_t nbBits = sizeof(T) * 8);
@@ -103,7 +103,7 @@ public:
 class BitsDeserializer
 {
 public:
-    inline BitsDeserializer(const std::span<const uint8_t> buffer, size_t lengthBufferBits = N * 8, size_t initialOffsetBits = 0);
+    inline BitsDeserializer(const std::span<const std::byte> buffer, size_t lengthBufferBits = N * 8, size_t initialOffsetBits = 0);
 
     template<typename T, std::enable_if_t< ! std::is_same_v<T, BitsDeserializer>, int> = 0>
     inline T extract(size_t nbBits);

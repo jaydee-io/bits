@@ -1,7 +1,6 @@
 ## TODO List
 - Merge `BitsSerializer` and `BitsDeserializer` to `BitsStream` ?
 - Add tests of `assert()` calls
-- Replace `uint8_t` by `std::byte`
 - Add endianness support
 - Add CMake options to
   - Enable bound check (assertion or exception throwing)

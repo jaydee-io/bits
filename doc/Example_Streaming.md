@@ -54,7 +54,7 @@ Then we can receive the request, decode it, encode a response and send it back:
 #include <bits/BitsSerializer.h>
 #include <bits/BitsDeserializer.h>
 
-std::array<uint8_t, 16> buffer = { };
+std::array<std::byte, 16> buffer = { };
 
 // ... Read incoming message into the buffer ...
 
@@ -137,7 +137,7 @@ struct IpHeader {
     std::array<uint8_t, 4> destination;
 };
 
-IpHeader extractIpHeader(std::span<const uint8_t> buffer)
+IpHeader extractIpHeader(std::span<const std::byte> buffer)
 {
     bits::BitsDeserializer deserializer(buffer.data(), buffer.size() * CHAR_BIT);
     IpHeader ipHeader;

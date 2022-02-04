@@ -7,7 +7,7 @@
 #ifndef BITS_BITS_DESERIALIZER_H
 #define BITS_BITS_DESERIALIZER_H
 
-#include <cstdint>
+#include <cstddef>
 #include <cstdlib>
 #include <span>
 
@@ -22,7 +22,7 @@ namespace bits {
 class BitsDeserializer : public detail::BitsStream<BitsDeserializer>
 {
 public:
-    inline BitsDeserializer(const std::span<const uint8_t> buffer, size_t initialOffsetBits = 0);
+    inline BitsDeserializer(const std::span<const std::byte> buffer, size_t initialOffsetBits = 0);
 
     template<typename T, std::enable_if_t< ! std::is_same_v<T, BitsDeserializer>, int> = 0>
     inline T extract(size_t nbBits);
@@ -30,7 +30,7 @@ public:
     inline BitsDeserializer & extract(T & val, size_t nbBits = sizeof(T) * 8);
 
 protected:
-    const std::span<const uint8_t> buffer;
+    const std::span<const std::byte> buffer;
 };
 
 template<typename T>
@@ -44,7 +44,7 @@ inline BitsDeserializer & operator >>(BitsDeserializer & bs, const detail::BitsS
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-inline BitsDeserializer::BitsDeserializer(const std::span<const uint8_t> buffer_, size_t initialOffsetBits)
+inline BitsDeserializer::BitsDeserializer(const std::span<const std::byte> buffer_, size_t initialOffsetBits)
 : BitsStream(buffer_.size() * CHAR_BIT, initialOffsetBits), buffer(buffer_)
 {}
 

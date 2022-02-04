@@ -21,7 +21,9 @@ enable_code_coverage()
 add_subdirectory(include)
 
 # Code example must compile
-add_subdirectory(doc/examples)
+if(BITS_BUILD_TESTS)
+    add_subdirectory(doc/examples)
+endif()
 
 # Install CMake file for all exported targets
 install(EXPORT BitsExport DESTINATION cmake/bits)

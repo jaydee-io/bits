@@ -8,6 +8,7 @@
 #define BITS_DETAIL_BASE_SERIALIZATION_H
 
 #include <cstdint>
+#include <cstddef>
 #include <cstdlib>
 
 namespace bits::detail {
@@ -37,10 +38,10 @@ protected:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-inline static constexpr size_t  num_byte(size_t bit)                { return bit / 8; }
-inline static constexpr uint8_t mask_8bits(size_t bit)              { return (1 << (8 - (bit % 8))) - 1; }
-inline static constexpr uint8_t mask_8bits(size_t low, size_t high) { return (1 << (((high - low) % 8) + 1)) - 1; }
-inline static constexpr size_t  first_byte_shift_8bits(size_t bit)  { return 7 - (bit % 8); }
+inline static constexpr size_t    num_byte(size_t bit)                { return bit / 8; }
+inline static constexpr std::byte mask_8bits(size_t bit)              { return std::byte((1 << (8 - (bit % 8))) - 1); }
+inline static constexpr std::byte mask_8bits(size_t low, size_t high) { return std::byte((1 << (((high - low) % 8) + 1)) - 1); }
+inline static constexpr size_t    first_byte_shift_8bits(size_t bit)  { return 7 - (bit % 8); }
 
 //-----------------------------------------------------------------------------
 inline constexpr BaseSerialization::BaseSerialization(size_t high, size_t low) noexcept

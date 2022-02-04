@@ -49,8 +49,8 @@ add_unit_test(TARGET ${UNITTESTS_NAME}
     bits/bits_insertion.cpparray.test.cpp
     bits/bits_extraction.carray.test.cpp
     bits/bits_extraction.cpparray.test.cpp
-    bits/BitsDeserializer.test.cpp
     bits/BitsSerializer.test.cpp
+    bits/BitsDeserializer.test.cpp
 
     # Flags / Enum / BitsField
     bits/Flags.test.cpp

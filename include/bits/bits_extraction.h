@@ -7,7 +7,7 @@
 #ifndef BITS_BITS_EXTRACTION_H
 #define BITS_BITS_EXTRACTION_H
 
-#include <cstdint>
+#include <cstddef>
 #include <cstdlib>
 #include <cassert>
 #include <span>
@@ -19,8 +19,8 @@ namespace bits {
 //-----------------------------------------------------------------------------
 //- Free standing functions
 //-----------------------------------------------------------------------------
-template<typename T>                          constexpr T extract(const std::span<const uint8_t> buffer, size_t high, size_t low);
-template<typename T, size_t high, size_t low> constexpr T extract(const std::span<const uint8_t> buffer);
+template<typename T>                          constexpr T extract(const std::span<const std::byte> buffer, size_t high, size_t low);
+template<typename T, size_t high, size_t low> constexpr T extract(const std::span<const std::byte> buffer);
 
 //-----------------------------------------------------------------------------
 //-
@@ -30,7 +30,7 @@ template<typename T, size_t high, size_t low> constexpr T extract(const std::spa
 
 //-----------------------------------------------------------------------------
 template<typename T>
-constexpr T extract(const std::span<const uint8_t> buffer, size_t high, size_t low)
+constexpr T extract(const std::span<const std::byte> buffer, size_t high, size_t low)
 {
     assert((sizeof(T) * 8) >= (high - low + 1));
 
@@ -41,7 +41,7 @@ constexpr T extract(const std::span<const uint8_t> buffer, size_t high, size_t l
 
 //-----------------------------------------------------------------------------
 template<typename T, size_t high, size_t low>
-constexpr T extract(const std::span<const uint8_t> buffer)
+constexpr T extract(const std::span<const std::byte> buffer)
 {
     assert((buffer.size() * 8) >= (high - low + 1));
     static_assert((sizeof(T) * 8) >= (high - low + 1));
