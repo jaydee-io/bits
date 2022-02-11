@@ -25,7 +25,7 @@ public:
     inline BitsSerializer(const std::span<std::byte> buffer, size_t initialOffsetBits = 0);
 
     template<typename T>
-    inline BitsSerializer & insert(T val, size_t nbBits = sizeof(T) * 8);
+    inline BitsSerializer & insert(T val, size_t nbBits = sizeof(T) * CHAR_BIT);
 
 protected:
     template<typename T>

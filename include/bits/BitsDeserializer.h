@@ -28,7 +28,7 @@ public:
     requires (not std::is_same_v<T, BitsDeserializer>)
     inline T extract(size_t nbBits);
     template<typename T>
-    inline BitsDeserializer & extract(T & val, size_t nbBits = sizeof(T) * 8);
+    inline BitsDeserializer & extract(T & val, size_t nbBits = sizeof(T) * CHAR_BIT);
 
 protected:
     const std::span<const std::byte> buffer;
@@ -77,7 +77,7 @@ inline BitsDeserializer & BitsDeserializer::extract(T & val, size_t nbBits)
 template<typename T>
 inline BitsDeserializer & operator >>(BitsDeserializer & bs, T & val)
 {
-    return bs.extract<T>(val, sizeof(T) * 8);
+    return bs.extract<T>(val, sizeof(T) * CHAR_BIT);
 }
 
 //-----------------------------------------------------------------------------

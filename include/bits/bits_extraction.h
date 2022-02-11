@@ -35,7 +35,7 @@ template<typename T, size_t high, size_t low> constexpr T extract(const std::spa
 template<typename T>
 constexpr void extract(const std::span<const std::byte> buffer, T & val, size_t high, size_t low)
 {
-    assert((sizeof(T) * 8) >= (high - low + 1));
+    assert((sizeof(T) * CHAR_BIT) >= (high - low + 1));
 
     const detail::Deserializer deserializer(sizeof(T) * CHAR_BIT, high, low);
 
@@ -46,10 +46,10 @@ constexpr void extract(const std::span<const std::byte> buffer, T & val, size_t 
 template<typename T, size_t high, size_t low>
 constexpr void extract(const std::span<const std::byte> buffer, T & val)
 {
-    assert((buffer.size() * 8) >= (high - low + 1));
-    static_assert((sizeof(T) * 8) >= (high - low + 1));
+    assert((buffer.size() * CHAR_BIT) >= (high - low + 1));
+    static_assert((sizeof(T) * CHAR_BIT) >= (high - low + 1));
 
-    constexpr detail::Deserializer deserializer(sizeof(T) * 8, high, low);
+    constexpr detail::Deserializer deserializer(sizeof(T) * CHAR_BIT, high, low);
 
     deserializer.extract<T>(buffer, val);
 }

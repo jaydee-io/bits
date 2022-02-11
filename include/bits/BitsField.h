@@ -19,7 +19,7 @@ namespace bits {
 template<typename T, size_t HIGH, size_t LOW = HIGH>
 class BitsField
 {
-    static_assert((sizeof(T) * 8) >= (HIGH - LOW + 1));
+    static_assert((sizeof(T) * CHAR_BIT) >= (HIGH - LOW + 1));
 
 public:
     // Constructors and assignments

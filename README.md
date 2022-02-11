@@ -28,13 +28,11 @@ Have a look at the [TODO](TODO.md) list.
 ---
 
 ## Bits insertion / extraction
-`bits` provides several `insert()` functions overload to easily insert bits into raw buffer (anything convertible to `std::span<std::byte>`). `bits` also provides several `extract()` functions overload to easily extract bits from raw buffer (anything convertible to `std::span<std::byte>`).
+`bits` provides several `insert()` functions overload to easily insert bits into raw buffer (anything convertible to `std::span<std::byte>`). `bits` also provides several `extract()` functions overload to easily extract bits from raw buffer.
 
 Be aware that bits range parameters order is `high` first then `low`.
 
-The behaviour is undefined if :
-- parameters `high` and `low` order is inverted
-- `high` or `low` overflow the buffer size
+The behaviour is undefined if order of parameters `high` and `low` is inverted
 
 ```c++
 #include <bits/bits_insertion.h>
@@ -48,6 +46,8 @@ constexpr void insert(T val, const std::span<std::byte> buffer, size_t high, siz
 
 template<typename T>
 constexpr T extract(const std::span<const std::byte> buffer, size_t high, size_t low);
+template<typename T>
+constexpr void extract(const std::span<const std::byte> buffer, T & val, size_t high, size_t low);
 ```
 
 If `high` and `low` are known at compile time, they could be specified as template parameters.
@@ -64,6 +64,8 @@ constexpr void insert(T val, const std::span<std::byte> buffer);
 
 template<typename T, size_t high, size_t low>
 constexpr T extract(const std::span<const std::byte> buffer);
+template<typename T, size_t high, size_t low>
+constexpr void extract(const std::span<const std::byte> buffer, T & val);
 ```
 
 View some usage examples :
@@ -85,10 +87,10 @@ These classes also provides method :
 class BitsSerializer
 {
 public:
-    inline BitsSerializer(const std::span<std::byte> buffer, size_t lengthBufferBits = N * 8, size_t initialOffsetBits = 0);
+    inline BitsSerializer(const std::span<std::byte> buffer, size_t lengthBufferBits = N * CHAR_BIT, size_t initialOffsetBits = 0);
 
     template<typename T>
-    inline BitsSerializer & insert(T val, size_t nbBits = sizeof(T) * 8);
+    inline BitsSerializer & insert(T val, size_t nbBits = sizeof(T) * CHAR_BIT);
 
     inline size_t nbBitsStreamed(void);
 
@@ -103,10 +105,10 @@ public:
 class BitsDeserializer
 {
 public:
-    inline BitsDeserializer(const std::span<const std::byte> buffer, size_t lengthBufferBits = N * 8, size_t initialOffsetBits = 0);
+    inline BitsDeserializer(const std::span<const std::byte> buffer, size_t lengthBufferBits = N * CHAR_BIT, size_t initialOffsetBits = 0);
 
     template<typename T> inline T extract(size_t nbBits);
-    template<typename T> inline BitsDeserializer & extract(T & val, size_t nbBits = sizeof(T) * 8);
+    template<typename T> inline BitsDeserializer & extract(T & val, size_t nbBits = sizeof(T) * CHAR_BIT);
 
     inline size_t nbBitsStreamed(void);
 

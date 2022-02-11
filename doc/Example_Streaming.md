@@ -59,7 +59,7 @@ std::array<std::byte, 16> buffer = { };
 // ... Read incoming message into the buffer ...
 
 // Deserialize request
-bits::BitsDeserializer deserializer(buffer, buffer.size() * 8);
+bits::BitsDeserializer deserializer(buffer, buffer.size() * CHAR_BIT);
 MessageType type;
 MessageGroup group;
 TimeServices service;
@@ -82,7 +82,7 @@ std::cout << "Second = " << second << std::endl;
 std::cout << "Nano second = " << nanoSecond << std::endl;
 
 // Serialize response
-bits::BitsSerializer serializer(buffer, buffer.size() * 8);
+bits::BitsSerializer serializer(buffer, buffer.size() * CHAR_BIT);
 serializer
     << bits::nbits(2) << MessageType::RESPONSE
     << bits::nbits(2) << MessageGroup::TIME
