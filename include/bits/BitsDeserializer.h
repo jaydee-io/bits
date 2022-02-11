@@ -26,7 +26,7 @@ public:
 
     template<typename T>
     requires (not std::is_same_v<T, BitsDeserializer>)
-    inline T extract(size_t nbBits);
+    inline T extract(size_t nbBits = sizeof(T) * CHAR_BIT);
     template<typename T>
     inline BitsDeserializer & extract(T & val, size_t nbBits = sizeof(T) * CHAR_BIT);
 

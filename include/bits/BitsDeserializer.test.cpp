@@ -75,9 +75,9 @@ TEST(BitsDeserializer, NbBitsDeserialized)
     ASSERT_EQ(deserializer.nbBitsStreamed(), 0);
     deserializer.extract<uint8_t>(4); ASSERT_EQ(deserializer.nbBitsStreamed(), 4);
     deserializer.extract<uint8_t>(2); ASSERT_EQ(deserializer.nbBitsStreamed(), 6);
-    deserializer.extract<uint8_t>(8); ASSERT_EQ(deserializer.nbBitsStreamed(), 14);
-    deserializer.extract<uint8_t>(8); ASSERT_EQ(deserializer.nbBitsStreamed(), 22);
-    deserializer.extract<uint8_t>(8); ASSERT_EQ(deserializer.nbBitsStreamed(), 30);
+    deserializer.extract<uint8_t>();  ASSERT_EQ(deserializer.nbBitsStreamed(), 14);
+    deserializer.extract<uint8_t>();  ASSERT_EQ(deserializer.nbBitsStreamed(), 22);
+    deserializer.extract<uint8_t>();  ASSERT_EQ(deserializer.nbBitsStreamed(), 30);
 }
 
 TEST(BitsDeserializer, ChainedExtract)
