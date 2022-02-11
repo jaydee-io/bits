@@ -22,7 +22,7 @@ class Deserializer : public BaseSerialization
 public :
     constexpr Deserializer(size_t type_size, size_t high, size_t low) noexcept;
 
-    template<typename T> constexpr T extract(const std::span<const std::byte> buffer) const noexcept;
+    template<typename T> constexpr void extract(const std::span<const std::byte> buffer, T & val) const noexcept;
 
 private:
     constexpr std::byte deserialize_first_byte_mask_8bits(size_t low, size_t high) const noexcept;
@@ -67,18 +67,18 @@ constexpr std::byte Deserializer::deserialize_first_byte_mask_8bits(size_t low, 
 
 //-----------------------------------------------------------------------------
 template<typename T>
-constexpr T Deserializer::extract(const std::span<const std::byte> buffer) const noexcept
+constexpr void Deserializer::extract(const std::span<const std::byte> buffer, T & val) const noexcept
 {
-    underlying_integral_type_t<T> val = {};
+    underlying_integral_type_t<T> rawVal = {};
 
-    extract_first_byte        (val, buffer);
-    extract_intermediate_bytes(val, buffer);
-    extract_last_byte         (val, buffer);
+    extract_first_byte        (rawVal, buffer);
+    extract_intermediate_bytes(rawVal, buffer);
+    extract_last_byte         (rawVal, buffer);
 
     if constexpr(std::is_signed_v<T>)
-        val = extend_sign(val);
+        rawVal = extend_sign(rawVal);
 
-    return static_cast<T>(val);
+    val = static_cast<T>(rawVal);
 }
 
 //-----------------------------------------------------------------------------
