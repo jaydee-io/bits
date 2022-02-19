@@ -4,8 +4,8 @@
 // This file is distributed under the 3-clause Berkeley Software Distribution
 // License. See LICENSE for details.
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef BITS_HELPER_MACROS_H
-#define BITS_HELPER_MACROS_H
+#ifndef BITS_DETAIL_HELPER_MACROS_H
+#define BITS_DETAIL_HELPER_MACROS_H
 
 #include <bits/BitsTraits.h>
 #include <string_view>
@@ -564,4 +564,4 @@ inline std::string_view to_string(nameSpace name value) { \
 #define __BITS_SINGLE_510(func, sep, nameSpace, name, a, b, ...)  __BITS_SINGLE_2(func, sep, nameSpace, name, a, b) sep __BITS_SINGLE_508(func, sep, nameSpace, name, __VA_ARGS__)
 #define __BITS_SINGLE_512(func, sep, nameSpace, name, a, b, ...)  __BITS_SINGLE_2(func, sep, nameSpace, name, a, b) sep __BITS_SINGLE_510(func, sep, nameSpace, name, __VA_ARGS__)
 
-#endif /* BITS_HELPER_MACROS_H */
+#endif /* BITS_DETAIL_HELPER_MACROS_H */

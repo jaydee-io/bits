@@ -8,17 +8,13 @@
 #define BITS_BITS_TRAITS_H
 
 #include <type_traits>
+#include <bits/detail/Traits.h>
 
 namespace bits {
 
 //-----------------------------------------------------------------------------
 //- Traits to check if a type is a bits declared enum type
 //-----------------------------------------------------------------------------
-namespace detail {
-template<typename EnumType>
-struct IsBitEnum : std::false_type {};
-} // namespace detail
-
 template<typename T>
 inline constexpr bool is_enum_v = detail::IsBitEnum<T>::value;
 

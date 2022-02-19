@@ -4,8 +4,8 @@
 // This file is distributed under the 3-clause Berkeley Software Distribution
 // License. See LICENSE for details.
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef BITS_BITS_STREAM_H
-#define BITS_BITS_STREAM_H
+#ifndef BITS_DETAIL_BITS_STREAM_H
+#define BITS_DETAIL_BITS_STREAM_H
 
 #include <cstdint>
 #include <cstdlib>
@@ -103,4 +103,4 @@ void BitsStream<T>::setManipulation(const BitsStreamManipulation manip)
 
 } // namespace bits::detail
 
-#endif /* BITS_BITS_STREAM_H */
+#endif /* BITS_DETAIL_BITS_STREAM_H */

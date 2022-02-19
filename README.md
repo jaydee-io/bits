@@ -11,7 +11,7 @@
 `bits` is a C++ 20 library designed to ease low-level bits manipulation from expressive high-level abstractions.
 
 In details, `bits` allows :
-- inserting or extracting arbitrary size bits fields into/from raw `std::byte` buffer ([detail](#bits-insertion-extraction))
+- inserting or extracting arbitrary size bits fields into/from raw `std::byte` buffer ([detail](#bits-insertion--extraction))
 - arbitrary size bits fields streaming to/from raw `std::byte` buffer (like `std:ostream` and `std::istream`) ([detail](#bits-streaming))
 - handling flag bits (set or not set bits) that can be combined within a bits field ([detail](#flags))
 - strongly types enumerations with associated helpers ([detail](#enumeration))
@@ -30,9 +30,19 @@ Have a look at the [TODO](TODO.md) list.
 ## Bits insertion / extraction
 `bits` provides several `insert()` functions overload to easily insert bits into raw buffer (anything convertible to `std::span<std::byte>`). `bits` also provides several `extract()` functions overload to easily extract bits from raw buffer.
 
-Be aware that bits range parameters order is `high` first then `low`.
+In particular, `insert()` and `extract()` overloads are provided for ranges :
+- bounded C style arrays `T[N]`
+- C++ arrays `std::array<T, N>`
+- C++ spans `std::span<T, N>`
+- C++ vector `std::vector<T>`
+- ...
 
-The behaviour is undefined if order of parameters `high` and `low` is inverted
+In fact, all types satisfying the `std::ranges::output_range` concept.
+Notice that for range type insertion / extraction:
+* The number of bits for each range's element could be specified (default to `sizeof(T) * 8`)
+* The bits range `[high, low]` should cover the _Number of elements x Number of bits per element_
+
+Be aware that bits range parameters order is `high` first then `low`. The behaviour is undefined if order of parameters `high` and `low` is inverted.
 
 ```c++
 #include <bits/bits_insertion.h>
@@ -47,10 +57,14 @@ constexpr void insert(T val, const std::span<std::byte> buffer, size_t high, siz
 template<typename T>
 constexpr T extract(const std::span<const std::byte> buffer, size_t high, size_t low);
 template<typename T>
-constexpr void extract(const std::span<const std::byte> buffer, T & val, size_t high, size_t low);
+constexpr void extract(const std::span<const std::byte> buffer, T && val, size_t high, size_t low);
+template<output_iterator O, std::sentinel_for<O> S>
+constexpr void extract(const std::span<const std::byte> buffer, O first, S last, size_t high, size_t low, size_t nbBitsByElement = /* default size of element */);
+template<output_range R>
+constexpr void extract(const std::span<const std::byte> buffer, R && r, size_t high, size_t low, size_t nbBitsByElement = /* default size of element */);
 ```
 
-If `high` and `low` are known at compile time, they could be specified as template parameters.
+If `high` and `low` (and `nbBitsByElement` for ranges) are known at compile time, they could be specified as template parameters.
 
 ```c++
 #include <bits/bits_insertion.h>
@@ -62,10 +76,14 @@ constexpr void insert(T val, const std::span<std::byte> buffer);
 
 #include <bits/bits_extraction.h>
 
-template<typename T, size_t high, size_t low>
+template<size_t high, size_t low, typename T>
 constexpr T extract(const std::span<const std::byte> buffer);
-template<typename T, size_t high, size_t low>
-constexpr void extract(const std::span<const std::byte> buffer, T & val);
+template<size_t high, size_t low, typename T>
+constexpr void extract(const std::span<const std::byte> buffer, T && val);
+template<size_t high, size_t low, size_t nbBitsByElement = /* default size of element */, detail::output_iterator O, std::sentinel_for<O> S>
+constexpr void extract(const std::span<const std::byte> buffer, O first, S last);
+template<size_t high, size_t low, size_t nbBitsByElement = /* default size of element */, detail::output_range R>
+constexpr void extract(const std::span<const std::byte> buffer, R && r);
 ```
 
 View some usage examples :
@@ -76,7 +94,7 @@ View some usage examples :
 
 `insert()` and `extract()` methods could be used to respectively insert and extract bits.
 
-These classes also provides method :
+These classes also provides methods :
 - `nbBitsStreamed()` to get the number of bits currently streamed (excluding initial offset)
 - `skip(size_t nbBits)` to skip a specified number of bits
 - `reset()` to reset the stream at the begining. _This reset the stream position to initial offset (`0` if not specified)._
@@ -87,7 +105,7 @@ These classes also provides method :
 class BitsSerializer
 {
 public:
-    inline BitsSerializer(const std::span<std::byte> buffer, size_t lengthBufferBits = N * CHAR_BIT, size_t initialOffsetBits = 0);
+    inline BitsSerializer(const std::span<std::byte> buffer, size_t initialOffsetBits = 0);
 
     template<typename T>
     inline BitsSerializer & insert(T val, size_t nbBits = sizeof(T) * CHAR_BIT);
@@ -105,10 +123,11 @@ public:
 class BitsDeserializer
 {
 public:
-    inline BitsDeserializer(const std::span<const std::byte> buffer, size_t lengthBufferBits = N * CHAR_BIT, size_t initialOffsetBits = 0);
+    inline BitsDeserializer(const std::span<const std::byte> buffer, size_t initialOffsetBits = 0);
 
-    template<typename T> inline T extract(size_t nbBits);
-    template<typename T> inline BitsDeserializer & extract(T & val, size_t nbBits = sizeof(T) * CHAR_BIT);
+    template<typename T>     inline T extract(size_t nbBits);
+    template<typename T>     inline BitsDeserializer & extract(T && val, size_t nbBits = sizeof(T) * CHAR_BIT);
+    template<output_range R> inline BitsDeserializer & extract(R && r, size_t nbBits = sizeof(std::ranges::range_value_t<R>) * CHAR_BIT);
 
     inline size_t nbBitsStreamed(void);
 
@@ -125,7 +144,9 @@ inline BitsSerializer & operator <<(BitsSerializer & bs, T val);
 inline BitsSerializer & operator <<(BitsSerializer & bs, const detail::BitsStreamManipulation manip);
 
 template<typename T>
-inline BitsDeserializer & operator >>(BitsDeserializer & bs, T & val);
+inline BitsDeserializer & operator >>(BitsDeserializer & bs, T && val);
+template<output_range R>
+inline BitsDeserializer & operator >>(BitsDeserializer & bs, R && r);
 inline BitsDeserializer & operator >>(BitsDeserializer & bs, const detail::BitsStreamManipulation manip);
 
 inline detail::BitsStreamManipulation nbits(size_t nbBits);

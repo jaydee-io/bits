@@ -7,4 +7,5 @@
   - Disable library installation
 - Add CMake installation rules
 - Document library installation / including
-- Add array (`T []` or `std::array`) insertion/extraction
+- Add array (`T []` or `std::array`) insertion
+- Rename `Flags` to `BitFlags`

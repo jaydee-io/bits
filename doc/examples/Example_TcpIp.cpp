@@ -190,10 +190,8 @@ EthernetHeader extractEthernetHeader(std::span<const std::byte> buffer)
     bits::BitsDeserializer deserializer(buffer);
     EthernetHeader ethernetHeader;
 
-    for(auto & byte : ethernetHeader.dest)
-        deserializer >> byte;
-    for(auto & byte : ethernetHeader.src)
-        deserializer >> byte;
+    deserializer >> ethernetHeader.dest;
+    deserializer >> ethernetHeader.src;
     deserializer >> ethernetHeader.proto;
 
     return ethernetHeader;
@@ -216,13 +214,9 @@ IpHeader extractIpHeader(std::span<const std::byte> buffer)
         >>                    ipHeader.ttl
         >>                    ipHeader.protocol
         >>                    ipHeader.checksum
+        >>                    ipHeader.source
+        >>                    ipHeader.destination
     ;
-
-    // For now, bits doesn't support array (de)serialization, but it's coming soon :-)
-    for(auto i=0ul; i<sizeof(ipHeader.source); i++)
-        deserializer >> ipHeader.source[i];
-    for(auto i=0ul; i<sizeof(ipHeader.destination); i++)
-        deserializer >> ipHeader.destination[i];
 
     return ipHeader;
 }
@@ -313,16 +307,16 @@ void printBuffer(std::span<const std::byte> buffer)
         printf("%08zX :", i);
 
         for(size_t j=0; j<8 and i<buffer.size(); j++, i++)
-            printf(" %02hhX", buffer[i]);
+            printf(" %02hhX", std::to_integer<int>(buffer[i]));
         printf("    ");
         for(size_t j=0; j<8 and i<buffer.size(); j++, i++)
-            printf(" %02hhX", buffer[i]);
+            printf(" %02hhX", std::to_integer<int>(buffer[i]));
         printf("    ");
         for(size_t j=0; j<8 and i<buffer.size(); j++, i++)
-            printf(" %02hhX", buffer[i]);
+            printf(" %02hhX", std::to_integer<int>(buffer[i]));
         printf("    ");
         for(size_t j=0; j<8 and i<buffer.size(); j++, i++)
-            printf(" %02hhX", buffer[i]);
+            printf(" %02hhX", std::to_integer<int>(buffer[i]));
         printf("\n");
 
         i--;

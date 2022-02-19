@@ -7,16 +7,19 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <array>
+#include <span>
+#include <vector>
+#include <list>
 #include <cstddef>
 
 #include <bits/BitsDeserializer.h>
 
 using ::testing::ElementsAreArray;
 
-template<typename... Ts>
-constexpr std::array<const std::byte, sizeof...(Ts)> make_array(Ts && ... args) noexcept
+template<typename T = std::byte, typename... Ts>
+constexpr std::array<const T, sizeof...(Ts)> make_array(Ts && ... args) noexcept
 {
-    return { std::byte(std::forward<Ts>(args))... };
+    return { T(std::forward<Ts>(args))... };
 }
 
 const size_t BUFFER_SIZE = 8;
@@ -203,4 +206,67 @@ TEST(BitsDeserializer, Deserialize_size_t)
 
     deserializer >> bits::reset() >> bits::nbits(8) >> val;
     ASSERT_EQ(val, 0xCA);
+}
+
+TEST(BitsDeserializer, Ranges)
+{
+    const auto buffer = make_array(0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF);
+    bits::BitsDeserializer deserializer(buffer, 4);
+    uint8_t c_array[3] = {};
+    std::array<uint8_t, 3> std_array = {};
+    std::array<uint8_t, 3> std_array_for_span = {};
+    std::span<uint8_t, 3> std_span(std_array_for_span);
+    std::vector<uint8_t> std_vector(3, 0);
+    std::list<uint8_t> std_list(3, 0);
+
+    deserializer
+        >> bits::reset() >> c_array
+        >> bits::reset() >> std_array
+        >> bits::reset() >> std_span
+        >> bits::reset() >> std_vector
+        >> bits::reset() >> std_list
+    ;
+
+    ASSERT_THAT(c_array, ElementsAreArray(make_array<uint8_t>(0x5F, 0xF7, 0x03)));
+    ASSERT_THAT(std_array, ElementsAreArray(make_array<uint8_t>(0x5F, 0xF7, 0x03)));
+    ASSERT_THAT(std_span, ElementsAreArray(make_array<uint8_t>(0x5F, 0xF7, 0x03)));
+    ASSERT_THAT(std_vector, ElementsAreArray(make_array<uint8_t>(0x5F, 0xF7, 0x03)));
+    ASSERT_THAT(std_list, ElementsAreArray(make_array<uint8_t>(0x5F, 0xF7, 0x03)));
+}
+
+TEST(BitsDeserializer, Ranges_Subranges)
+{
+    const auto buffer = make_array(0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF);
+    bits::BitsDeserializer deserializer(buffer, 4);
+
+    uint8_t c_array[6] = {};
+    std::array<uint8_t, 6> std_array = {};
+    std::array<uint8_t, 6> std_array_for_span = {};
+    std::span<uint8_t, 6> std_span(std_array_for_span);
+    std::vector<uint8_t> std_vector(6, 0);
+    std::list<uint8_t> std_list(6, 0);
+
+    deserializer
+        >> bits::reset() >> std::ranges::subrange(std::next(std::begin(c_array)), std::next(std::begin(c_array), 4))
+        >> bits::reset() >> std::ranges::subrange(std::next(std::begin(std_array)), std::next(std::begin(std_array), 4))
+        >> bits::reset() >> std::ranges::subrange(std::next(std::begin(std_span)), std::next(std::begin(std_span), 4))
+        >> bits::reset() >> std::ranges::subrange(std::next(std::begin(std_vector)), std::next(std::begin(std_vector), 4))
+        >> bits::reset() >> std::ranges::subrange(std::next(std::begin(std_list)), std::next(std::begin(std_list), 4))
+    ;
+
+    ASSERT_THAT(c_array, ElementsAreArray(make_array<uint8_t>(0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00)));
+    ASSERT_THAT(std_array, ElementsAreArray(make_array<uint8_t>(0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00)));
+    ASSERT_THAT(std_span, ElementsAreArray(make_array<uint8_t>(0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00)));
+    ASSERT_THAT(std_vector, ElementsAreArray(make_array<uint8_t>(0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00)));
+    ASSERT_THAT(std_list, ElementsAreArray(make_array<uint8_t>(0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00)));
+}
+
+TEST(BitsDeserializer, Ranges_nbits)
+{
+    const auto buffer = make_array(0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF);
+    bits::BitsDeserializer deserializer(buffer, 4);
+    std::array<uint8_t, 6> array = {};
+
+    deserializer >> bits::nbits(4) >> array;
+    ASSERT_THAT(array, ElementsAreArray(make_array<uint8_t>(0x05, 0x0F, 0x0F, 0x07, 0x00, 0x03 )));
 }

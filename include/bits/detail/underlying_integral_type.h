@@ -4,8 +4,8 @@
 // This file is distributed under the 3-clause Berkeley Software Distribution
 // License. See LICENSE for details.
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef BITS_UNDERLYING_INTEGRAL_TYPE_H
-#define BITS_UNDERLYING_INTEGRAL_TYPE_H
+#ifndef BITS_DETAIL_UNDERLYING_INTEGRAL_TYPE_H
+#define BITS_DETAIL_UNDERLYING_INTEGRAL_TYPE_H
 
 #include <cstdint>
 #include <type_traits>
@@ -40,4 +40,4 @@ using underlying_integral_type_t = typename underlying_integral_type<sizeof(T), 
 
 } // namespace bits::detail
 
-#endif /* BITS_UNDERLYING_INTEGRAL_TYPE_H */
+#endif /* BITS_DETAIL_UNDERLYING_INTEGRAL_TYPE_H */

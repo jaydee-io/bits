@@ -4,8 +4,8 @@
 // This file is distributed under the 3-clause Berkeley Software Distribution
 // License. See LICENSE for details.
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef BITS_BITS_STREAM_MANIPULATION_H
-#define BITS_BITS_STREAM_MANIPULATION_H
+#ifndef BITS_DETAIL_BITS_STREAM_MANIPULATION_H
+#define BITS_DETAIL_BITS_STREAM_MANIPULATION_H
 
 namespace bits {
 
@@ -20,7 +20,7 @@ struct BitsStreamManipulation
         SKIP_BITS,
         RESET,
     };
-    
+
     Action action;
     size_t value = 0;
 };
@@ -50,4 +50,4 @@ inline detail::BitsStreamManipulation reset(void)
 
 } // namespace bits
 
-#endif /* BITS_BITS_STREAM_MANIPULATION_H */
+#endif /* BITS_DETAIL_BITS_STREAM_MANIPULATION_H */

@@ -31,9 +31,9 @@ enum class GasValid
     VALID = 1,
 };
 
-auto gas_resistance_data  = bits::extract<uint16_t,  9,  0>(buffer);
-auto gas_is_valid_as_enum = bits::extract<GasValid, 10, 10>(buffer);
-auto gas_is_valid_as_bool = bits::extract<bool,     10, 10>(buffer);
+auto gas_resistance_data  = bits::extract< 9,  0, uint16_t>(buffer);
+auto gas_is_valid_as_enum = bits::extract<10, 10, GasValid>(buffer);
+auto gas_is_valid_as_bool = bits::extract<10, 10, bool>(buffer);
 
 if(gas_is_valid_as_bool)                    // Using bool type
 if(gas_is_valid_as_enum == GasValid::VALID) // Using 'GasValid' strong type
