@@ -8,6 +8,7 @@
 #define BITS_BITS_FIELD_H
 
 #include <cstdint>
+#include <climits>
 #include <compare>
 
 namespace bits {

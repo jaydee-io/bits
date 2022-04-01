@@ -9,6 +9,7 @@
 
 #include <cstddef>
 #include <cstdlib>
+#include <climits>
 #include <span>
 
 #include <bits/bits_insertion.h>

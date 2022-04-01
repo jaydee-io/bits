@@ -102,16 +102,16 @@ inline constexpr Flags<EnumType> operator ^(EnumType lhs, const Flags<EnumType> 
 //- Bitwise operators enum/enum
 //-----------------------------------------------------------------------------
 template<typename EnumType>
-requires (bits::is_flags_bits_v<EnumType>)
+requires(bits::is_flags_bits_v<EnumType>)
 inline constexpr bits::Flags<EnumType> operator &(EnumType lhs, EnumType rhs) noexcept;
 template<typename EnumType>
-requires (bits::is_flags_bits_v<EnumType>)
+requires(bits::is_flags_bits_v<EnumType>)
 inline constexpr bits::Flags<EnumType> operator |(EnumType lhs, EnumType rhs) noexcept;
 template<typename EnumType>
-requires (bits::is_flags_bits_v<EnumType>)
+requires(bits::is_flags_bits_v<EnumType>)
 inline constexpr bits::Flags<EnumType> operator ^(EnumType lhs, EnumType rhs) noexcept;
 template<typename EnumType>
-requires (bits::is_flags_bits_v<EnumType>)
+requires(bits::is_flags_bits_v<EnumType>)
 inline constexpr bits::Flags<EnumType> operator ~(EnumType lhs) noexcept;
 
 
@@ -264,16 +264,16 @@ inline constexpr Flags<EnumType> operator ^(EnumType lhs, const Flags<EnumType> 
 //- Bitwise operators enum/enum
 //-----------------------------------------------------------------------------
 template<typename EnumType>
-requires (bits::is_flags_bits_v<EnumType>)
+requires(bits::is_flags_bits_v<EnumType>)
 inline constexpr bits::Flags<EnumType> operator &(EnumType lhs, EnumType rhs) noexcept { return  bits::Flags<EnumType>(lhs) & rhs; }
 template<typename EnumType>
-requires (bits::is_flags_bits_v<EnumType>)
+requires(bits::is_flags_bits_v<EnumType>)
 inline constexpr bits::Flags<EnumType> operator |(EnumType lhs, EnumType rhs) noexcept { return  bits::Flags<EnumType>(lhs) | rhs; }
 template<typename EnumType>
-requires (bits::is_flags_bits_v<EnumType>)
+requires(bits::is_flags_bits_v<EnumType>)
 inline constexpr bits::Flags<EnumType> operator ^(EnumType lhs, EnumType rhs) noexcept { return  bits::Flags<EnumType>(lhs) ^ rhs; }
 template<typename EnumType>
-requires (bits::is_flags_bits_v<EnumType>)
+requires(bits::is_flags_bits_v<EnumType>)
 inline constexpr bits::Flags<EnumType> operator ~(EnumType lhs)               noexcept { return ~bits::Flags<EnumType>(lhs); }
 
 //-----------------------------------------------------------------------------
