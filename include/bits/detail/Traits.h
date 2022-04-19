@@ -8,6 +8,8 @@
 #define BITS_DETAIL_TRAITS_H
 
 #include <type_traits>
+#include <iterator>
+#include <ranges>
 #include <span>
 #include <array>
 

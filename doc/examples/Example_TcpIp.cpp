@@ -307,16 +307,16 @@ void printBuffer(std::span<const std::byte> buffer)
         printf("%08zX :", i);
 
         for(size_t j=0; j<8 and i<buffer.size(); j++, i++)
-            printf(" %02hhX", std::to_integer<int>(buffer[i]));
+            printf(" %02X", std::to_integer<int>(buffer[i]));
         printf("    ");
         for(size_t j=0; j<8 and i<buffer.size(); j++, i++)
-            printf(" %02hhX", std::to_integer<int>(buffer[i]));
+            printf(" %02X", std::to_integer<int>(buffer[i]));
         printf("    ");
         for(size_t j=0; j<8 and i<buffer.size(); j++, i++)
-            printf(" %02hhX", std::to_integer<int>(buffer[i]));
+            printf(" %02X", std::to_integer<int>(buffer[i]));
         printf("    ");
         for(size_t j=0; j<8 and i<buffer.size(); j++, i++)
-            printf(" %02hhX", std::to_integer<int>(buffer[i]));
+            printf(" %02X", std::to_integer<int>(buffer[i]));
         printf("\n");
 
         i--;
@@ -329,7 +329,7 @@ void onPacket(uint8_t * /*args*/, const struct pcap_pkthdr * packet_header, cons
     auto ethernetHeader = extractEthernetHeader(packet);
     auto ipHeader = extractIpHeader(packet.subspan(sizeof(ethernetHeader)));
 
-    printf("%ld.%06d - %6d bytes received", packet_header->ts.tv_sec, packet_header->ts.tv_usec, packet_header->caplen);
+    printf("%ld.%06ld - %6d bytes received", packet_header->ts.tv_sec, static_cast<long int>(packet_header->ts.tv_usec), packet_header->caplen);
 
     if(ethernetHeader.proto != EtherType::IP or ipHeader.protocol != IpProtocol::TCP)
     {
