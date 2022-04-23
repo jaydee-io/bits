@@ -26,11 +26,10 @@ class BitsDeserializer : public detail::BitsStream<BitsDeserializer>
 public:
     inline BitsDeserializer(const std::span<const std::byte> buffer, size_t initialOffsetBits = 0);
 
-    template<typename T>
-    requires(not std::is_same_v<T, BitsDeserializer>)
+    template<detail::output_basic_type T>
     inline T extract(size_t nbBits = sizeof(T) * CHAR_BIT);
-    template<typename T>
-    inline BitsDeserializer & extract(T && val, size_t nbBits = sizeof(T) * CHAR_BIT);
+    template<detail::output_basic_type T>
+    inline BitsDeserializer & extract(T & val, size_t nbBits = sizeof(T) * CHAR_BIT);
     template<detail::output_range R>
     inline BitsDeserializer & extract(R && r, size_t nbBits = sizeof(std::ranges::range_value_t<R>) * CHAR_BIT);
 
@@ -38,12 +37,15 @@ protected:
     const std::span<const std::byte> buffer;
 };
 
-template<typename T>
-requires(not detail::output_range<T>)
-inline BitsDeserializer & operator >>(BitsDeserializer & bs, T && val);
+template<detail::output_basic_type T>
+inline BitsDeserializer & operator >>(BitsDeserializer & bs, T & val);
 template<detail::output_range R>
 inline BitsDeserializer & operator >>(BitsDeserializer & bs, R && r);
 inline BitsDeserializer & operator >>(BitsDeserializer & bs, const detail::BitsStreamManipulation manip);
+
+
+
+
 
 //-----------------------------------------------------------------------------
 //-
@@ -57,8 +59,7 @@ inline BitsDeserializer::BitsDeserializer(const std::span<const std::byte> buffe
 {}
 
 //-----------------------------------------------------------------------------
-template<typename T>
-requires(not std::is_same_v<T, BitsDeserializer>)
+template<detail::output_basic_type T>
 inline T BitsDeserializer::extract(size_t nbBits)
 {
     checkNbRemainingBits(nbBits, "Unable to extract bits, too few bits remaining");
@@ -70,13 +71,13 @@ inline T BitsDeserializer::extract(size_t nbBits)
 }
 
 //-----------------------------------------------------------------------------
-template<typename T>
-inline BitsDeserializer & BitsDeserializer::extract(T && val, size_t nbBits)
+template<detail::output_basic_type T>
+inline BitsDeserializer & BitsDeserializer::extract(T & val, size_t nbBits)
 {
     auto nbBitsToExtract = nbBitsNext ? nbBitsNext : nbBits;
     checkNbRemainingBits(nbBitsToExtract, "Unable to extract bits, too few bits remaining");
 
-    bits::extract(buffer, std::forward<T>(val), posBits + nbBitsToExtract - 1, posBits);
+    bits::extract(buffer, val, posBits + nbBitsToExtract - 1, posBits);
     posBits += nbBitsToExtract;
     nbBitsNext = 0;
 
@@ -113,11 +114,10 @@ inline BitsDeserializer & BitsDeserializer::extract(R && r, size_t nbBits)
 }
 
 //-----------------------------------------------------------------------------
-template<typename T>
-requires(not detail::output_range<T>)
-inline BitsDeserializer & operator >>(BitsDeserializer & bs, T && val)
+template<detail::output_basic_type T>
+inline BitsDeserializer & operator >>(BitsDeserializer & bs, T & val)
 {
-    return bs.extract(std::forward<T>(val), sizeof(T) * CHAR_BIT);
+    return bs.extract(val, sizeof(T) * CHAR_BIT);
 }
 
 //-----------------------------------------------------------------------------

@@ -166,24 +166,24 @@ TEST(BitsExtraction_CArray, Ranges_Subranges)
 
     // Extract array APIs with output value
     uint8_t c_array[6] = {};
-    bits::extract(buffer, std::ranges::subrange(std::next(std::begin(c_array)), std::next(std::begin(c_array), 4)), 27, 4);
+    bits::extract(buffer, std::ranges::subrange(std::ranges::next(std::ranges::begin(c_array)), std::ranges::next(std::ranges::begin(c_array), 4)), 27, 4);
     ASSERT_THAT(c_array, ElementsAreArray(make_cpp_array<uint8_t>(0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00)));
 
     std::array<uint8_t, 6> std_array = {};
-    bits::extract(buffer, std::ranges::subrange(std::next(std::begin(std_array)), std::next(std::begin(std_array), 4)), 27, 4);
+    bits::extract(buffer, std::ranges::subrange(std::ranges::next(std::ranges::begin(std_array)), std::ranges::next(std::ranges::begin(std_array), 4)), 27, 4);
     ASSERT_THAT(std_array, ElementsAreArray(make_cpp_array<uint8_t>(0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00)));
 
     std_array = {};
     std::span<uint8_t, 6> std_span(std_array);
-    bits::extract(buffer, std::ranges::subrange(std::next(std::begin(std_span)), std::next(std::begin(std_span), 4)), 27, 4);
+    bits::extract(buffer, std::ranges::subrange(std::ranges::next(std::ranges::begin(std_span)), std::ranges::next(std::ranges::begin(std_span), 4)), 27, 4);
     ASSERT_THAT(std_span, ElementsAreArray(make_cpp_array<uint8_t>(0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00)));
 
     std::vector<uint8_t> std_vector(6, 0);
-    bits::extract(buffer, std::ranges::subrange(std::next(std::begin(std_vector)), std::next(std::begin(std_vector), 4)), 27, 4);
+    bits::extract(buffer, std::ranges::subrange(std::ranges::next(std::ranges::begin(std_vector)), std::ranges::next(std::ranges::begin(std_vector), 4)), 27, 4);
     ASSERT_THAT(std_vector, ElementsAreArray(make_cpp_array<uint8_t>(0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00)));
 
     std::list<uint8_t> std_list(6, 0);
-    bits::extract(buffer, std::ranges::subrange(std::next(std::begin(std_list)), std::next(std::begin(std_list), 4)), 27, 4);
+    bits::extract(buffer, std::ranges::subrange(std::ranges::next(std::ranges::begin(std_list)), std::ranges::next(std::ranges::begin(std_list), 4)), 27, 4);
     ASSERT_THAT(std_list, ElementsAreArray(make_cpp_array<uint8_t>(0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00)));
 }
 
@@ -372,24 +372,24 @@ TEST(BitsExtraction_CArray, TemplatedPosition_Ranges_Subranges)
 
     // Extract array APIs with output value
     uint8_t c_array[6] = {};
-    bits::extract<27, 4>(buffer, std::ranges::subrange(std::next(std::begin(c_array)), std::next(std::begin(c_array), 4)));
+    bits::extract<27, 4>(buffer, std::ranges::subrange(std::ranges::next(std::ranges::begin(c_array)), std::ranges::next(std::ranges::begin(c_array), 4)));
     ASSERT_THAT(c_array, ElementsAreArray(make_cpp_array<uint8_t>(0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00)));
 
     std::array<uint8_t, 6> std_array = {};
-    bits::extract<27, 4>(buffer, std::ranges::subrange(std::next(std::begin(std_array)), std::next(std::begin(std_array), 4)));
+    bits::extract<27, 4>(buffer, std::ranges::subrange(std::ranges::next(std::ranges::begin(std_array)), std::ranges::next(std::ranges::begin(std_array), 4)));
     ASSERT_THAT(std_array, ElementsAreArray(make_cpp_array<uint8_t>(0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00)));
 
     std_array = {};
     std::span<uint8_t, 6> std_span(std_array);
-    bits::extract<27, 4>(buffer, std::ranges::subrange(std::next(std::begin(std_span)), std::next(std::begin(std_span), 4)));
+    bits::extract<27, 4>(buffer, std::ranges::subrange(std::ranges::next(std::ranges::begin(std_span)), std::ranges::next(std::ranges::begin(std_span), 4)));
     ASSERT_THAT(std_span, ElementsAreArray(make_cpp_array<uint8_t>(0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00)));
 
     std::vector<uint8_t> std_vector(6, 0);
-    bits::extract<27, 4>(buffer, std::ranges::subrange(std::next(std::begin(std_vector)), std::next(std::begin(std_vector), 4)));
+    bits::extract<27, 4>(buffer, std::ranges::subrange(std::ranges::next(std::ranges::begin(std_vector)), std::ranges::next(std::ranges::begin(std_vector), 4)));
     ASSERT_THAT(std_vector, ElementsAreArray(make_cpp_array<uint8_t>(0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00)));
 
     std::list<uint8_t> std_list(6, 0);
-    bits::extract<27, 4>(buffer, std::ranges::subrange(std::next(std::begin(std_list)), std::next(std::begin(std_list), 4)));
+    bits::extract<27, 4>(buffer, std::ranges::subrange(std::ranges::next(std::ranges::begin(std_list)), std::ranges::next(std::ranges::begin(std_list), 4)));
     ASSERT_THAT(std_list, ElementsAreArray(make_cpp_array<uint8_t>(0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00)));
 }
 

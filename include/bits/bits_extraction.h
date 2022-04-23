@@ -22,8 +22,7 @@ namespace bits {
 //-----------------------------------------------------------------------------
 //- Extract to output parameter with runtime bits range
 //-----------------------------------------------------------------------------
-template<typename T>
-requires(not detail::output_range<T>)
+template<detail::input_basic_type T>
 constexpr void extract(const std::span<const std::byte> buffer, T & val, size_t high, size_t low);
 template<detail::output_iterator O, std::sentinel_for<O> S>
 constexpr void extract(const std::span<const std::byte> buffer, O first, S last, size_t high, size_t low, size_t nbBitsByElement = sizeof(std::iter_value_t<O>) * CHAR_BIT);
@@ -33,8 +32,7 @@ constexpr void extract(const std::span<const std::byte> buffer, R && r, size_t h
 //-----------------------------------------------------------------------------
 //- Extract to output parameter with compile time bits range
 //-----------------------------------------------------------------------------
-template<size_t high, size_t low, typename T>
-requires(not detail::output_range<T>)
+template<size_t high, size_t low, detail::input_basic_type T>
 constexpr void extract(const std::span<const std::byte> buffer, T & val);
 template<size_t high, size_t low, size_t nbBitsByElement, detail::output_iterator O, std::sentinel_for<O> S>
 constexpr void extract(const std::span<const std::byte> buffer, O first, S last);
@@ -68,6 +66,7 @@ constexpr T extract(const std::span<const std::byte> buffer);
 
 
 
+
 //-----------------------------------------------------------------------------
 //-
 //- Implementation
@@ -94,8 +93,7 @@ constexpr void extract(const std::span<const std::byte> buffer, O first, std::in
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<typename T>
-requires(not detail::output_range<T>)
+template<detail::input_basic_type T>
 constexpr void extract(const std::span<const std::byte> buffer, T & val, size_t high, size_t low)
 {
     assert((sizeof(T) * CHAR_BIT) >= (high - low + 1));
@@ -134,8 +132,7 @@ constexpr void extract(const std::span<const std::byte> buffer, R && r, size_t h
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<size_t high, size_t low, typename T>
-requires(not detail::output_range<T>)
+template<size_t high, size_t low, detail::input_basic_type T>
 constexpr void extract(const std::span<const std::byte> buffer, T & val)
 {
     assert((buffer.size() * CHAR_BIT) >= (high - low + 1));

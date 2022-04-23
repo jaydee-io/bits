@@ -43,6 +43,15 @@ template<typename T, size_t N> struct is_std_span<std::span<T, N>> : std::true_t
 
 template<typename T> inline constexpr bool is_std_span_v = is_std_span<T>::value;
 
+//-----------------------------------------------------------------------------
+//- Concept to express a basic serializable type, that is an arithlmetic
+//- or enum type
+//-----------------------------------------------------------------------------
+template <class T>
+concept input_basic_type = std::is_arithmetic_v<T> or std::is_enum_v<T>;
+template<class T>
+concept output_basic_type = input_basic_type<T> and not std::is_const_v<T>;
+
 } // namespace bits::detail
 
 #endif // BITS_DETAIL_TRAITS_H
