@@ -31,6 +31,19 @@ template <class R>
 concept output_range = std::ranges::output_range<R, std::ranges::range_value_t<R>>;
 
 //-----------------------------------------------------------------------------
+//- Helper to get number of elements in range
+//- TODO: Find a better place to put this helper
+//-----------------------------------------------------------------------------
+template<std::ranges::range R>
+inline constexpr size_t range_size(R && r)
+{
+    if constexpr(std::ranges::sized_range<R>)
+        return std::ranges::size(std::forward<R>(r));
+    else
+        return std::ranges::distance(std::ranges::begin(std::forward<R>(r)), std::ranges::end(std::forward<R>(r)));
+}
+
+//-----------------------------------------------------------------------------
 //- Traits to check if a type is a std::array or std::span type
 //-----------------------------------------------------------------------------
 template<typename T>           struct is_std_array : std::false_type {};

@@ -75,7 +75,7 @@ enum class Oversampling
     OVERSAMPLING_X16 = 5,
 };
 
-bits::insert<Oversampling, 7, 5>(Oversampling::OVERSAMPLING_X4, buffer);
+bits::insert<7, 5, Oversampling>(buffer, Oversampling::OVERSAMPLING_X4);
 
 // ... Write back the byte on I2C bus, at address 0x74 ...
 ```

@@ -7,16 +7,19 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <array>
+#include <span>
+#include <vector>
+#include <list>
 #include <cstddef>
 
 #include <bits/BitsSerializer.h>
 
 using ::testing::ElementsAreArray;
 
-template<typename... Ts>
-constexpr std::array<std::byte, sizeof...(Ts)> make_array(Ts && ... args) noexcept
+template<typename T = std::byte, typename... Ts>
+constexpr std::array<T, sizeof...(Ts)> make_array(Ts && ... args) noexcept
 {
-    return { std::byte(std::forward<Ts>(args))... };
+    return { T(std::forward<Ts>(args))... };
 }
 
 const size_t BUFFER_SIZE = 8;
@@ -157,4 +160,97 @@ TEST(BitsSerializer, BitsManipulation_SkipAndReset)
 
     serializer << uint8_t(0xAA);
     ASSERT_EQ(buffer[1], std::byte(0xAA));
+}
+
+TEST(BitsSerializer, Ranges)
+{
+    {
+        auto buffer = make_array(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+        bits::BitsSerializer serializer(buffer, 4);
+        uint8_t c_array[3] = { 0x5F, 0xF7, 0x03 };
+        serializer << c_array;
+        ASSERT_THAT(buffer, ElementsAreArray(make_array(0xF5, 0xFF, 0x70, 0x3F, 0xFF, 0xFF, 0xFF, 0xFF)));
+    }
+    {
+        auto buffer = make_array(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+        bits::BitsSerializer serializer(buffer, 4);
+        std::array<uint8_t, 3> std_array = { 0x5F, 0xF7, 0x03 };
+        serializer << std_array;
+        ASSERT_THAT(buffer, ElementsAreArray(make_array(0xF5, 0xFF, 0x70, 0x3F, 0xFF, 0xFF, 0xFF, 0xFF)));
+    }
+    {
+        auto buffer = make_array(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+        bits::BitsSerializer serializer(buffer, 4);
+        std::array<uint8_t, 3> std_array_for_span = { 0x5F, 0xF7, 0x03 };
+        std::span<uint8_t, 3> std_span(std_array_for_span);
+        serializer << std_span;
+        ASSERT_THAT(buffer, ElementsAreArray(make_array(0xF5, 0xFF, 0x70, 0x3F, 0xFF, 0xFF, 0xFF, 0xFF)));
+    }
+    {
+        auto buffer = make_array(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+        bits::BitsSerializer serializer(buffer, 4);
+        std::vector<uint8_t> std_vector = { 0x5F, 0xF7, 0x03 };
+        serializer << std_vector;
+        ASSERT_THAT(buffer, ElementsAreArray(make_array(0xF5, 0xFF, 0x70, 0x3F, 0xFF, 0xFF, 0xFF, 0xFF)));
+    }
+    {
+        auto buffer = make_array(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+        bits::BitsSerializer serializer(buffer, 4);
+        std::list<uint8_t> std_list = { 0x5F, 0xF7, 0x03 };
+        serializer << std_list;
+        ASSERT_THAT(buffer, ElementsAreArray(make_array(0xF5, 0xFF, 0x70, 0x3F, 0xFF, 0xFF, 0xFF, 0xFF)));
+    }
+}
+
+TEST(BitsSerializer, Ranges_Subranges)
+{
+    {
+        auto buffer = make_array(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+        bits::BitsSerializer serializer(buffer, 4);
+        uint8_t c_array[6] = { 0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00 };
+        serializer << std::ranges::subrange(std::ranges::next(std::ranges::begin(c_array)), std::ranges::next(std::ranges::begin(c_array), 4));
+        ASSERT_THAT(buffer, ElementsAreArray(make_array(0xF5, 0xFF, 0x70, 0x3F, 0xFF, 0xFF, 0xFF, 0xFF)));
+    }
+
+    {
+        auto buffer = make_array(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+        bits::BitsSerializer serializer(buffer, 4);
+        std::array<uint8_t, 6> std_array = { 0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00 };
+        serializer << std::ranges::subrange(std::ranges::next(std::ranges::begin(std_array)), std::ranges::next(std::ranges::begin(std_array), 4));
+        ASSERT_THAT(buffer, ElementsAreArray(make_array(0xF5, 0xFF, 0x70, 0x3F, 0xFF, 0xFF, 0xFF, 0xFF)));
+    }
+
+    {
+        auto buffer = make_array(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+        bits::BitsSerializer serializer(buffer, 4);
+        std::array<uint8_t, 6> std_array = { 0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00 };
+        std::span<uint8_t, 6> std_span(std_array);
+        serializer << std::ranges::subrange(std::ranges::next(std::ranges::begin(std_span)), std::ranges::next(std::ranges::begin(std_span), 4));
+        ASSERT_THAT(buffer, ElementsAreArray(make_array(0xF5, 0xFF, 0x70, 0x3F, 0xFF, 0xFF, 0xFF, 0xFF)));
+    }
+
+    {
+        auto buffer = make_array(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+        bits::BitsSerializer serializer(buffer, 4);
+        std::vector<uint8_t> std_vector = { 0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00 };
+        serializer << std::ranges::subrange(std::ranges::next(std::ranges::begin(std_vector)), std::ranges::next(std::ranges::begin(std_vector), 4));
+        ASSERT_THAT(buffer, ElementsAreArray(make_array(0xF5, 0xFF, 0x70, 0x3F, 0xFF, 0xFF, 0xFF, 0xFF)));
+    }
+
+    {
+        auto buffer = make_array(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+        bits::BitsSerializer serializer(buffer, 4);
+        std::list<uint8_t> std_list = { 0x00, 0x5F, 0xF7, 0x03, 0x00, 0x00 };
+        serializer << std::ranges::subrange(std::ranges::next(std::ranges::begin(std_list)), std::ranges::next(std::ranges::begin(std_list), 4));
+        ASSERT_THAT(buffer, ElementsAreArray(make_array(0xF5, 0xFF, 0x70, 0x3F, 0xFF, 0xFF, 0xFF, 0xFF)));
+    }
+}
+
+TEST(BitsSerializer, Ranges_nbits)
+{
+    auto buffer = make_array(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+    bits::BitsSerializer serializer(buffer, 4);
+    uint8_t c_array[3] = { 0x05, 0x07, 0x03 };
+    serializer << bits::nbits(4) << c_array;
+    ASSERT_THAT(buffer, ElementsAreArray(make_array(0xF5, 0x73, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF)));
 }

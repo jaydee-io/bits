@@ -68,7 +68,7 @@ void BME680_write(void)
     std::cout << "std::is_integral_v<Oversampling>  = " << std::is_integral_v<Oversampling> << std::endl;
     std::cout << "std::is_integral_v<Oversampling2> = " << std::is_integral_v<Oversampling2> << std::endl;
 
-    bits::insert<Oversampling, 7, 5>(Oversampling::OVERSAMPLING_X4, buffer);
+    bits::insert<7, 5, Oversampling>(buffer, Oversampling::OVERSAMPLING_X4);
 
     // ... Write back the byte on I2C bus, at address 0x74 ...
 }

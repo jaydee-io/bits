@@ -85,20 +85,6 @@ inline BitsDeserializer & BitsDeserializer::extract(T & val, size_t nbBits)
 }
 
 //-----------------------------------------------------------------------------
-namespace detail {
-
-template<detail::output_range R>
-inline constexpr size_t range_size(R && r)
-{
-    if constexpr(std::ranges::sized_range<R>)
-        return std::ranges::size(std::forward<R>(r));
-    else
-        return std::ranges::distance(std::ranges::begin(std::forward<R>(r)), std::ranges::end(std::forward<R>(r)));
-}
-
-} // namespace detail
-
-//-----------------------------------------------------------------------------
 template<detail::output_range R>
 inline BitsDeserializer & BitsDeserializer::extract(R && r, size_t nbBits)
 {

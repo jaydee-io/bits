@@ -13,6 +13,7 @@
 #include <span>
 
 #include <bits/bits_insertion.h>
+#include <bits/detail/Traits.h>
 #include <bits/detail/BitsStream.h>
 
 namespace bits {
@@ -25,22 +26,24 @@ class BitsSerializer : public detail::BitsStream<BitsSerializer>
 public:
     inline BitsSerializer(const std::span<std::byte> buffer, size_t initialOffsetBits = 0);
 
-    template<typename T>
+    template<detail::input_basic_type T>
     inline BitsSerializer & insert(T val, size_t nbBits = sizeof(T) * CHAR_BIT);
+    template<std::ranges::input_range R>
+    inline BitsSerializer & insert(R && r, size_t nbBits = sizeof(std::ranges::range_value_t<R>) * CHAR_BIT);
 
 protected:
-    template<typename T>
-    inline BitsSerializer & insertUsingInternalState(T val);
-
-    template<typename T>
-    friend inline BitsSerializer & operator <<(BitsSerializer & bs, T val);
-
     const std::span<std::byte> buffer;
 };
 
-template<typename T>
+template<detail::input_basic_type T>
 inline BitsSerializer & operator <<(BitsSerializer & bs, T val);
+template<std::ranges::input_range R>
+inline BitsSerializer & operator <<(BitsSerializer & bs, R && r);
 inline BitsSerializer & operator <<(BitsSerializer & bs, const detail::BitsStreamManipulation manip);
+
+
+
+
 
 //-----------------------------------------------------------------------------
 //-
@@ -54,14 +57,14 @@ BitsSerializer::BitsSerializer(const std::span<std::byte> buffer_, size_t initia
 {}
 
 //-----------------------------------------------------------------------------
-template<typename T>
+template<detail::input_basic_type T>
 BitsSerializer & BitsSerializer::insert(T val, size_t nbBits)
 {
     auto nbBitsToInsert = nbBitsNext ? nbBitsNext : nbBits;
 
     checkNbRemainingBits(nbBitsToInsert, "Unable to insert bits, too few bits remaining");
 
-    bits::insert<T>(val, buffer, posBits + nbBitsToInsert - 1, posBits);
+    bits::insert(buffer, val, posBits + nbBitsToInsert - 1, posBits);
     posBits += nbBitsToInsert;
     nbBitsNext = 0;
 
@@ -69,10 +72,32 @@ BitsSerializer & BitsSerializer::insert(T val, size_t nbBits)
 }
 
 //-----------------------------------------------------------------------------
-template<typename T>
+template<std::ranges::input_range R>
+inline BitsSerializer & BitsSerializer::insert(R && r, size_t nbBits)
+{
+    auto nbBitsToInsertByElement = nbBitsNext ? nbBitsNext : nbBits;
+    auto nbBitsToInsert = nbBitsToInsertByElement * detail::range_size(std::forward<R>(r));
+    checkNbRemainingBits(nbBitsToInsert, "Unable to insert bits, too few bits remaining");
+
+    bits::insert(buffer, std::forward<R>(r), posBits + nbBitsToInsert - 1, posBits, nbBitsToInsertByElement);
+    posBits += nbBitsToInsert;
+    nbBitsNext = 0;
+
+    return *this;
+}
+
+//-----------------------------------------------------------------------------
+template<detail::input_basic_type T>
 inline BitsSerializer & operator <<(BitsSerializer & bs, T val)
 {
-    return bs.insert<T>(val);
+    return bs.insert(val);
+}
+
+//-----------------------------------------------------------------------------
+template<std::ranges::input_range R>
+inline BitsSerializer & operator <<(BitsSerializer & bs, R && r)
+{
+    return bs.insert(std::forward<R>(r), sizeof(std::ranges::range_value_t<R>) * CHAR_BIT);
 }
 
 //-----------------------------------------------------------------------------

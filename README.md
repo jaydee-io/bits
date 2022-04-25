@@ -37,7 +37,7 @@ In particular, `insert()` and `extract()` overloads are provided for ranges :
 - C++ vector `std::vector<T>`
 - ...
 
-In fact, all types satisfying the `std::ranges::output_range` concept.
+In fact, all types satisfying the `std::ranges::output_range` (for extraction) or `std::ranges::input_range` (for insertion) concepts.
 Notice that for range type insertion / extraction:
 * The number of bits for each range's element could be specified (default to `sizeof(T) * 8`)
 * The bits range `[high, low]` should cover the _Number of elements x Number of bits per element_
@@ -48,7 +48,12 @@ Be aware that bits range parameters order is `high` first then `low`. The behavi
 #include <bits/bits_insertion.h>
 
 template<typename T>
-constexpr void insert(T val, const std::span<std::byte> buffer, size_t high, size_t low);
+constexpr void insert(const std::span<std::byte> buffer, T val, size_t high, size_t low);
+
+template<std::input_iterator I, std::sentinel_for<I> S>
+constexpr void insert(const std::span<std::byte> buffer, I first, S last, size_t high, size_t low, size_t nbBitsByElement = /* default to size of element */);
+template<std::ranges::input_range R>
+constexpr void insert(const std::span<std::byte> buffer, R && r, size_t high, size_t low, size_t nbBitsByElement = /* default to size of element */);
 
 
 
@@ -56,12 +61,14 @@ constexpr void insert(T val, const std::span<std::byte> buffer, size_t high, siz
 
 template<typename T>
 constexpr T extract(const std::span<const std::byte> buffer, size_t high, size_t low);
+
 template<typename T>
-constexpr void extract(const std::span<const std::byte> buffer, T && val, size_t high, size_t low);
+constexpr void extract(const std::span<const std::byte> buffer, T & val, size_t high, size_t low);
+
 template<output_iterator O, std::sentinel_for<O> S>
-constexpr void extract(const std::span<const std::byte> buffer, O first, S last, size_t high, size_t low, size_t nbBitsByElement = /* default size of element */);
+constexpr void extract(const std::span<const std::byte> buffer, O first, S last, size_t high, size_t low, size_t nbBitsByElement = /* default to size of element */);
 template<output_range R>
-constexpr void extract(const std::span<const std::byte> buffer, R && r, size_t high, size_t low, size_t nbBitsByElement = /* default size of element */);
+constexpr void extract(const std::span<const std::byte> buffer, R && r, size_t high, size_t low, size_t nbBitsByElement = /* default to size of element */);
 ```
 
 If `high` and `low` (and `nbBitsByElement` for ranges) are known at compile time, they could be specified as template parameters.
@@ -72,17 +79,27 @@ If `high` and `low` (and `nbBitsByElement` for ranges) are known at compile time
 template<typename T, size_t high, size_t low>
 constexpr void insert(T val, const std::span<std::byte> buffer);
 
+template<size_t high, size_t low, typename T>
+constexpr void insert(const std::span<std::byte> buffer, T val);
+
+template<size_t high, size_t low, size_t nbBitsByElement = /* default to size of element */, std::input_iterator I, std::sentinel_for<I> S>
+constexpr void insert(const std::span<std::byte> buffer, I first, S last);
+template<size_t high, size_t low, size_t nbBitsByElement = /* default to size of element */, std::ranges::input_range R>
+constexpr void insert(const std::span<std::byte> buffer, R && r);
+
 
 
 #include <bits/bits_extraction.h>
 
 template<size_t high, size_t low, typename T>
 constexpr T extract(const std::span<const std::byte> buffer);
+
 template<size_t high, size_t low, typename T>
-constexpr void extract(const std::span<const std::byte> buffer, T && val);
-template<size_t high, size_t low, size_t nbBitsByElement = /* default size of element */, detail::output_iterator O, std::sentinel_for<O> S>
+constexpr void extract(const std::span<const std::byte> buffer, T & val);
+
+template<size_t high, size_t low, size_t nbBitsByElement = /* default to size of element */, detail::output_iterator O, std::sentinel_for<O> S>
 constexpr void extract(const std::span<const std::byte> buffer, O first, S last);
-template<size_t high, size_t low, size_t nbBitsByElement = /* default size of element */, detail::output_range R>
+template<size_t high, size_t low, size_t nbBitsByElement = /* default to size of element */, detail::output_range R>
 constexpr void extract(const std::span<const std::byte> buffer, R && r);
 ```
 
@@ -107,8 +124,8 @@ class BitsSerializer
 public:
     inline BitsSerializer(const std::span<std::byte> buffer, size_t initialOffsetBits = 0);
 
-    template<typename T>
-    inline BitsSerializer & insert(T val, size_t nbBits = sizeof(T) * CHAR_BIT);
+    template<typename T>    inline BitsSerializer & insert(T val, size_t nbBits = sizeof(T) * CHAR_BIT);
+    template<input_range R> inline BitsSerializer & insert(R && r, size_t nbBits = sizeof(std::ranges::range_value_t<R>) * CHAR_BIT);
 
     inline size_t nbBitsStreamed(void);
 
@@ -125,8 +142,8 @@ class BitsDeserializer
 public:
     inline BitsDeserializer(const std::span<const std::byte> buffer, size_t initialOffsetBits = 0);
 
-    template<typename T>     inline T extract(size_t nbBits);
-    template<typename T>     inline BitsDeserializer & extract(T && val, size_t nbBits = sizeof(T) * CHAR_BIT);
+    template<typename T>     inline T extract(size_t nbBits = sizeof(T) * CHAR_BIT);
+    template<typename T>     inline BitsDeserializer & extract(T & val, size_t nbBits = sizeof(T) * CHAR_BIT);
     template<output_range R> inline BitsDeserializer & extract(R && r, size_t nbBits = sizeof(std::ranges::range_value_t<R>) * CHAR_BIT);
 
     inline size_t nbBitsStreamed(void);
@@ -141,6 +158,8 @@ In addition to members functions, `bits` provides _streaming operators_ free sta
 ```c++
 template<typename T>
 inline BitsSerializer & operator <<(BitsSerializer & bs, T val);
+template<input_range R>
+inline BitsSerializer & operator <<(BitsSerializer & bs, R && r);
 inline BitsSerializer & operator <<(BitsSerializer & bs, const detail::BitsStreamManipulation manip);
 
 template<typename T>
