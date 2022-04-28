@@ -13,10 +13,18 @@
 namespace bits {
 
 //-----------------------------------------------------------------------------
-//- Traits to check if a type is a bits declared enum type
+//- Traits to check if a type is
+//-     - a bits declared enum type
+//-     - a flags enum type
 //-----------------------------------------------------------------------------
 template<typename T>
 inline constexpr bool is_enum_v = detail::IsBitEnum<T>::value;
+
+template<typename T>
+inline constexpr bool is_flags_bits_v = detail::IsFlagsBits<T>::value;
+
+template<typename T>
+inline constexpr bool is_flags_bits_enum_v = detail::IsFlagsBitsEnum<T>::value;
 
 //-----------------------------------------------------------------------------
 //- Utility traits to get enum properties :

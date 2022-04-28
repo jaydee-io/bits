@@ -11,6 +11,7 @@
 #define BITS_FLAGS_H
 
 #include <bits/detail/helper_macros.h>
+#include <bits/BitsTraits.h>
 #include <type_traits>
 #include <string>
 #include <compare>
@@ -22,7 +23,7 @@ namespace bits {
 //- Specialized, via the BITS_DECLARE_FLAGS[...] maros, for each Flag type
 //-----------------------------------------------------------------------------
 template<typename EnumType>
-struct FlagsTraits : std::false_type
+struct FlagsTraits
 {
     static constexpr const auto ALL_FLAGS = 0;
 };
@@ -81,12 +82,6 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-//- Traits to check if a type is a flags enum type
-//-----------------------------------------------------------------------------
-template<typename T>
-inline constexpr bool is_flags_bits_v = FlagsTraits<T>::value;
-
-//-----------------------------------------------------------------------------
 //- Bitwise operators enum/flags
 //-----------------------------------------------------------------------------
 template<typename EnumType>
@@ -102,16 +97,16 @@ inline constexpr Flags<EnumType> operator ^(EnumType lhs, const Flags<EnumType> 
 //- Bitwise operators enum/enum
 //-----------------------------------------------------------------------------
 template<typename EnumType>
-requires(bits::is_flags_bits_v<EnumType>)
+requires(bits::is_flags_bits_enum_v<EnumType>)
 inline constexpr bits::Flags<EnumType> operator &(EnumType lhs, EnumType rhs) noexcept;
 template<typename EnumType>
-requires(bits::is_flags_bits_v<EnumType>)
+requires(bits::is_flags_bits_enum_v<EnumType>)
 inline constexpr bits::Flags<EnumType> operator |(EnumType lhs, EnumType rhs) noexcept;
 template<typename EnumType>
-requires(bits::is_flags_bits_v<EnumType>)
+requires(bits::is_flags_bits_enum_v<EnumType>)
 inline constexpr bits::Flags<EnumType> operator ^(EnumType lhs, EnumType rhs) noexcept;
 template<typename EnumType>
-requires(bits::is_flags_bits_v<EnumType>)
+requires(bits::is_flags_bits_enum_v<EnumType>)
 inline constexpr bits::Flags<EnumType> operator ~(EnumType lhs) noexcept;
 
 
@@ -264,16 +259,16 @@ inline constexpr Flags<EnumType> operator ^(EnumType lhs, const Flags<EnumType> 
 //- Bitwise operators enum/enum
 //-----------------------------------------------------------------------------
 template<typename EnumType>
-requires(bits::is_flags_bits_v<EnumType>)
+requires(bits::is_flags_bits_enum_v<EnumType>)
 inline constexpr bits::Flags<EnumType> operator &(EnumType lhs, EnumType rhs) noexcept { return  bits::Flags<EnumType>(lhs) & rhs; }
 template<typename EnumType>
-requires(bits::is_flags_bits_v<EnumType>)
+requires(bits::is_flags_bits_enum_v<EnumType>)
 inline constexpr bits::Flags<EnumType> operator |(EnumType lhs, EnumType rhs) noexcept { return  bits::Flags<EnumType>(lhs) | rhs; }
 template<typename EnumType>
-requires(bits::is_flags_bits_v<EnumType>)
+requires(bits::is_flags_bits_enum_v<EnumType>)
 inline constexpr bits::Flags<EnumType> operator ^(EnumType lhs, EnumType rhs) noexcept { return  bits::Flags<EnumType>(lhs) ^ rhs; }
 template<typename EnumType>
-requires(bits::is_flags_bits_v<EnumType>)
+requires(bits::is_flags_bits_enum_v<EnumType>)
 inline constexpr bits::Flags<EnumType> operator ~(EnumType lhs)               noexcept { return ~bits::Flags<EnumType>(lhs); }
 
 //-----------------------------------------------------------------------------
@@ -295,6 +290,8 @@ enum class name rawTypeSpec { \
 
 // Flags traits
 #define __BITS_FLAGS_DECLARE_TRAITS(nameSpace, name, ...) \
+template<> struct detail::IsFlagsBitsEnum<nameSpace name> : std::true_type {}; \
+template<> struct detail::IsFlagsBits<nameSpace __BITS_FLAGS_NAME(name)> : std::true_type {}; \
 template<> \
 struct FlagsTraits<nameSpace name> : std::true_type { \
     static constexpr const auto ALL_FLAGS = \

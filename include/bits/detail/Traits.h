@@ -16,10 +16,18 @@
 namespace bits::detail {
 
 //-----------------------------------------------------------------------------
-//- Trait to check if a type is a bits declared enum type
+//- Trait to check if a type is
+//-     - a bits declared enum type
+//-     - a flags enum type
 //-----------------------------------------------------------------------------
 template<typename EnumType>
 struct IsBitEnum : std::false_type {};
+
+template<typename T>
+struct IsFlagsBits : std::false_type {};
+
+template<typename T>
+struct IsFlagsBitsEnum : std::false_type {};
 
 //-----------------------------------------------------------------------------
 //- Concept for output range and iterator with assigned value of the same type
@@ -61,7 +69,7 @@ template<typename T> inline constexpr bool is_std_span_v = is_std_span<T>::value
 //- or enum type
 //-----------------------------------------------------------------------------
 template <class T>
-concept input_basic_type = std::is_arithmetic_v<T> or std::is_enum_v<T>;
+concept input_basic_type = std::is_arithmetic_v<T> or std::is_enum_v<T> or IsFlagsBits<T>::value;
 template<class T>
 concept output_basic_type = input_basic_type<T> and not std::is_const_v<T>;
 

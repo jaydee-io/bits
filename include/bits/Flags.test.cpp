@@ -5,8 +5,30 @@
 // License. See LICENSE for details.
 ////////////////////////////////////////////////////////////////////////////////
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include <bits/Flags.h>
+
+#include <bits/bits_extraction.h>
+#include <bits/bits_insertion.h>
+#include <bits/BitsSerializer.h>
+#include <bits/BitsDeserializer.h>
+#include <array>
+#include <cstddef>
+
+using ::testing::ElementsAreArray;
+
+template<typename T = std::byte, typename... Ts>
+constexpr std::array<T, sizeof...(Ts)> make_array(Ts && ... args) noexcept
+{
+    return { T(std::forward<Ts>(args))... };
+}
+
+template<typename T = std::byte, typename... Ts>
+constexpr std::array<const T, sizeof...(Ts)> make_const_array(Ts && ... args) noexcept
+{
+    return { T(std::forward<Ts>(args))... };
+}
 
 BITS_DECLARE_FLAGS(TestWithoutType,
     BIT_0, 0,
@@ -481,4 +503,48 @@ TEST(Flags, Sizeof) {
     EXPECT_EQ(sizeof(TestWithoutType), sizeof(int));
     EXPECT_EQ(sizeof(testNamespace::TestType), sizeof(uint8_t));
     EXPECT_EQ(sizeof(testNamespace::TestWithoutType), sizeof(int));
+}
+
+TEST(Flags, Extraction) {
+    const auto buffer = make_const_array(0x35, 0xFF, 0x70, 0x35, 0xFF, 0x70, 0x35, 0xFF);
+
+    EXPECT_EQ(bits::extract<FlagsTestType>(buffer, 7,  4), TestType::BIT_0 | TestType::BIT_2);
+
+    FlagsTestType flags;
+    bits::extract(buffer, flags, 7,  4);
+    EXPECT_EQ(flags, TestType::BIT_0 | TestType::BIT_2);
+}
+
+TEST(Flags, Insertion) {
+    auto buffer = make_array(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+
+    bits::insert(buffer, TestType::BIT_0 | TestType::BIT_2, 7,  4);
+    EXPECT_THAT(buffer, ElementsAreArray(make_array(0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)));
+
+    FlagsTestType flags = TestType::BIT_0 | TestType::BIT_2;
+    bits::insert(buffer, flags, 3,  0);
+    EXPECT_THAT(buffer, ElementsAreArray(make_array(0x55, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)));
+}
+
+TEST(Flags, Streaming) {
+    auto buffer = make_array(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+
+    // Serialization
+    bits::BitsSerializer serializer(buffer);
+    serializer << bits::nbits(4) << (TestType::BIT_0 | TestType::BIT_2);
+    EXPECT_THAT(buffer, ElementsAreArray(make_array(0x50, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)));
+
+    FlagsTestType flags1 = TestType::BIT_1 | TestType::BIT_3;
+    serializer << flags1;
+    EXPECT_THAT(buffer, ElementsAreArray(make_array(0x50, 0xA0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)));
+
+    // Deserialization
+    bits::BitsDeserializer deserializer(buffer);
+    FlagsTestType flags2;
+    deserializer >> bits::nbits(4) >> flags2;
+    EXPECT_EQ(flags2, TestType::BIT_0 | TestType::BIT_2);
+
+    FlagsTestType flags3;
+    deserializer >> flags3;
+    EXPECT_EQ(flags3, TestType::BIT_1 | TestType::BIT_3);
 }
