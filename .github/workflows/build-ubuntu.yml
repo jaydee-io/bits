@@ -17,6 +17,7 @@ jobs:
     env:
       CC: "gcc-${{matrix.compiler-version}}"
       CXX: "g++-${{matrix.compiler-version}}"
+
     steps:
       - name: Install ${{env.CXX}}
         run: |
@@ -28,7 +29,6 @@ jobs:
         uses: actions/checkout@v3
       - name: Configure CMake
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build-type}} -DBITS_BUILD_TESTS=ON
-
       - name: Build
         run: cmake --build ${{github.workspace}}/build --parallel
       - name: Test
@@ -45,6 +45,7 @@ jobs:
     env:
       CC: "clang-${{matrix.compiler-version}}"
       CXX: "clang++-${{matrix.compiler-version}}"
+
     steps:
       - name: Install ${{env.CXX}}
         run: |
