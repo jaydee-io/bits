@@ -45,10 +45,8 @@ add_unit_test(TARGET ${UNITTESTS_NAME}
     bits/bits.test.cpp
 
     # Serialization / Deserialization
-    bits/bits_insertion.carray.test.cpp
-    bits/bits_insertion.cpparray.test.cpp
-    bits/bits_extraction.carray.test.cpp
-    bits/bits_extraction.cpparray.test.cpp
+    bits/bits_insertion.test.cpp
+    bits/bits_extraction.test.cpp
     bits/BitsSerializer.test.cpp
     bits/BitsDeserializer.test.cpp
 
