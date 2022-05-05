@@ -6,7 +6,9 @@
 #include <span>
 #include <cstddef>
 
+// #ifndef _MSC_VER
 #include <pcap.h>
+// #endif // _MSC_VER
 
 BITS_DECLARE_ENUM_WITH_TYPE(EtherType, uint16_t,
     PUP,         0x0200,
@@ -33,110 +35,113 @@ BITS_DECLARE_FLAGS_WITH_TYPE(Fragments, uint8_t,
     MORE_FRAGMENTS, 2
 )
 
-BITS_DECLARE_ENUM_WITH_TYPE(IpProtocol, uint8_t,
-    HOPOPTS,         0,               /* IP6 hop-by-hop options */
-    ICMP,            1,               /* control message protocol */
-    IGMP,            2,               /* group mgmt protocol */
-    GGP,             3,               /* gateway^2 (deprecated) */
-    IPV4,            4,               /* IPv4 encapsulation */
-    TCP,             6,               /* tcp */
-    ST,              7,               /* Stream protocol II */
-    EGP,             8,               /* exterior gateway protocol */
-    PIGP,            9,               /* private interior gateway */
-    RCCMON,          10,              /* BBN RCC Monitoring */
-    NVPII,           11,              /* network voice protocol*/
-    PUP,             12,              /* pup */
-    ARGUS,           13,              /* Argus */
-    EMCON,           14,              /* EMCON */
-    XNET,            15,              /* Cross Net Debugger */
-    CHAOS,           16,              /* Chaos*/
-    UDP,             17,              /* user datagram protocol */
-    MUX,             18,              /* Multiplexing */
-    MEAS,            19,              /* DCN Measurement Subsystems */
-    HMP,             20,              /* Host Monitoring */
-    PRM,             21,              /* Packet Radio Measurement */
-    IDP,             22,              /* xns idp */
-    TRUNK1,          23,              /* Trunk-1 */
-    TRUNK2,          24,              /* Trunk-2 */
-    LEAF1,           25,              /* Leaf-1 */
-    LEAF2,           26,              /* Leaf-2 */
-    RDP,             27,              /* Reliable Data */
-    IRTP,            28,              /* Reliable Transaction */
-    TP,              29,              /* tp-4 w/ class negotiation */
-    BLT,             30,              /* Bulk Data Transfer */
-    NSP,             31,              /* Network Services */
-    INP,             32,              /* Merit Internodal */
-    SEP,             33,              /* Sequential Exchange */
-    THREE_PC,        34,              /* Third Party Connect */
-    IDPR,            35,              /* InterDomain Policy Routing */
-    XTP,             36,              /* XTP */
-    DDP,             37,              /* Datagram Delivery */
-    CMTP,            38,              /* Control Message Transport */
-    TPXX,            39,              /* TP++ Transport */
-    IL,              40,              /* IL transport protocol */
-    IPV6,            41,              /* IP6 header */
-    SDRP,            42,              /* Source Demand Routing */
-    ROUTING,         43,              /* IP6 routing header */
-    FRAGMENT,        44,              /* IP6 fragmentation header */
-    IDRP,            45,              /* InterDomain Routing*/
-    RSVP,            46,              /* resource reservation */
-    GRE,             47,              /* General Routing Encap. */
-    MHRP,            48,              /* Mobile Host Routing */
-    BHA,             49,              /* BHA */
-    ESP,             50,              /* IP6 Encap Sec. Payload */
-    AH,              51,              /* IP6 Auth Header */
-    INLSP,           52,              /* Integ. Net Layer Security */
-    SWIPE,           53,              /* IP with encryption */
-    NHRP,            54,              /* Next Hop Resolution */
-    ICMPV6,          58,              /* ICMP6 */
-    NONE,            59,              /* IP6 no next header */
-    DSTOPTS,         60,              /* IP6 destination option */
-    AHIP,            61,              /* any host internal protocol */
-    CFTP,            62,              /* CFTP */
-    HELLO,           63,              /* "hello" routing protocol */
-    SATEXPAK,        64,              /* SATNET/Backroom EXPAK */
-    KRYPTOLAN,       65,              /* Kryptolan */
-    RVD,             66,              /* Remote Virtual Disk */
-    IPPC,            67,              /* Pluribus Packet Core */
-    ADFS,            68,              /* Any distributed FS */
-    SATMON,          69,              /* Satnet Monitoring */
-    VISA,            70,              /* VISA Protocol */
-    IPCV,            71,              /* Packet Core Utility */
-    CPNX,            72,              /* Comp. Prot. Net. Executive */
-    CPHB,            73,              /* Comp. Prot. HeartBeat */
-    WSN,             74,              /* Wang Span Network */
-    PVP,             75,              /* Packet Video Protocol */
-    BRSATMON,        76,              /* BackRoom SATNET Monitoring */
-    ND,              77,              /* Sun net disk proto (temp.) */
-    WBMON,           78,              /* WIDEBAND Monitoring */
-    WBEXPAK,         79,              /* WIDEBAND EXPAK */
-    EON,             80,              /* ISO cnlp */
-    VMTP,            81,              /* VMTP */
-    SVMTP,           82,              /* Secure VMTP */
-    VINES,           83,              /* Banyon VINES */
-    TTP,             84,              /* TTP */
-    IGP,             85,              /* NSFNET-IGP */
-    DGP,             86,              /* dissimilar gateway prot. */
-    TCF,             87,              /* TCF */
-    IGRP,            88,              /* Cisco/GXS IGRP */
-    OSPFIGP,         89,              /* OSPFIGP */
-    SRPC,            90,              /* Strite RPC protocol */
-    LARP,            91,              /* Locus Address Resoloution */
-    MTP,             92,              /* Multicast Transport */
-    AX25,            93,              /* AX.25 Frames */
-    IPEIP,           94,              /* IP encapsulated in IP */
-    MICP,            95,              /* Mobile Int.ing control */
-    SCCSP,           96,              /* Semaphore Comm. security */
-    ETHERIP,         97,              /* Ethernet IP encapsulation */
-    ENCAP,           98,              /* encapsulation header */
-    APES,            99,              /* any private encr. scheme */
-    GMTP,            100,             /* GMTP*/
-    PIM,             103,             /* Protocol Independent Mcast */
-    IPCOMP,          108,             /* payload compression (IPComp) */
-    PGM,             113,             /* PGM */
-    SCTP,            132,             /* SCTP */
-    DIVERT,          254,             /* divert pseudo-protocol */
-    RAW,             255              /* raw IP packet */
+BITS_DECLARE_ENUM_WITH_TYPE(IpProtocol, uint8_t
+    , HOPOPTS,         0               /* IP6 hop-by-hop options */
+    , ICMP,            1               /* control message protocol */
+    , IGMP,            2               /* group mgmt protocol */
+    , GGP,             3               /* gateway^2 (deprecated) */
+    , IPV4,            4               /* IPv4 encapsulation */
+    , TCP,             6               /* tcp */
+    , ST,              7               /* Stream protocol II */
+    , EGP,             8               /* exterior gateway protocol */
+    , PIGP,            9               /* private interior gateway */
+    , RCCMON,          10              /* BBN RCC Monitoring */
+    , NVPII,           11              /* network voice protocol*/
+    , PUP,             12              /* pup */
+    , ARGUS,           13              /* Argus */
+    , EMCON,           14              /* EMCON */
+    , XNET,            15              /* Cross Net Debugger */
+    , CHAOS,           16              /* Chaos*/
+    , UDP,             17              /* user datagram protocol */
+    , MUX,             18              /* Multiplexing */
+    , MEAS,            19              /* DCN Measurement Subsystems */
+    , HMP,             20              /* Host Monitoring */
+    , PRM,             21              /* Packet Radio Measurement */
+    , IDP,             22              /* xns idp */
+    , TRUNK1,          23              /* Trunk-1 */
+    , TRUNK2,          24              /* Trunk-2 */
+    , LEAF1,           25              /* Leaf-1 */
+    , LEAF2,           26              /* Leaf-2 */
+    , RDP,             27              /* Reliable Data */
+    , IRTP,            28              /* Reliable Transaction */
+    , TP,              29              /* tp-4 w/ class negotiation */
+    , BLT,             30              /* Bulk Data Transfer */
+    , NSP,             31              /* Network Services */
+    , INP,             32              /* Merit Internodal */
+    , SEP,             33              /* Sequential Exchange */
+    , THREE_PC,        34              /* Third Party Connect */
+    , IDPR,            35              /* InterDomain Policy Routing */
+    , XTP,             36              /* XTP */
+    , DDP,             37              /* Datagram Delivery */
+    , CMTP,            38              /* Control Message Transport */
+    , TPXX,            39              /* TP++ Transport */
+    , IL,              40              /* IL transport protocol */
+    , IPV6,            41              /* IP6 header */
+    , SDRP,            42              /* Source Demand Routing */
+    , ROUTING,         43              /* IP6 routing header */
+    , FRAGMENT,        44              /* IP6 fragmentation header */
+    , IDRP,            45              /* InterDomain Routing*/
+    , RSVP,            46              /* resource reservation */
+    , GRE,             47              /* General Routing Encap. */
+    , MHRP,            48              /* Mobile Host Routing */
+    , BHA,             49              /* BHA */
+    , ESP,             50              /* IP6 Encap Sec. Payload */
+    , AH,              51              /* IP6 Auth Header */
+    , INLSP,           52              /* Integ. Net Layer Security */
+    , SWIPE,           53              /* IP with encryption */
+    , NHRP,            54              /* Next Hop Resolution */
+    , ICMPV6,          58              /* ICMP6 */
+    , NONE,            59              /* IP6 no next header */
+    , DSTOPTS,         60              /* IP6 destination option */
+    , AHIP,            61              /* any host internal protocol */
+    , CFTP,            62              /* CFTP */
+    , HELLO,           63              /* "hello" routing protocol */
+    , SATEXPAK,        64              /* SATNET/Backroom EXPAK */
+    , KRYPTOLAN,       65              /* Kryptolan */
+// MSVC supports only 127 macro parameters
+#ifndef _MSC_VER
+    , RVD,             66              /* Remote Virtual Disk */
+    , IPPC,            67              /* Pluribus Packet Core */
+    , ADFS,            68              /* Any distributed FS */
+    , SATMON,          69              /* Satnet Monitoring */
+    , VISA,            70              /* VISA Protocol */
+    , IPCV,            71              /* Packet Core Utility */
+    , CPNX,            72              /* Comp. Prot. Net. Executive */
+    , CPHB,            73              /* Comp. Prot. HeartBeat */
+    , WSN,             74              /* Wang Span Network */
+    , PVP,             75              /* Packet Video Protocol */
+    , BRSATMON,        76              /* BackRoom SATNET Monitoring */
+    , ND,              77              /* Sun net disk proto (temp.) */
+    , WBMON,           78              /* WIDEBAND Monitoring */
+    , WBEXPAK,         79              /* WIDEBAND EXPAK */
+    , EON,             80              /* ISO cnlp */
+    , VMTP,            81              /* VMTP */
+    , SVMTP,           82              /* Secure VMTP */
+    , VINES,           83              /* Banyon VINES */
+    , TTP,             84              /* TTP */
+    , IGP,             85              /* NSFNET-IGP */
+    , DGP,             86              /* dissimilar gateway prot. */
+    , TCF,             87              /* TCF */
+    , IGRP,            88              /* Cisco/GXS IGRP */
+    , OSPFIGP,         89              /* OSPFIGP */
+    , SRPC,            90              /* Strite RPC protocol */
+    , LARP,            91              /* Locus Address Resoloution */
+    , MTP,             92              /* Multicast Transport */
+    , AX25,            93              /* AX.25 Frames */
+    , IPEIP,           94              /* IP encapsulated in IP */
+    , MICP,            95              /* Mobile Int.ing control */
+    , SCCSP,           96              /* Semaphore Comm. security */
+    , ETHERIP,         97              /* Ethernet IP encapsulation */
+    , ENCAP,           98              /* encapsulation header */
+    , APES,            99              /* any private encr. scheme */
+    , GMTP,            100             /* GMTP*/
+    , PIM,             103             /* Protocol Independent Mcast */
+    , IPCOMP,          108             /* payload compression (IPComp) */
+    , PGM,             113             /* PGM */
+    , SCTP,            132             /* SCTP */
+    , DIVERT,          254             /* divert pseudo-protocol */
+    , RAW,             255             /* raw IP packet */
+#endif // _MSC_VER
 )
 
 BITS_DECLARE_FLAGS_WITH_TYPE(Tcp, uint16_t,
@@ -323,6 +328,7 @@ void printBuffer(std::span<const std::byte> buffer)
     }
 }
 
+// #ifndef _MSC_VER
 void onPacket(uint8_t * /*args*/, const struct pcap_pkthdr * packet_header, const uint8_t * packet_body)
 {
     auto packet = std::span(reinterpret_cast<const std::byte *>(packet_body), packet_header->caplen);
@@ -351,18 +357,20 @@ void onPacket(uint8_t * /*args*/, const struct pcap_pkthdr * packet_header, cons
     if(dataStart < packet.size())
         printBuffer(packet.subspan(dataStart));
 }
+// #endif // _MSC_VER
 
 int main(int argc, char * argv[])
 {
-    char error_buffer[PCAP_ERRBUF_SIZE];
-    int snapshot_len = 2048;
-    int promiscuous = 0;
-    int timeout = 1000;
-
     if(argc < 3) {
         std::cerr << "Usage : example_tcpip [-i|-f] [interface name|file name]\n";
         return 1;
     }
+
+// #ifndef _MSC_VER
+    char error_buffer[PCAP_ERRBUF_SIZE];
+    int snapshot_len = 2048;
+    int promiscuous = 0;
+    int timeout = 1000;
 
     pcap_t * handle = nullptr;
 
@@ -381,6 +389,7 @@ int main(int argc, char * argv[])
     }
     pcap_loop(handle, 0, onPacket, NULL);
     pcap_close(handle);
+// #endif // _MSC_VER
 
     return 0;
 }

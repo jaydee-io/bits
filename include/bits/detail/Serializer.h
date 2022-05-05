@@ -12,6 +12,10 @@
 #include <cstddef>
 #include <span>
 
+#ifdef _MSC_VER
+#pragma warning( disable : 4333 ) // Line 99 : warning C4333: '>>': right shift by too large amount, data loss
+#endif // _MSC_VER
+
 namespace bits::detail {
 
 //-----------------------------------------------------------------------------

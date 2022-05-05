@@ -17,7 +17,7 @@
 using ::testing::ElementsAreArray;
 
 template<typename T = std::byte, typename... Ts>
-constexpr std::array<const T, sizeof...(Ts)> make_array(Ts && ... args) noexcept
+constexpr std::array<T, sizeof...(Ts)> make_array(Ts && ... args) noexcept
 {
     return { T(std::forward<Ts>(args))... };
 }
@@ -101,11 +101,11 @@ TEST(BitsDeserializer, ChainedExtract)
         .extract(val5, 8)
     ;
 
-    ASSERT_EQ(val1, 0x03);
-    ASSERT_EQ(val2, 0x01);
-    ASSERT_EQ(val3, 0x7F);
-    ASSERT_EQ(val4, 0xDC);
-    ASSERT_EQ(val5, 0x0D);
+    ASSERT_EQ(val1, 0x03u);
+    ASSERT_EQ(val2, 0x01u);
+    ASSERT_EQ(val3, 0x7Fu);
+    ASSERT_EQ(val4, 0xDCu);
+    ASSERT_EQ(val5, 0x0Du);
 }
 
 TEST(BitsDeserializer, ChainedExtract_AutoSize)
@@ -126,11 +126,11 @@ TEST(BitsDeserializer, ChainedExtract_AutoSize)
         .extract(val5)
     ;
 
-    ASSERT_EQ(val1, 0xD8);
-    ASSERT_EQ(val2, 0xE9);
-    ASSERT_EQ(val3, 0xA5A5);
-    ASSERT_EQ(val4, 0xB6B6'B6B6);
-    ASSERT_EQ(val5, 0xC7C7'C7C7'C7C7'C7C7);
+    ASSERT_EQ(val1, 0xD8u);
+    ASSERT_EQ(val2, 0xE9u);
+    ASSERT_EQ(val3, 0xA5A5u);
+    ASSERT_EQ(val4, 0xB6B6'B6B6u);
+    ASSERT_EQ(val5, 0xC7C7'C7C7'C7C7'C7C7u);
 }
 
 TEST(BitsDeserializer, ChainedExtract_Operator)
@@ -151,11 +151,11 @@ TEST(BitsDeserializer, ChainedExtract_Operator)
         >> val5
     ;
 
-    ASSERT_EQ(val1, 0xD8);
-    ASSERT_EQ(val2, 0xE9);
-    ASSERT_EQ(val3, 0xA5A5);
-    ASSERT_EQ(val4, 0xB6B6'B6B6);
-    ASSERT_EQ(val5, 0xC7C7'C7C7'C7C7'C7C7);
+    ASSERT_EQ(val1, 0xD8u);
+    ASSERT_EQ(val2, 0xE9u);
+    ASSERT_EQ(val3, 0xA5A5u);
+    ASSERT_EQ(val4, 0xB6B6'B6B6u);
+    ASSERT_EQ(val5, 0xC7C7'C7C7'C7C7'C7C7u);
 }
 
 TEST(BitsDeserializer, BitsManipulation_nbits)
@@ -176,11 +176,11 @@ TEST(BitsDeserializer, BitsManipulation_nbits)
         >> bits::nbits(4) >> val5    // 4 bits extracted
     ;
 
-    ASSERT_EQ(val1, 0x03);
-    ASSERT_EQ(val2, 0x01);
-    ASSERT_EQ(val3, 0x07);
-    ASSERT_EQ(val4, 0x03);
-    ASSERT_EQ(val5, 0x0F);
+    ASSERT_EQ(val1, 0x03u);
+    ASSERT_EQ(val2, 0x01u);
+    ASSERT_EQ(val3, 0x07u);
+    ASSERT_EQ(val4, 0x03u);
+    ASSERT_EQ(val5, 0x0Fu);
 }
 
 TEST(BitsDeserializer, BitsManipulation_SkipAndReset)
@@ -202,7 +202,7 @@ TEST(BitsDeserializer, Deserialize_size_t)
     size_t val = 0;
 
     deserializer >> val;
-    ASSERT_EQ(val, 0xCAFEBABE'A5B6C7D8);
+    ASSERT_EQ(val, static_cast<size_t>(0xCAFEBABE'A5B6C7D8)); // On 32bits platform, size_t is 32bits
 
     deserializer >> bits::reset() >> bits::nbits(8) >> val;
     ASSERT_EQ(val, 0xCA);

@@ -25,7 +25,7 @@ constexpr std::array<T, sizeof...(Ts)> make_array(Ts && ... args) noexcept
 }
 
 template<typename T = std::byte, typename... Ts>
-constexpr std::array<const T, sizeof...(Ts)> make_const_array(Ts && ... args) noexcept
+constexpr std::array<T, sizeof...(Ts)> make_const_array(Ts && ... args) noexcept
 {
     return { T(std::forward<Ts>(args))... };
 }

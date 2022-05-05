@@ -4,7 +4,8 @@ function(target_enable_warnings TARGET VISIBILITY)
             -Werror -Wall -Wextra
         >
         $<$<CXX_COMPILER_ID:MSVC>:
-            "W4"
+            "/W4"
+            "/Zc:preprocessor" # To avoid preprocessor issue with __VA_ARGS__ macro
         >
     )
 endfunction(target_enable_warnings)
