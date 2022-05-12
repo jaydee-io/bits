@@ -2,9 +2,9 @@ name: Build on macOS
 
 on:
   push:
-    branches: [ github-action ]
+    branches: [ nop ]
   pull_request:
-    branches: [ github-action ]
+    branches: [ nop ]
 
 jobs:
   apple-clang:
