@@ -33,14 +33,16 @@ jobs:
           dir "C:\MSVC\MSBuild"
         # run: .\vs_buildtools.exe --wait --norestart --passive --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools" --includeOptional --includeRecommended --add Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools --add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.NativeDesktop --add Microsoft.VisualStudio.Workload.NetCoreTools
         shell: cmd
-      # - name: set MSBuildSDKsPath env variable
-      #   run: echo ::set-env name=MSBuildSDKsPath::"C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Sdks"
+      - name: set MSBuildSDKsPath env variable
+        run: echo ::set-env name=MSBuildSDKsPath::"C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Sdks"
+        # run: echo ::set-env name=MSBuildSDKsPath::"C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Sdks"
       - name: Select MSVC version
         uses: microsoft/setup-msbuild@v1.1
         with:
           vs-version: '${{matrix.compiler-version}}'
       - name: Install pcap
-        run: vcpkg install winpcap
+        run: vcpkg install pcap
+        # run: vcpkg install winpcap
       - name: Checkout sources
         uses: actions/checkout@v3
       - name: List CMake generators
