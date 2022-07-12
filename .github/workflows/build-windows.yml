@@ -43,6 +43,12 @@ jobs:
           vs-version: '${{matrix.compiler-version}}'
       - name: Install pcap
         run: vcpkg install winpcap
+      - name: Find pcap
+        shell: sh
+        run: |
+          ls -lh /
+          ls -lh /c
+          ls -lh /c/vscode
       - name: Checkout sources
         uses: actions/checkout@v3
       - name: List CMake generators

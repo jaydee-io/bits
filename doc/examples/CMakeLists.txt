@@ -20,6 +20,4 @@ add_executable(${EXAMPLE_NAME}
 target_enable_warnings(${EXAMPLE_NAME} PRIVATE)
 target_compile_features(${EXAMPLE_NAME} PRIVATE ${BITS_CXX_STANDARD})
 target_link_libraries(${EXAMPLE_NAME} PRIVATE bits)
-if(NOT WIN32)
-    target_link_libraries(${EXAMPLE_NAME} PRIVATE pcap)
-endif()
+target_link_libraries(${EXAMPLE_NAME} PRIVATE pcap)
