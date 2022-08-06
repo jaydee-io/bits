@@ -131,7 +131,7 @@ inline constexpr bits::Flags<EnumType> operator ~(EnumType lhs) noexcept;
     __BITS_FLAGS_DECLARE_TO_STRING(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
     __BITS_FLAGS_DECLARE_TRAITS(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
     __BITS_ENUM_DECLARE_TO_STRING(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
-    __BITS_ENUM_DECLARE_TRAITS(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_SIZE(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
     __BITS_END_NAMESPACE(bits)
 
 #define BITS_DECLARE_FLAGS_WITH_TYPE(name, rawType, ...) \
@@ -141,7 +141,7 @@ inline constexpr bits::Flags<EnumType> operator ~(EnumType lhs) noexcept;
     __BITS_FLAGS_DECLARE_TO_STRING(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
     __BITS_FLAGS_DECLARE_TRAITS(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
     __BITS_ENUM_DECLARE_TO_STRING(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
-    __BITS_ENUM_DECLARE_TRAITS(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_SIZE(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
     __BITS_END_NAMESPACE(bits)
 
 #define BITS_DECLARE_FLAGS_WITH_NAMESPACE(nameSpace, name, ...) \
@@ -153,7 +153,7 @@ inline constexpr bits::Flags<EnumType> operator ~(EnumType lhs) noexcept;
     __BITS_FLAGS_DECLARE_TO_STRING(nameSpace::, name, __VA_ARGS__) \
     __BITS_FLAGS_DECLARE_TRAITS(nameSpace::, name, __VA_ARGS__) \
     __BITS_ENUM_DECLARE_TO_STRING(nameSpace::, name, __VA_ARGS__) \
-    __BITS_ENUM_DECLARE_TRAITS(nameSpace::, name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_SIZE(nameSpace::, name, __VA_ARGS__) \
     __BITS_END_NAMESPACE(bits)
 
 #define BITS_DECLARE_FLAGS_WITH_TYPE_AND_NAMESPACE(nameSpace, name, rawType, ...) \
@@ -165,7 +165,7 @@ inline constexpr bits::Flags<EnumType> operator ~(EnumType lhs) noexcept;
     __BITS_FLAGS_DECLARE_TO_STRING(nameSpace::, name, __VA_ARGS__) \
     __BITS_FLAGS_DECLARE_TRAITS(nameSpace::, name, __VA_ARGS__) \
     __BITS_ENUM_DECLARE_TO_STRING(nameSpace::, name, __VA_ARGS__) \
-    __BITS_ENUM_DECLARE_TRAITS(nameSpace::, name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_SIZE(nameSpace::, name, __VA_ARGS__) \
     __BITS_END_NAMESPACE(bits)
 
 

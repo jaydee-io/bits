@@ -19,16 +19,13 @@
 #define __BITS_BEGIN_NAMESPACE(nameSpace)  namespace nameSpace {
 #define __BITS_END_NAMESPACE(nameSpace)    }; // namespace nameSpace
 
-// Enum traits : size()
-#define __BITS_ENUM_DECLARE_TRAITS(nameSpace, name, ...) \
-template<> struct detail::IsBitEnum<nameSpace name> : std::true_type {}; \
-template<> struct EnumTraits<nameSpace name> { \
-    inline static constexpr size_t size(void) { return __BITS_NUM_ARGS(__VA_ARGS__) / 2u; } \
-};
+// Enum size() free standaing function
+#define __BITS_ENUM_DECLARE_SIZE(nameSpace, name, ...) \
+template<> inline constexpr size_t size<nameSpace name>(void) { return __BITS_NUM_ARGS(__VA_ARGS__) / 2u; }
 
 // Enum to string_view free standing function
 #define __BITS_ENUM_DECLARE_TO_STRING(nameSpace, name, ...) \
-inline std::string_view to_string(nameSpace name value) { \
+inline constexpr std::string_view to_string(nameSpace name value) { \
     switch(value) { \
         __BITS_ENUM_DECLARE_ALL_TO_STRING_VALUES(nameSpace, name, __VA_ARGS__) \
     } \

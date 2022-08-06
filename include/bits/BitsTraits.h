@@ -27,16 +27,11 @@ template<typename T>
 inline constexpr bool is_flags_bits_enum_v = detail::IsFlagsBitsEnum<T>::value;
 
 //-----------------------------------------------------------------------------
-//- Utility traits to get enum properties :
+//- Utility to get enum properties :
 //-     - size() : number of enum values
 //-----------------------------------------------------------------------------
 template<typename EnumType>
-struct EnumTraits : std::false_type
-{
-    inline static constexpr size_t size(void);
-
-    static_assert(bits::is_enum_v<EnumType>, "Provided type is not a bits enum type");
-};
+inline constexpr size_t size(void) { static_assert(bits::is_enum_v<EnumType>, "Provided type is not a bits enum type"); return 0; }
 
 } // namespace bits
 

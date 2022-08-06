@@ -487,10 +487,10 @@ TEST(Flags, ToStringEnum_WithNamespace_WithoutType) {
 }
 
 TEST(Flags, Size) {
-    EXPECT_EQ(bits::EnumTraits<TestType>::size(), 5);
-    EXPECT_EQ(bits::EnumTraits<TestWithoutType>::size(), 5);
-    EXPECT_EQ(bits::EnumTraits<testNamespace::TestType>::size(), 5);
-    EXPECT_EQ(bits::EnumTraits<testNamespace::TestWithoutType>::size(), 5);
+    EXPECT_EQ(bits::size<TestType>(), 5);
+    EXPECT_EQ(bits::size<TestWithoutType>(), 5);
+    EXPECT_EQ(bits::size<testNamespace::TestType>(), 5);
+    EXPECT_EQ(bits::size<testNamespace::TestWithoutType>(), 5);
 }
 
 TEST(Flags, Sizeof) {

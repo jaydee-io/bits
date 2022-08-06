@@ -91,11 +91,11 @@ TEST(Enum, ToString_WithNamespace_WithoutType) {
 }
 
 TEST(Enum, Size) {
-    EXPECT_EQ(bits::EnumTraits<TestEnum8Values>::size(), 8);
-    EXPECT_EQ(bits::EnumTraits<TestEnumType>::size(), 4);
-    EXPECT_EQ(bits::EnumTraits<TestEnumWithoutType>::size(), 4);
-    EXPECT_EQ(bits::EnumTraits<testNamespace::TestEnumType>::size(), 4);
-    EXPECT_EQ(bits::EnumTraits<testNamespace::TestEnumWithoutType>::size(), 4);
+    EXPECT_EQ(bits::size<TestEnum8Values>(), 8);
+    EXPECT_EQ(bits::size<TestEnumType>(), 4);
+    EXPECT_EQ(bits::size<TestEnumWithoutType>(), 4);
+    EXPECT_EQ(bits::size<testNamespace::TestEnumType>(), 4);
+    EXPECT_EQ(bits::size<testNamespace::TestEnumWithoutType>(), 4);
 }
 
 TEST(Enum, Sizeof) {
@@ -115,5 +115,5 @@ TEST(Enum, NotBitsEnum) {
     EXPECT_FALSE(bits::is_enum_v<TestEnumWrongEnum>);
 
     // Trying to use bits::EnumTraits on non bits enum type raises a static_assert()
-    // EXPECT_EQ(bits::EnumTraits<TestEnumWrongEnum>::size(), 2);
+    // EXPECT_EQ(bits::size<TestEnumWrongEnum>(), 2);
 }
