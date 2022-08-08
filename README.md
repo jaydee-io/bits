@@ -262,7 +262,9 @@ View some usage examples :
 `bits` provides some helper macros to easily declare a strongly type enumeration. This declares :
 - a strongly typed enum type, named _`name`_, defined with all the pairs of _name_ / _value_ specified.
 - a free standing function `bits::to_string()` to convert strongly typed enumeration value to string_view (example: "`VAL_1`" or "`<invalid>`")
-- a free standing template function specialization `bits::size<nameSpace::Name>()` to get the number of enumerations
+- a free standing template function specialization `bits::size<>()` to get the number of enumerations
+- a free standing template function specialization `bits::names<>()` to get all enumeration's names
+- a free standing template function specialization `bits::values<>()` to get all enumeration's values
 
 ```c++
 #include <bits/Enum.h>
@@ -281,9 +283,10 @@ View some usage examples :
     ...
 )
 
-inline constexpr std::string_view bits::to_string(nameSpace::Name value);
-template<>
-inline constexpr size_t bits::size<nameSpace::Name>(void);
+inline constexpr std::string_view bits::to_string(Enum value);
+template<> inline constexpr size_t bits::size<Enum>(void);
+template<> inline constexpr std::array<std::string_view, bits::size<Enum>()> bits::names<Enum>(void);
+template<> inline constexpr std::array<Enum, bits::size<Enum>()> bits::values<Enum>(void);
 ```
 
 View some usage examples :

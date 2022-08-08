@@ -1,6 +1,7 @@
 ## Change log
 
 ### Not yet released
+- Add trait on Enum & Flags : names() and values()
 - Add range insertion
 - Add range extraction
 - Replace `uint8_t[]` and `std::array<uint8_t, ...>` with `std::span<std::byte>`

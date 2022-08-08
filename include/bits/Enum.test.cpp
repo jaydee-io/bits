@@ -5,8 +5,11 @@
 // License. See LICENSE for details.
 ////////////////////////////////////////////////////////////////////////////////
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include <bits/Enum.h>
+
+using ::testing::ElementsAreArray;
 
 BITS_DECLARE_ENUM(TestEnumWithoutType,
     VAL_1, (1 * 10),
@@ -96,6 +99,22 @@ TEST(Enum, Size) {
     EXPECT_EQ(bits::size<TestEnumWithoutType>(), 4);
     EXPECT_EQ(bits::size<testNamespace::TestEnumType>(), 4);
     EXPECT_EQ(bits::size<testNamespace::TestEnumWithoutType>(), 4);
+}
+
+TEST(Enum, Names) {
+    EXPECT_THAT(bits::names<TestEnum8Values>(), ElementsAreArray({ "VAL_1", "VAL_2", "VAL_3", "VAL_4", "VAL_5", "VAL_6", "VAL_7", "VAL_8" }));
+    EXPECT_THAT(bits::names<TestEnumType>(), ElementsAreArray({ "VAL_1", "VAL_2", "VAL_3", "VAL_4" }));
+    EXPECT_THAT(bits::names<TestEnumWithoutType>(), ElementsAreArray({ "VAL_1", "VAL_2", "VAL_3", "VAL_4" }));
+    EXPECT_THAT(bits::names<testNamespace::TestEnumType>(), ElementsAreArray({ "VAL_1", "VAL_2", "VAL_3", "VAL_4" }));
+    EXPECT_THAT(bits::names<testNamespace::TestEnumWithoutType>(), ElementsAreArray({ "VAL_1", "VAL_2", "VAL_3", "VAL_4" }));
+}
+
+TEST(Enum, Values) {
+    EXPECT_THAT(bits::values<TestEnum8Values>(), ElementsAreArray({ TestEnum8Values::VAL_1, TestEnum8Values::VAL_2, TestEnum8Values::VAL_3, TestEnum8Values::VAL_4, TestEnum8Values::VAL_5, TestEnum8Values::VAL_6, TestEnum8Values::VAL_7, TestEnum8Values::VAL_8 }));
+    EXPECT_THAT(bits::values<TestEnumType>(), ElementsAreArray({ TestEnumType::VAL_1, TestEnumType::VAL_2, TestEnumType::VAL_3, TestEnumType::VAL_4 }));
+    EXPECT_THAT(bits::values<TestEnumWithoutType>(), ElementsAreArray({ TestEnumWithoutType::VAL_1, TestEnumWithoutType::VAL_2, TestEnumWithoutType::VAL_3, TestEnumWithoutType::VAL_4 }));
+    EXPECT_THAT(bits::values<testNamespace::TestEnumType>(), ElementsAreArray({ testNamespace::TestEnumType::VAL_1, testNamespace::TestEnumType::VAL_2, testNamespace::TestEnumType::VAL_3, testNamespace::TestEnumType::VAL_4 }));
+    EXPECT_THAT(bits::values<testNamespace::TestEnumWithoutType>(), ElementsAreArray({ testNamespace::TestEnumWithoutType::VAL_1, testNamespace::TestEnumWithoutType::VAL_2, testNamespace::TestEnumWithoutType::VAL_3, testNamespace::TestEnumWithoutType::VAL_4 }));
 }
 
 TEST(Enum, Sizeof) {

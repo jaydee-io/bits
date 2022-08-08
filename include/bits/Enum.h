@@ -27,6 +27,8 @@
     __BITS_BEGIN_NAMESPACE(bits) \
     __BITS_ENUM_DECLARE_TO_STRING(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
     __BITS_ENUM_DECLARE_SIZE(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_NAMES(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_VALUES(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
     __BITS_END_NAMESPACE(bits)
 
 #define BITS_DECLARE_ENUM_WITH_TYPE(name, rawType, ...) \
@@ -34,6 +36,8 @@
     __BITS_BEGIN_NAMESPACE(bits) \
     __BITS_ENUM_DECLARE_TO_STRING(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
     __BITS_ENUM_DECLARE_SIZE(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_NAMES(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_VALUES(__BITS_EMPTY_NAMESPACE, name, __VA_ARGS__) \
     __BITS_END_NAMESPACE(bits)
 
 #define BITS_DECLARE_ENUM_WITH_NAMESPACE(nameSpace, name, ...) \
@@ -43,6 +47,8 @@
     __BITS_BEGIN_NAMESPACE(bits) \
     __BITS_ENUM_DECLARE_TO_STRING(nameSpace::, name, __VA_ARGS__) \
     __BITS_ENUM_DECLARE_SIZE(nameSpace::, name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_NAMES(nameSpace::, name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_VALUES(nameSpace::, name, __VA_ARGS__) \
     __BITS_END_NAMESPACE(bits)
 
 #define BITS_DECLARE_ENUM_WITH_TYPE_AND_NAMESPACE(nameSpace, name, rawType, ...) \
@@ -52,6 +58,8 @@
     __BITS_BEGIN_NAMESPACE(bits) \
     __BITS_ENUM_DECLARE_TO_STRING(nameSpace::, name, __VA_ARGS__) \
     __BITS_ENUM_DECLARE_SIZE(nameSpace::, name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_NAMES(nameSpace::, name, __VA_ARGS__) \
+    __BITS_ENUM_DECLARE_VALUES(nameSpace::, name, __VA_ARGS__) \
     __BITS_END_NAMESPACE(bits)
 
 
